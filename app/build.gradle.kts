@@ -7,6 +7,10 @@ android {
     namespace = "ie.setu.project"
     compileSdk = 35
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId = "ie.setu.project"
         minSdk = 30
