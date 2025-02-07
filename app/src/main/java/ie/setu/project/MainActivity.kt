@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import ie.setu.project.databinding.ActivityMainBinding
+import ie.setu.project.utils.log
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         binding.greetingButton.setOnClickListener {
             val greetingText = getString(R.string.greeting_text)
             Toast.makeText(applicationContext, greetingText, Toast.LENGTH_LONG).show()
+            log.info { "Greeting Button Pressed" }
         }
     }
 }
