@@ -12,6 +12,7 @@ import ie.setu.project.utils.log
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private var counter = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +29,9 @@ class MainActivity : AppCompatActivity() {
         binding.greetingButton.setOnClickListener {
             val greetingText = getString(R.string.greeting_text)
             Toast.makeText(applicationContext, greetingText, Toast.LENGTH_LONG).show()
-            log.info { "Greeting Button Pressed" }
+            counter ++
+            log.info { "Greeting Button Pressed: ${counter} time(s) "}
+            binding.counterView.text = counter.toString()
         }
     }
 }
