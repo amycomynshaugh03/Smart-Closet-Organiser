@@ -51,5 +51,8 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation (libs.slf4j.simple)
     implementation (libs.kotlin.logging)
+    implementation (libs.timberkt)
+
+
 
 }

@@ -11,6 +11,8 @@ activity = "1.10.0"
 constraintlayout = "2.2.0"
 slf4jSimple = "1.7.36"
 kotlinLogging = "2.1.23"
+timber = "4.7.1"
+timberkt = "1.5.1"
 
 
 [libraries]
@@ -24,6 +26,8 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4jSimple" }
 kotlin-logging = { module = "io.github.microutils:kotlin-logging", version.ref = "kotlinLogging" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+timberkt = { module = "com.github.ajalt:timberkt", version.ref = "timberkt" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

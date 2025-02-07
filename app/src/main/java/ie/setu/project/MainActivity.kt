@@ -8,6 +8,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import ie.setu.project.databinding.ActivityMainBinding
 import ie.setu.project.utils.log
+import timber.log.Timber
+import timber.log.Timber.i
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,6 +21,10 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        Timber.plant(Timber.DebugTree())
+        i("Amy's Project started..")
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
