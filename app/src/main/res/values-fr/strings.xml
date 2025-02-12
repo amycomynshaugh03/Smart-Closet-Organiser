@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">projet</string>
+    <string name="button_label">Afficher le message d\'accueil</string>
+    <string name="greeting_text">Bienvenue dans mon projet !</string>
+    <string name="window_text">Appuyez sur le button ci-dessous pour un message</string>
+    <string name="day_mode">Jour</string>
+    <string name="night_mode">Nuit</string>
+</resources>

@@ -1,3 +1,5 @@
+
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,6 +8,10 @@ plugins {
 android {
     namespace = "ie.setu.project"
     compileSdk = 35
+
+    buildFeatures {
+        viewBinding = true
+    }
 
     defaultConfig {
         applicationId = "ie.setu.project"
@@ -45,4 +51,13 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation (libs.slf4j.simple)
+    implementation (libs.kotlin.logging)
+    implementation (libs.timberkt)
+
+
+
+
+
+
 }
