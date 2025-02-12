@@ -1,3 +1,5 @@
+
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -52,6 +54,9 @@ dependencies {
     implementation (libs.slf4j.simple)
     implementation (libs.kotlin.logging)
     implementation (libs.timberkt)
+
+
+
 
 
 
