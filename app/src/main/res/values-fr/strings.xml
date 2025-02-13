@@ -7,4 +7,6 @@
     <string name="day_mode">Jour</string>
     <string name="night_mode">Nuit</string>
     <string name="hint_clothingItem">Article vestimentaire</string>
+    <string name="button_addClothing">Ajouter un vetement!</string>
+
 </resources>

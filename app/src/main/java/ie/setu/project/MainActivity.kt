@@ -15,7 +15,7 @@ import timber.log.Timber.i
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private var counter = 0
+    //private var counter = 0
 
 
 
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
 
 
         Timber.plant(Timber.DebugTree())
-        i("Amy's Project started..")
+        i("Welcome to your Closet Organiser!")
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -36,19 +36,11 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-//        binding.greetingButton.setOnClickListener {
-//            val greetingText = getString(R.string.greeting_text)
-//            Toast.makeText(applicationContext, greetingText, Toast.LENGTH_LONG).show()
-//            counter++
-//            log.info { "Greeting Button Pressed: ${counter} time(s) " }
-//            binding.counterView.text = counter.toString()
-//        }
-//            binding.materialSwitch.setOnCheckedChangeListener { _, isChecked ->
-//            if (isChecked) {
-//                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-//            } else {
-//                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-//            }
-//        }
+        binding.btnAdd.setOnClickListener() {
+            i("add Button Pressed")
+        }
+
+
+
     }
 }
