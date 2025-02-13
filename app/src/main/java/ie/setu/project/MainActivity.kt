@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.materialSwitch.isChecked = false
+
 
         Timber.plant(Timber.DebugTree())
         i("Amy's Project started..")
@@ -36,19 +36,19 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        binding.greetingButton.setOnClickListener {
-            val greetingText = getString(R.string.greeting_text)
-            Toast.makeText(applicationContext, greetingText, Toast.LENGTH_LONG).show()
-            counter++
-            log.info { "Greeting Button Pressed: ${counter} time(s) " }
-            binding.counterView.text = counter.toString()
-        }
-            binding.materialSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-        }
+//        binding.greetingButton.setOnClickListener {
+//            val greetingText = getString(R.string.greeting_text)
+//            Toast.makeText(applicationContext, greetingText, Toast.LENGTH_LONG).show()
+//            counter++
+//            log.info { "Greeting Button Pressed: ${counter} time(s) " }
+//            binding.counterView.text = counter.toString()
+//        }
+//            binding.materialSwitch.setOnCheckedChangeListener { _, isChecked ->
+//            if (isChecked) {
+//                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+//            } else {
+//                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+//            }
+//        }
     }
 }

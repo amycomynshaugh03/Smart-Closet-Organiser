@@ -5,4 +5,6 @@
     <string name="window_text">" Press the button below for a message"</string>
     <string name="day_mode">Day</string>
     <string name="night_mode">Night</string>
+    <string name="hint_clothingItem">Clothing Item</string>
+
 </resources>
