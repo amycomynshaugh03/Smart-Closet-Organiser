@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.snackbar.Snackbar
 import ie.setu.project.databinding.ActivityMainBinding
 import ie.setu.project.utils.log
 import timber.log.Timber
@@ -37,7 +38,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnAdd.setOnClickListener() {
-            i("add Button Pressed")
+            val clothingItemTitle = binding.clothingItemTitle.text.toString()
+            if (clothingItemTitle.isNotEmpty()) {
+                i("add Button Pressed: $clothingItemTitle")
+            }
+            else {
+                Snackbar
+                    .make(it,"Please enter your clothing item", Snackbar.LENGTH_LONG)
+                    .show()
+            }
         }
 
 

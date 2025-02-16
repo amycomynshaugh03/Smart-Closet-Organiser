@@ -39,7 +39,7 @@
                 android:orientation="vertical">
 
                 <EditText
-                    android:id="@+id/placemarkTitle"
+                    android:id="@+id/clothingItemTitle"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_margin="8dp"
