@@ -46,7 +46,10 @@ class MainActivity : AppCompatActivity() {
             if (closetOrganiser.title.isNotEmpty()) {
                 closetItems.add(closetOrganiser.copy())
                 i("Add Button Pressed: ${closetOrganiser.title}")
-                i("Closet Item added to Array: ${closetOrganiser.title} with the category: ${closetOrganiser.description}")
+
+                for (i in closetItems.indices) {
+                    i("Closet Item[$i] : ${closetItems[i].title}, ${closetItems[i].description}")
+                }
             } else {
                 Snackbar
                     .make(it, "Please Enter a clothing item and category", Snackbar.LENGTH_LONG)
