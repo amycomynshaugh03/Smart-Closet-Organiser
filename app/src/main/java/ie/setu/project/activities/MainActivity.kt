@@ -11,13 +11,15 @@ import ie.setu.project.databinding.ActivityMainBinding
 import ie.setu.project.models.ClosetOrganiserModel
 import timber.log.Timber
 import timber.log.Timber.i
+import java.nio.file.Files.copy
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     var closetOrganiser = ClosetOrganiserModel()
-    //private var counter = 0
+    val closetItems = ArrayList<ClosetOrganiserModel>()
 
+    //private var counter = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,15 +43,18 @@ class MainActivity : AppCompatActivity() {
             closetOrganiser.title = binding.clothingItemTitle.text.toString()
 
             if (closetOrganiser.title.isNotEmpty()) {
+                closetItems.add(closetOrganiser.copy())
                 i("Add Button Pressed: ${closetOrganiser.title}")
+                i("Closet Item added to Array: ${closetOrganiser.title}")
             } else {
                 Snackbar
                     .make(it, "Please Enter a clothing item", Snackbar.LENGTH_LONG)
                     .show()
             }
         }
-
-
-
     }
 }
+
+
+
+
