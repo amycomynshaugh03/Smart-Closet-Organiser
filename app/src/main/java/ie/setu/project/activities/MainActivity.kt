@@ -41,14 +41,15 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnAdd.setOnClickListener {
             closetOrganiser.title = binding.clothingItemTitle.text.toString()
+            closetOrganiser.description = binding.clothingDescription.text.toString()
 
             if (closetOrganiser.title.isNotEmpty()) {
                 closetItems.add(closetOrganiser.copy())
                 i("Add Button Pressed: ${closetOrganiser.title}")
-                i("Closet Item added to Array: ${closetOrganiser.title}")
+                i("Closet Item added to Array: ${closetOrganiser.title} with the category: ${closetOrganiser.description}")
             } else {
                 Snackbar
-                    .make(it, "Please Enter a clothing item", Snackbar.LENGTH_LONG)
+                    .make(it, "Please Enter a clothing item and category", Snackbar.LENGTH_LONG)
                     .show()
             }
         }

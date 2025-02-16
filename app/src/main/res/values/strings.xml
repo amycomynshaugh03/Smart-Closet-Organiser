@@ -7,5 +7,6 @@
     <string name="night_mode">Night</string>
     <string name="hint_clothingItem">Clothing Item</string>
     <string name="button_addClothing">Add a Clothing Item!</string>
+    <string name="description_hint">Enter Category</string>
 
 </resources>
