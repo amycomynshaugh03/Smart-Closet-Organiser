@@ -1,16 +1,14 @@
-package ie.setu.project
+package ie.setu.project.activities
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.snackbar.Snackbar
+import ie.setu.project.R
 import ie.setu.project.databinding.ActivityMainBinding
 import ie.setu.project.models.ClosetOrganiserModel
-import ie.setu.project.utils.log
 import timber.log.Timber
 import timber.log.Timber.i
 
