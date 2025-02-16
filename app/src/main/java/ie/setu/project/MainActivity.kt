@@ -9,6 +9,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.snackbar.Snackbar
 import ie.setu.project.databinding.ActivityMainBinding
+import ie.setu.project.models.ClosetOrganiserModel
 import ie.setu.project.utils.log
 import timber.log.Timber
 import timber.log.Timber.i
@@ -16,6 +17,7 @@ import timber.log.Timber.i
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    var closetOrganiser = ClosetOrganiserModel()
     //private var counter = 0
 
 
@@ -37,14 +39,14 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        binding.btnAdd.setOnClickListener() {
-            val clothingItemTitle = binding.clothingItemTitle.text.toString()
-            if (clothingItemTitle.isNotEmpty()) {
-                i("add Button Pressed: $clothingItemTitle")
-            }
-            else {
+        binding.btnAdd.setOnClickListener {
+            closetOrganiser.title = binding.clothingItemTitle.text.toString()
+
+            if (closetOrganiser.title.isNotEmpty()) {
+                i("Add Button Pressed: ${closetOrganiser.title}")
+            } else {
                 Snackbar
-                    .make(it,"Please enter your clothing item", Snackbar.LENGTH_LONG)
+                    .make(it, "Please Enter a clothing item", Snackbar.LENGTH_LONG)
                     .show()
             }
         }
