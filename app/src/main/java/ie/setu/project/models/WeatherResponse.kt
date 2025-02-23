@@ -1,9 +1,8 @@
 package ie.setu.project.models
 
-
 data class WeatherResponse(
     val location: Location,
-    val current: CurrentWeather
+    val current: Current
 )
 
 data class Location(
@@ -11,8 +10,8 @@ data class Location(
     val country: String
 )
 
-data class CurrentWeather(
-    val temp_c: Float,
+data class Current(
+    val temp_c: Double,
     val condition: Condition,
     val humidity: Int
 )

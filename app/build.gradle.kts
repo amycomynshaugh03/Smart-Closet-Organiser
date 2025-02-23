@@ -20,8 +20,6 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        buildConfigField("String", "WEATHER_API_KEY", "\"e1c8f42d6eb241bbbbe194422251802\"")
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -56,18 +54,19 @@ dependencies {
     implementation (libs.slf4j.simple)
     implementation (libs.kotlin.logging)
     implementation (libs.timberkt)
-    // Retrofit and Gson
+    // Retrofit and Gson dependencies
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
 
     // OkHttp logging interceptor for debugging
     implementation(libs.logging.interceptor)
 
-    // Lifecycle and Coroutine support
-    implementation(libs.androidx.lifecycle.viewmodel.ktx.v231)
-    implementation(libs.androidx.lifecycle.livedata.ktx.v231)
-    implementation(libs.kotlinx.coroutines.android.v150)
+    // Coroutine dependencies for background tasks
+    implementation(libs.kotlinx.coroutines.android.v143)
 
+    // Lifecycle dependencies
+    implementation(libs.androidx.lifecycle.viewmodel.ktx.v241)
+    implementation(libs.androidx.lifecycle.livedata.ktx.v241)
 
 
 

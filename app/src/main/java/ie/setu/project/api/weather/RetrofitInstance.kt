@@ -1,5 +1,7 @@
 package ie.setu.project.api.weather
 
+
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -7,12 +9,17 @@ object RetrofitInstance {
 
     private const val BASE_URL = "https://api.weatherapi.com/v1/"
 
-    val api: WeatherApiService by lazy {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)  // Base URL for WeatherAPI
-            .addConverterFactory(GsonConverterFactory.create())  // Using Gson to parse JSON
-            .build()
+    private val retrofit by lazy {
+        val client = OkHttpClient.Builder().build()
 
-        retrofit.create(WeatherApiService::class.java)  // Create the API service
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    val api: WeatherApi by lazy {
+        retrofit.create(WeatherApi::class.java)
     }
 }

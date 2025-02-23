@@ -67,6 +67,7 @@
                     android:backgroundTint="?attr/colorSecondary"
                     android:text="@string/button_addClothing" />
 
+
             </LinearLayout>
         </ScrollView>
     </RelativeLayout>

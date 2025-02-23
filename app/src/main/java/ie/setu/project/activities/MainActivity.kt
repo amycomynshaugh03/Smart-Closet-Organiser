@@ -1,5 +1,6 @@
 package ie.setu.project.activities
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -7,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Observer
 import com.github.ajalt.timberkt.BuildConfig
 import com.google.android.material.snackbar.Snackbar
 import ie.setu.project.R
@@ -22,10 +24,9 @@ class MainActivity : AppCompatActivity() {
     var closetOrganiser = ClosetOrganiserModel()
     val closetItems = ArrayList<ClosetOrganiserModel>()
 
-//    // Weather ViewModel for weather-related API calls
 //    private val weatherViewModel: WeatherViewModel by viewModels()
-//    private val apiKey = BuildConfig.WEATHER_API_KEY // API key stored in BuildConfig
-//    private val city = "Ireland"  // Default city for weather info, can be dynamically updated
+//    private val city = "London"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +34,22 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Timber Setup for logging
+//        val weatherTextView: TextView = findViewById(R.id.weatherTextView)
+
+
+//        // Observe the weather data and update the UI
+//        weatherViewModel.weatherData.observe(this, Observer { weatherData ->
+//            weatherData?.let {
+//                weatherTextView.text = "City: ${it.location.name}\n" +
+//                        "Country: ${it.location.country}\n" +
+//                        "Temperature: ${it.current.temp_c}°C\n" +
+//                        "Condition: ${it.current.condition.text}\n" +
+//                        "Humidity: ${it.current.humidity}%"
+//            }
+//        })
+
+//        weatherViewModel.fetchWeather(city)
+
         Timber.plant(Timber.DebugTree())
         i("Welcome to your Closet Organiser!")
 
@@ -44,23 +60,6 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-//        // Weather: Observe weather data and update the UI when data is fetched
-//        weatherViewModel.weatherData.observe(this, { weatherData ->
-//            weatherData?.let {
-//                // Get reference to the TextView where weather details will be displayed
-//                val weatherTextView: TextView = findViewById(R.id.weatherTextView)
-//
-//                // Update the TextView with fetched weather details (location, temperature, condition, humidity)
-//                weatherTextView.text = "City: ${it.location.name}\n" +
-//                        "Country: ${it.location.country}\n" +
-//                        "Temperature: ${it.current.temp_c}°C\n" +
-//                        "Condition: ${it.current.condition.text}\n" +
-//                        "Humidity: ${it.current.humidity}%"
-//            }
-//        })
-//
-//        // Weather: Fetch weather data using the ViewModel
-//        weatherViewModel.fetchWeather(apiKey, city)
 
         // Code for adding items to the Closet Organiser (remains unchanged)
         binding.btnAdd.setOnClickListener {
