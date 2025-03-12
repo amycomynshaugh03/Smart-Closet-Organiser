@@ -74,7 +74,10 @@ class MainActivity : AppCompatActivity() {
                 for (i in app!!.closetItems.indices) {
                     i("Closet Item[i]:${this.app!!.closetItems[i].title}, ${this.app!!.closetItems[i].description}")
                 }
-            } else {
+                setResult(RESULT_OK)
+                finish()
+            }
+            else {
                 Snackbar
                     .make(it, "Please Enter a clothing item and category", Snackbar.LENGTH_LONG)
                     .show()
