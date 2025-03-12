@@ -9,5 +9,7 @@
     <string name="button_addClothing">Add a Clothing Item!</string>
     <string name="description_hint">Enter Category</string>
     <string name="menu_addClothingItem">Add</string>
+    <string name="menu_cancelClothingItem">Cancel</string>
+
 
 </resources>

@@ -2,6 +2,8 @@ package ie.setu.project.activities
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -20,8 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     var closetOrganiser = ClosetOrganiserModel()
-    var app : MainApp? = null
-
+    var app: MainApp? = null
 
 
 //    private val weatherViewModel: WeatherViewModel by viewModels()
@@ -30,9 +31,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+        binding.topAppBar.title = title
+        setSupportActionBar(binding.topAppBar)
 
 //        val weatherTextView: TextView = findViewById(R.id.weatherTextView)
 
@@ -50,16 +55,6 @@ class MainActivity : AppCompatActivity() {
 
 //        weatherViewModel.fetchWeather(city)
 
-        Timber.plant(Timber.DebugTree())
-        i("Welcome to your Closet Organiser!")
-
-        // Handle the window insets for edge-to-edge display
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
         app = application as MainApp
 
         binding.btnAdd.setOnClickListener {
@@ -76,12 +71,29 @@ class MainActivity : AppCompatActivity() {
                 }
                 setResult(RESULT_OK)
                 finish()
-            }
-            else {
+            } else {
                 Snackbar
                     .make(it, "Please Enter a clothing item and category", Snackbar.LENGTH_LONG)
                     .show()
             }
         }
+
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_clothing_item, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.item_cancel -> {
+                setResult(RESULT_CANCELED)
+                finish()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+
+
 }

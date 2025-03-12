@@ -10,5 +10,6 @@
     <string name="button_addClothing">Ajouter un vetement!</string>
     <string name="description_hint">Entrez la categorie</string>
     <string name="menu_addClothingItem">Ajouter</string>
+    <string name="menu_cancelClothingItem">Annuler</string>
 
 </resources>
