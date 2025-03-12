@@ -1,7 +1,7 @@
 <resources>
-    <string name ="app_name">project</string>
-    <string name = "button_label"> Show Greeting</string>
-    <string name = "greeting_text"> Welcome to my Project!</string>
+    <string name="app_name">project</string>
+    <string name="button_label"> Show Greeting</string>
+    <string name="greeting_text"> Welcome to my Project!</string>
     <string name="window_text">" Press the button below for a message"</string>
     <string name="day_mode">Day</string>
     <string name="night_mode">Night</string>
