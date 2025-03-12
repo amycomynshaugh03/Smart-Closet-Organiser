@@ -4,6 +4,7 @@ package ie.setu.project.activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,16 +21,24 @@ class ClothingListActivity : AppCompatActivity() {
     lateinit var app: MainApp
     private lateinit var binding: ActivityClothingListBinding
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityClothingListBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.topAppBar.title = title
+        setSupportActionBar(binding.topAppBar)
 
         app = application as MainApp
 
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = ClosetAdapter(app.closetItems)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 }
 
