@@ -13,5 +13,9 @@ class MainApp : Application() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
         i("Closet Organiser started >3")
+
+        closetItems.add(ClosetOrganiserModel("One", "About one..."))
+        closetItems.add(ClosetOrganiserModel("Two", "About two..."))
+        closetItems.add(ClosetOrganiserModel("Three", "About three..."))
     }
 }
