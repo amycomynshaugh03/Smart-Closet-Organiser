@@ -8,11 +8,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.Observer
-import com.github.ajalt.timberkt.BuildConfig
 import com.google.android.material.snackbar.Snackbar
 import ie.setu.project.R
-import ie.setu.project.api.weather.WeatherViewModel
+import ie.setu.project.closet.main.MainApp
 import ie.setu.project.databinding.ActivityMainBinding
 import ie.setu.project.models.ClosetOrganiserModel
 import timber.log.Timber
@@ -22,7 +20,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     var closetOrganiser = ClosetOrganiserModel()
-    val closetItems = ArrayList<ClosetOrganiserModel>()
+    var app : MainApp? = null
+
+
 
 //    private val weatherViewModel: WeatherViewModel by viewModels()
 //    private val city = "London"
@@ -60,19 +60,19 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        app = application as MainApp
 
-        // Code for adding items to the Closet Organiser (remains unchanged)
         binding.btnAdd.setOnClickListener {
             closetOrganiser.title = binding.clothingItemTitle.text.toString()
             closetOrganiser.description = binding.clothingDescription.text.toString()
 
             if (closetOrganiser.title.isNotEmpty()) {
-                closetItems.add(closetOrganiser.copy())
+                app!!.closetItems.add(closetOrganiser.copy())
                 i("Add Button Pressed: ${closetOrganiser.title}")
 
                 // Log added closet items
-                for (i in closetItems.indices) {
-                    i("Closet Item[$i] : ${closetItems[i].title}, ${closetItems[i].description}")
+                for (i in app!!.closetItems.indices) {
+                    i("Closet Item[i]:${this.app!!.closetItems[i].title}, ${this.app!!.closetItems[i].description}")
                 }
             } else {
                 Snackbar
