@@ -5,24 +5,20 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
-import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-
 import ie.setu.project.R
 import ie.setu.project.adapters.ClosetAdapter
+import ie.setu.project.adapters.ClosetItemListener
 import ie.setu.project.closet.main.MainApp
 import ie.setu.project.databinding.ActivityClothingListBinding
-import ie.setu.project.databinding.ActivityMainBinding
-import ie.setu.project.databinding.CardClothingBinding
 import ie.setu.project.models.ClosetOrganiserModel
 
-class ClothingListActivity : AppCompatActivity() {
+
+class ClothingListActivity : AppCompatActivity(), ClosetItemListener {
 
     lateinit var app: MainApp
     private lateinit var binding: ActivityClothingListBinding
@@ -38,7 +34,7 @@ class ClothingListActivity : AppCompatActivity() {
 
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
-        binding.recyclerView.adapter = ClosetAdapter(app.clothingItems.findAll())
+        binding.recyclerView.adapter = ClosetAdapter(app.clothingItems.findAll(), this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -67,6 +63,10 @@ class ClothingListActivity : AppCompatActivity() {
                 Snackbar.make(binding.root, "Clothing Item Add Cancelled", Snackbar.LENGTH_LONG).show()
             }
         }
+    override fun onClosetItemClick(item: ClosetOrganiserModel) {
+        val launcherIntent = Intent(this, MainActivity::class.java)
+        getResult.launch(launcherIntent)
+    }
 }
 
 
