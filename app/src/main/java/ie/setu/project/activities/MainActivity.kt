@@ -51,18 +51,21 @@ class MainActivity : AppCompatActivity() {
 
         app = application as MainApp
 
+        if (intent.hasExtra("closet_item")) {
+            closetOrganiser = intent.getParcelableExtra("closet_item")!!
+            binding.clothingItemTitle.setText(closetOrganiser.title)
+            binding.clothingDescription.setText(closetOrganiser.description)
+        }
 
         binding.btnAdd.setOnClickListener {
             closetOrganiser.title = binding.clothingItemTitle.text.toString()
             closetOrganiser.description = binding.clothingDescription.text.toString()
 
             if (closetOrganiser.title.isNotEmpty()) {
-                // Use clothingItems instead of closetItems to add the new clothing item
-                app!!.clothingItems.create(closetOrganiser.copy())  // Adds to the correct store (clothingItems)
+                app!!.clothingItems.create(closetOrganiser.copy())
 
                 i("Add Button Pressed: ${closetOrganiser.title}")
 
-                // Log added clothing items (use clothingItems here, not closetItems)
                 for (i in app!!.clothingItems.findAll().indices) {
                     i("Clothing Item[i]: ${app!!.clothingItems.findAll()[i].title}, ${app!!.clothingItems.findAll()[i].description}")
                 }

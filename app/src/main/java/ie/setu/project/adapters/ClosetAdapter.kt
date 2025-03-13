@@ -17,7 +17,6 @@ class ClosetAdapter constructor(private var closetItems: List<ClosetOrganiserMod
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
         val binding = CardClothingBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
-
         return MainHolder(binding)
     }
 

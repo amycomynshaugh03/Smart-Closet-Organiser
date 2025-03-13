@@ -23,6 +23,7 @@ class ClothingListActivity : AppCompatActivity(), ClosetItemListener {
     lateinit var app: MainApp
     private lateinit var binding: ActivityClothingListBinding
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityClothingListBinding.inflate(layoutInflater)
@@ -65,6 +66,7 @@ class ClothingListActivity : AppCompatActivity(), ClosetItemListener {
         }
     override fun onClosetItemClick(item: ClosetOrganiserModel) {
         val launcherIntent = Intent(this, MainActivity::class.java)
+        launcherIntent.putExtra("closet_item", item)
         getResult.launch(launcherIntent)
     }
 }
