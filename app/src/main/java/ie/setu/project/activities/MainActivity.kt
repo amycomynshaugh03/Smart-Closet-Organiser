@@ -17,6 +17,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     var closetOrganiser = ClosetOrganiserModel()
     var app: MainApp? = null
+    var edit = false
+
 
 
 //    private val weatherViewModel: WeatherViewModel by viewModels()
@@ -52,38 +54,40 @@ class MainActivity : AppCompatActivity() {
         app = application as MainApp
 
         if (intent.hasExtra("closet_item")) {
+            edit = true
             closetOrganiser = intent.getParcelableExtra("closet_item")!!
             binding.clothingItemTitle.setText(closetOrganiser.title)
             binding.clothingDescription.setText(closetOrganiser.description)
+            binding.btnAdd.text = getString(R.string.save_clothing_item)
         }
 
         binding.btnAdd.setOnClickListener {
             closetOrganiser.title = binding.clothingItemTitle.text.toString()
             closetOrganiser.description = binding.clothingDescription.text.toString()
-            binding.btnAdd.text = getString(R.string.save_clothing_item)
 
-                if (closetOrganiser.title.isNotEmpty()) {
-                    if (closetOrganiser.id == 0L) {
-                        app!!.clothingItems.create(closetOrganiser.copy())
+            if (closetOrganiser.title.isNotEmpty()) {
+                if (edit) {
+                    app!!.clothingItems.update(closetOrganiser.copy()) // Update existing item
+                    i("Update Button Pressed: ${closetOrganiser.title}")
+                } else if (closetOrganiser.id == 0L) {
+                    app!!.clothingItems.create(closetOrganiser.copy()) // Create new item
+                    i("Add Button Pressed: ${closetOrganiser.title}")
 
-                        i("Add Button Pressed: ${closetOrganiser.title}")
-
-                        for (i in app!!.clothingItems.findAll().indices) {
-                            i("Clothing Item[i]: ${app!!.clothingItems.findAll()[i].title}, ${app!!.clothingItems.findAll()[i].description}")
-                        }
-                        setResult(RESULT_OK)
-                        finish()
-                    } else {
-                        Snackbar.make(
-                            it,
-                            getString(R.string.please_enter_clothing_item) + " and " + getString(R.string.please_enter_category),
-                            Snackbar.LENGTH_LONG
-                        ).show()
+                    for (i in app!!.clothingItems.findAll().indices) {
+                        i("Clothing Item[i]: ${app!!.clothingItems.findAll()[i].title}, ${app!!.clothingItems.findAll()[i].description}")
                     }
                 }
+                setResult(RESULT_OK)
+                finish()
+            } else {
+                Snackbar.make(
+                    it,
+                    getString(R.string.please_enter_clothing_item) + " and " + getString(R.string.please_enter_category),
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
         }
-
-    }
+}
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_clothing_item, menu)
