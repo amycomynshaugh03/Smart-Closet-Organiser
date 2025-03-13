@@ -1,4 +1,5 @@
 [versions]
+picasso = "2.71828"
 agp = "8.8.0"
 androidxLifecycleViewmodelKtx = "2.4.1"
 jetbrainsKotlinxCoroutinesAndroid = "1.4.3"
@@ -23,6 +24,7 @@ slf4jSimple = "1.7.36"
 kotlinLogging = "2.1.23"
 timber = "4.7.1"
 timberkt = "1.5.1"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,6 +51,7 @@ slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4jSimple" 
 kotlin-logging = { module = "io.github.microutils:kotlin-logging", version.ref = "kotlinLogging" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 timberkt = { module = "com.github.ajalt:timberkt", version.ref = "timberkt" }
+picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

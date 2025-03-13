@@ -1,20 +1,26 @@
 package ie.setu.project.activities
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import com.squareup.picasso.Picasso
 import ie.setu.project.R
 import ie.setu.project.closet.main.MainApp
 import ie.setu.project.databinding.ActivityMainBinding
+import ie.setu.project.helpers.showImagePicker
 import ie.setu.project.models.ClosetOrganiserModel
 import timber.log.Timber.i
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var imageIntentLauncher : ActivityResultLauncher<Intent>
     var closetOrganiser = ClosetOrganiserModel()
     var app: MainApp? = null
     var edit = false
@@ -88,8 +94,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
         binding.chooseImage.setOnClickListener {
-            i("Select Image <3")
+            showImagePicker(imageIntentLauncher)
         }
+        registerImagePickerCallback()
+
 }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -105,6 +113,26 @@ class MainActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    private fun registerImagePickerCallback() {
+        imageIntentLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+            { result ->
+                when(result.resultCode){
+                    RESULT_OK -> {
+                        if (result.data != null) {
+                            i("Got Result ${result.data!!.data}")
+                            closetOrganiser.image = result.data!!.data!!
+                            Picasso.get()
+                                .load(closetOrganiser.image)
+                                .into(binding.placemarkImage)
+                        } // end of if
+                    }
+                    RESULT_CANCELED -> { } else -> { }
+                }
+            }
+    }
+
 
 
 

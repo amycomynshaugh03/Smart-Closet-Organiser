@@ -15,6 +15,6 @@
     <string name="please_enter_category">Veuillez entrer une catégorie</string>
     <string name="save_clothing_item">Enregistrer l\'article vestimentaire</string>
     <string name="button_addImage">Ajouter une image</string>
-    <string name="button_addImage">Ajouter une image</string>
+    <string name="select_clothing_image">Sélectionnez l\'image du vêtement</string>
 
 </resources>
