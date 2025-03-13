@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         binding.btnAdd.setOnClickListener {
             closetOrganiser.title = binding.clothingItemTitle.text.toString()
             closetOrganiser.description = binding.clothingDescription.text.toString()
-
+            binding.btnAdd.text = getString(R.string.save_clothing_item)
 
                 if (closetOrganiser.title.isNotEmpty()) {
                     if (closetOrganiser.id == 0L) {
