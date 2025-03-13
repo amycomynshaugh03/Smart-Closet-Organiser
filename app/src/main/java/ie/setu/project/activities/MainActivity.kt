@@ -87,6 +87,9 @@ class MainActivity : AppCompatActivity() {
                 ).show()
             }
         }
+        binding.chooseImage.setOnClickListener {
+            i("Select Image <3")
+        }
 }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

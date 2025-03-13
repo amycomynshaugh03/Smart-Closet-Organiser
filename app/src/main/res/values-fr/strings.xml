@@ -14,5 +14,7 @@
     <string name="please_enter_clothing_item">Veuillez saisir un article vestimentaire</string>
     <string name="please_enter_category">Veuillez entrer une catégorie</string>
     <string name="save_clothing_item">Enregistrer l\'article vestimentaire</string>
+    <string name="button_addImage">Ajouter une image</string>
+    <string name="button_addImage">Ajouter une image</string>
 
 </resources>
