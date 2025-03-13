@@ -1,21 +1,15 @@
 package ie.setu.project.activities
 
-import android.annotation.SuppressLint
+
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.snackbar.Snackbar
 import ie.setu.project.R
 import ie.setu.project.closet.main.MainApp
 import ie.setu.project.databinding.ActivityMainBinding
 import ie.setu.project.models.ClosetOrganiserModel
-import timber.log.Timber
 import timber.log.Timber.i
 
 class MainActivity : AppCompatActivity() {
@@ -23,6 +17,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     var closetOrganiser = ClosetOrganiserModel()
     var app: MainApp? = null
+    var edit = false
+
 
 
 //    private val weatherViewModel: WeatherViewModel by viewModels()
@@ -57,28 +53,41 @@ class MainActivity : AppCompatActivity() {
 
         app = application as MainApp
 
+        if (intent.hasExtra("closet_item")) {
+            edit = true
+            closetOrganiser = intent.getParcelableExtra("closet_item")!!
+            binding.clothingItemTitle.setText(closetOrganiser.title)
+            binding.clothingDescription.setText(closetOrganiser.description)
+            binding.btnAdd.text = getString(R.string.save_clothing_item)
+        }
+
         binding.btnAdd.setOnClickListener {
             closetOrganiser.title = binding.clothingItemTitle.text.toString()
             closetOrganiser.description = binding.clothingDescription.text.toString()
 
             if (closetOrganiser.title.isNotEmpty()) {
-                app!!.closetItems.add(closetOrganiser.copy())
-                i("Add Button Pressed: ${closetOrganiser.title}")
+                if (edit) {
+                    app!!.clothingItems.update(closetOrganiser.copy()) // Update existing item
+                    i("Update Button Pressed: ${closetOrganiser.title}")
+                } else if (closetOrganiser.id == 0L) {
+                    app!!.clothingItems.create(closetOrganiser.copy()) // Create new item
+                    i("Add Button Pressed: ${closetOrganiser.title}")
 
-                // Log added closet items
-                for (i in app!!.closetItems.indices) {
-                    i("Closet Item[i]:${this.app!!.closetItems[i].title}, ${this.app!!.closetItems[i].description}")
+                    for (i in app!!.clothingItems.findAll().indices) {
+                        i("Clothing Item[i]: ${app!!.clothingItems.findAll()[i].title}, ${app!!.clothingItems.findAll()[i].description}")
+                    }
                 }
                 setResult(RESULT_OK)
                 finish()
             } else {
-                Snackbar
-                    .make(it, "Please Enter a clothing item and category", Snackbar.LENGTH_LONG)
-                    .show()
+                Snackbar.make(
+                    it,
+                    getString(R.string.please_enter_clothing_item) + " and " + getString(R.string.please_enter_category),
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         }
-
-    }
+}
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_clothing_item, menu)

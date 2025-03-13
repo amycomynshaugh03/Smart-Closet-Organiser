@@ -10,6 +10,11 @@
     <string name="description_hint">Enter Category</string>
     <string name="menu_addClothingItem">Add</string>
     <string name="menu_cancelClothingItem">Cancel</string>
+    <string name="please_enter_clothing_item">Please Enter a Clothing Item</string>
+    <string name="please_enter_category">Please Enter a Category</string>
+    <string name="save_clothing_item"> Save Clothing Item </string>
+
+
 
 
 </resources>
