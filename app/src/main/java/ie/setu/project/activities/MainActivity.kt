@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         Snackbar.make(
                             it,
-                            "Please Enter a clothing item and category",
+                            getString(R.string.please_enter_clothing_item) + " and " + getString(R.string.please_enter_category),
                             Snackbar.LENGTH_LONG
                         ).show()
                     }
