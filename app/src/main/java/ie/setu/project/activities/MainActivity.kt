@@ -59,12 +59,12 @@ class MainActivity : AppCompatActivity() {
 
         app = application as MainApp
 
-        if (intent.hasExtra("closet_item")) {
+        if (intent.hasExtra("closet_item_edit")) {
             edit = true
-            closetOrganiser = intent.getParcelableExtra("closet_item")!!
+            closetOrganiser = intent.getParcelableExtra("closet_item_edit")!!
             binding.clothingItemTitle.setText(closetOrganiser.title)
             binding.clothingDescription.setText(closetOrganiser.description)
-            binding.btnAdd.text = getString(R.string.save_clothing_item)
+            binding.btnAdd.text = getString(R.string.save_clothing_item)  // This now uses the correct string resource
         }
 
         binding.btnAdd.setOnClickListener {
@@ -116,19 +116,29 @@ class MainActivity : AppCompatActivity() {
 
     private fun registerImagePickerCallback() {
         imageIntentLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult())
-            { result ->
-                when(result.resultCode){
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                when (result.resultCode) {
                     RESULT_OK -> {
                         if (result.data != null) {
-                            i("Got Result ${result.data!!.data}")
-                            closetOrganiser.image = result.data!!.data!!
+                            result.data?.data?.let { uri ->
+                                i("Got Result: $uri")
+                                closetOrganiser.image = uri
+                                Picasso.get()
+                                    .load(uri)
+                                    .into(binding.clothingImage)
+                            }
+                        }
+                        if (intent.hasExtra("closet_item_edit")) {
+                            // Handle the case where you are in edit mode
                             Picasso.get()
                                 .load(closetOrganiser.image)
-                                .into(binding.placemarkImage)
-                        } // end of if
+                                .into(binding.clothingImage)
+                        }
                     }
-                    RESULT_CANCELED -> { } else -> { }
+                    RESULT_CANCELED -> {
+                        // Handle the canceled result if needed
+                    }
+                    else -> { }
                 }
             }
     }

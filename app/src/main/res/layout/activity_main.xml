@@ -166,7 +166,7 @@
                 android:text="@string/button_addImage"/>
 
             <ImageView
-                android:id="@+id/placemarkImage"
+                android:id="@+id/clothingImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:srcCompat="@mipmap/ic_launcher"/>
