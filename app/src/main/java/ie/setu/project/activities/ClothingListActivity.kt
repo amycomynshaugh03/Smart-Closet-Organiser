@@ -27,7 +27,6 @@ class ClothingListActivity : AppCompatActivity() {
     lateinit var app: MainApp
     private lateinit var binding: ActivityClothingListBinding
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityClothingListBinding.inflate(layoutInflater)
@@ -39,13 +38,14 @@ class ClothingListActivity : AppCompatActivity() {
 
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
-        binding.recyclerView.adapter = ClosetAdapter(app.closetItems)
+        binding.recyclerView.adapter = ClosetAdapter(app.clothingItems.findAll())
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return super.onCreateOptionsMenu(menu)
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.item_add -> {
@@ -61,8 +61,7 @@ class ClothingListActivity : AppCompatActivity() {
             ActivityResultContracts.StartActivityForResult()
         ) {
             if (it.resultCode == Activity.RESULT_OK) {
-                (binding.recyclerView.adapter)?.
-                notifyItemRangeChanged(0,app.closetItems.size)
+                (binding.recyclerView.adapter)?.notifyItemRangeChanged(0,app.clothingItems.findAll().size)
             }
             if (it.resultCode == Activity.RESULT_CANCELED) {
                 Snackbar.make(binding.root, "Clothing Item Add Cancelled", Snackbar.LENGTH_LONG).show()
