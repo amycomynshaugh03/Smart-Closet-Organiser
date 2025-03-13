@@ -61,19 +61,26 @@ class MainActivity : AppCompatActivity() {
             closetOrganiser.title = binding.clothingItemTitle.text.toString()
             closetOrganiser.description = binding.clothingDescription.text.toString()
 
-            if (closetOrganiser.title.isNotEmpty()) {
-                app!!.clothingItems.create(closetOrganiser.copy())
 
-                i("Add Button Pressed: ${closetOrganiser.title}")
+                if (closetOrganiser.title.isNotEmpty()) {
+                    if (closetOrganiser.id == 0L) {
+                        app!!.clothingItems.create(closetOrganiser.copy())
 
-                for (i in app!!.clothingItems.findAll().indices) {
-                    i("Clothing Item[i]: ${app!!.clothingItems.findAll()[i].title}, ${app!!.clothingItems.findAll()[i].description}")
+                        i("Add Button Pressed: ${closetOrganiser.title}")
+
+                        for (i in app!!.clothingItems.findAll().indices) {
+                            i("Clothing Item[i]: ${app!!.clothingItems.findAll()[i].title}, ${app!!.clothingItems.findAll()[i].description}")
+                        }
+                        setResult(RESULT_OK)
+                        finish()
+                    } else {
+                        Snackbar.make(
+                            it,
+                            "Please Enter a clothing item and category",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
                 }
-                setResult(RESULT_OK)
-                finish()
-            } else {
-                Snackbar.make(it, "Please Enter a clothing item and category", Snackbar.LENGTH_LONG).show()
-            }
         }
 
     }
