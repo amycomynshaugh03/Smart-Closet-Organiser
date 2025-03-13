@@ -54,19 +54,14 @@ dependencies {
     implementation (libs.slf4j.simple)
     implementation (libs.kotlin.logging)
     implementation (libs.timberkt)
-    // Retrofit and Gson dependencies
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
-
-    // OkHttp logging interceptor for debugging
     implementation(libs.logging.interceptor)
-
-    // Coroutine dependencies for background tasks
     implementation(libs.kotlinx.coroutines.android.v143)
-
-    // Lifecycle dependencies
     implementation(libs.androidx.lifecycle.viewmodel.ktx.v241)
     implementation(libs.androidx.lifecycle.livedata.ktx.v241)
+    implementation (libs.picasso)
+
 
 
 

@@ -1,20 +1,26 @@
 package ie.setu.project.activities
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import com.squareup.picasso.Picasso
 import ie.setu.project.R
 import ie.setu.project.closet.main.MainApp
 import ie.setu.project.databinding.ActivityMainBinding
+import ie.setu.project.helpers.showImagePicker
 import ie.setu.project.models.ClosetOrganiserModel
 import timber.log.Timber.i
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var imageIntentLauncher : ActivityResultLauncher<Intent>
     var closetOrganiser = ClosetOrganiserModel()
     var app: MainApp? = null
     var edit = false
@@ -53,12 +59,12 @@ class MainActivity : AppCompatActivity() {
 
         app = application as MainApp
 
-        if (intent.hasExtra("closet_item")) {
+        if (intent.hasExtra("closet_item_edit")) {
             edit = true
-            closetOrganiser = intent.getParcelableExtra("closet_item")!!
+            closetOrganiser = intent.getParcelableExtra("closet_item_edit")!!
             binding.clothingItemTitle.setText(closetOrganiser.title)
             binding.clothingDescription.setText(closetOrganiser.description)
-            binding.btnAdd.text = getString(R.string.save_clothing_item)
+            binding.btnAdd.text = getString(R.string.save_clothing_item)  // This now uses the correct string resource
         }
 
         binding.btnAdd.setOnClickListener {
@@ -87,6 +93,11 @@ class MainActivity : AppCompatActivity() {
                 ).show()
             }
         }
+        binding.chooseImage.setOnClickListener {
+            showImagePicker(imageIntentLauncher)
+        }
+        registerImagePickerCallback()
+
 }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -102,6 +113,36 @@ class MainActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    private fun registerImagePickerCallback() {
+        imageIntentLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                when (result.resultCode) {
+                    RESULT_OK -> {
+                        if (result.data != null) {
+                            result.data?.data?.let { uri ->
+                                i("Got Result: $uri")
+                                closetOrganiser.image = uri
+                                Picasso.get()
+                                    .load(uri)
+                                    .into(binding.clothingImage)
+                            }
+                        }
+                        if (intent.hasExtra("closet_item_edit")) {
+                            // Handle the case where you are in edit mode
+                            Picasso.get()
+                                .load(closetOrganiser.image)
+                                .into(binding.clothingImage)
+                        }
+                    }
+                    RESULT_CANCELED -> {
+                        // Handle the canceled result if needed
+                    }
+                    else -> { }
+                }
+            }
+    }
+
 
 
 
