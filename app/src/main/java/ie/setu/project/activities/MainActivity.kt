@@ -64,12 +64,21 @@ class MainActivity : AppCompatActivity() {
             closetOrganiser = intent.getParcelableExtra("closet_item_edit")!!
             binding.clothingItemTitle.setText(closetOrganiser.title)
             binding.clothingDescription.setText(closetOrganiser.description)
+            binding.clothingColour.setText(closetOrganiser.colourPattern)
+            binding.clothingSize.setText(closetOrganiser.size)
+            binding.clothingSeason.setText(closetOrganiser.season)
+            binding.lastWorn.setText(closetOrganiser.lastWorn)
             binding.btnAdd.text = getString(R.string.save_clothing_item)  // This now uses the correct string resource
         }
 
         binding.btnAdd.setOnClickListener {
             closetOrganiser.title = binding.clothingItemTitle.text.toString()
             closetOrganiser.description = binding.clothingDescription.text.toString()
+            closetOrganiser.colourPattern = binding.clothingColour.text.toString()
+            closetOrganiser.size = binding.clothingSize.text.toString()
+            closetOrganiser.season = binding.clothingSeason.text.toString()
+            closetOrganiser.lastWorn = binding.lastWorn.text.toString()
+
 
             if (closetOrganiser.title.isNotEmpty()) {
                 if (edit) {
@@ -88,7 +97,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 Snackbar.make(
                     it,
-                    getString(R.string.please_enter_clothing_item) + " and " + getString(R.string.please_enter_category),
+                    getString(R.string.please_enter_missing_item),
                     Snackbar.LENGTH_LONG
                 ).show()
             }

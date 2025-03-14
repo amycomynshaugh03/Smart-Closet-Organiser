@@ -155,6 +155,48 @@
                 android:minLines="2"
                 android:padding="8dp" />
 
+            <EditText
+                android:id="@+id/clothingColour"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:hint="Enter Colour "
+                android:inputType="textMultiLine"
+                android:minLines="2"
+                android:padding="8dp" />
+
+            <EditText
+                android:id="@+id/clothingSize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:hint="Enter Size"
+                android:inputType="textMultiLine"
+                android:minLines="2"
+                android:padding="8dp" />
+
+            <EditText
+                android:id="@+id/clothingSeason"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:hint="Enter the required Season"
+                android:inputType="textMultiLine"
+                android:minLines="2"
+                android:padding="8dp" />
+
+            <EditText
+                android:id="@+id/lastWorn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:hint="Last Worn DD/MM/YYYY"
+                android:inputType="textMultiLine"
+                android:minLines="2"
+                android:padding="8dp" />
+
+
+
             <Button
                 android:id="@+id/chooseImage"
                 android:layout_width="match_parent"

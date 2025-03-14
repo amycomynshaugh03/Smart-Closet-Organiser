@@ -66,7 +66,7 @@ class ClothingListActivity : AppCompatActivity(), ClosetItemListener {
         }
     override fun onClosetItemClick(item: ClosetOrganiserModel) {
         val launcherIntent = Intent(this, MainActivity::class.java)
-        launcherIntent.putExtra("closet_item", item)
+        launcherIntent.putExtra("closet_item_edit", item)
         getResult.launch(launcherIntent)
     }
 }
