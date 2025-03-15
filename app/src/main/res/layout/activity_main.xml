@@ -38,39 +38,10 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             android:gravity="center">
 
-            <!-- Centered Layout with Heart Icons and Title -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_gravity="center">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_heart"
-                    android:layout_marginEnd="8dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Closet Organiser"
-                    android:textColor="@android:color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_heart"
-                    android:contentDescription="Heart Icon"
-                    android:layout_marginStart="8dp" />
-            </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Scrollable Content -->
+
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="0dp"
@@ -87,57 +58,12 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Top Row: Outfits & Clothes Buttons and Search Box -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
-
-                <!-- Outfits Button -->
-                <Button
-                    android:id="@+id/btnOutfits"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Outfits" />
-
-                <!-- Clothes Button -->
-                <Button
-                    android:id="@+id/btnClothes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Clothes" />
-
-                <!-- Search Box -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:padding="4dp"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_search"
-                        android:contentDescription="Search Icon" />
-
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:hint="Search"
-                        android:maxLines="1"
-                        android:paddingStart="8dp"
-                        android:textSize="14sp" />
-                </LinearLayout>
-            </LinearLayout>
 
             <!-- Add Clothing Section -->
+
             <EditText
                 android:id="@+id/clothingItemTitle"
-                android:layout_width="match_parent"
+                android:layout_width="392dp"
                 android:layout_height="48dp"
                 android:layout_margin="8dp"
                 android:hint="Enter Clothing Item Title"
@@ -223,48 +149,9 @@
                 android:backgroundTint="?attr/colorSecondary"
                 android:text="Add Clothing" />
 
-
-            <!-- Recently Worn Title -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="40dp"
-                android:layout_marginBottom="16dp"
-                android:text="Recently Worn"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <!-- Placeholder for Recently Worn Items / Carousel -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginBottom="40dp">
-
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_margin="8dp"
-                    android:background="@android:color/darker_gray" />
-
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_margin="8dp"
-                    android:background="@android:color/darker_gray" />
-
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_margin="8dp"
-                    android:background="@android:color/darker_gray" />
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
-    <!-- Bottom App Bar -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/bottomAppBar"
         android:layout_width="match_parent"
@@ -277,16 +164,9 @@
 
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="26dp"
             android:gravity="center">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_gravity="center">
-            </LinearLayout>
 
 
         </androidx.appcompat.widget.Toolbar>
