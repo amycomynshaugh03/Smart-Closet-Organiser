@@ -3,6 +3,10 @@
     <string name="app_name">projet</string>
     <string name="day_mode">Jour</string>
     <string name="night_mode">Nuit</string>
+    <string name="enter_description">Entrez la description</string>
+    <string name="enter_season">Entrez la saison préférée</string>
+    <string name="enter_lastworn">Entrez la date du dernier port : jj/mm/aa</string>
+    <string name="enter_image">Image</string>
     <string name="hint_clothingItem">Article vestimentaire</string>
     <string name="button_addClothing">Ajouter un vetement!</string>
     <string name="description_hint">Entrez la categorie</string>
@@ -12,5 +16,9 @@
     <string name="save_clothing_item">Enregistrer l\'article vestimentaire</string>
     <string name="button_addImage">Ajouter une image</string>
     <string name="select_clothing_image">Sélectionnez l\'image du vêtement</string>
+    <string name="add_clothing">Ajouter des vêtements</string>
+    <string name="enter_clothing_title">Saisissez le titre du vêtement</string>
+    <string name="enter_colour">Entrez la couleur</string>
+    <string name="enter_size">Entrez la taille</string>
 
 </resources>

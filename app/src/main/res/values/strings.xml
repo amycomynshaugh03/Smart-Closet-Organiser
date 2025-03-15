@@ -3,6 +3,15 @@
     <string name="day_mode">Day</string>
     <string name="night_mode">Night</string>
 
+    <string name="add_clothing">Add Clothing</string>
+    <string name="enter_clothing_title">Enter Clothing Item Title</string>
+    <string name="enter_description">Enter Description</string>
+    <string name="enter_colour">Enter Colour</string>
+    <string name="enter_size">Enter Size</string>
+    <string name="enter_season">Enter preferred season</string>
+    <string name="enter_lastworn">Enter date last worn : dd/mm/yy</string>
+    <string name="enter_image">Image</string>
+
     <string name="hint_clothingItem">Clothing Item</string>
     <string name="button_addClothing">Add a Clothing Item</string>
     <string name="description_hint">Enter Category</string>
