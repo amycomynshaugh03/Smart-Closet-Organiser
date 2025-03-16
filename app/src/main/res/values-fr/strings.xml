@@ -8,7 +8,6 @@
     <string name="enter_lastworn">Entrez la date du dernier port : jj/mm/aa</string>
     <string name="enter_image">Image</string>
     <string name="clothes_button">Vêtements</string>
-    <string name="clothes_button">Vêtements</string>
     <string name="search_bar">Recherche</string>
     <string name="hint_clothingItem">Article vestimentaire</string>
     <string name="button_addClothing">Ajouter un vetement!</string>
