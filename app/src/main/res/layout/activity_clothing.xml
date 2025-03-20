@@ -25,8 +25,7 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             android:gravity="center"
             app:title="Closet Organiser"
-            app:titleTextColor="@android:color/white">
-        </com.google.android.material.appbar.MaterialToolbar>
+            app:titleTextColor="@android:color/white" />
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbarAdd"
@@ -34,9 +33,16 @@
             android:layout_height="match_parent"
             android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            android:gravity="center">
-
-        </androidx.appcompat.widget.Toolbar>
+            android:gravity="center" />
     </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scrollbars="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

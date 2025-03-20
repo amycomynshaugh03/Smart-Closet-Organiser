@@ -62,13 +62,6 @@ class MainActivity : AppCompatActivity() {
 //        weatherViewModel.fetchWeather(city)
 
 
-        val clothesButton: Button = findViewById(R.id.btnClothes)
-        clothesButton.setOnClickListener {
-            i("This works maybe")
-            val intent = Intent(this, clothingActivity::class.java)
-            startActivity(intent)
-        }
-
 
 
         if (intent.hasExtra("closet_item_edit")) {
@@ -120,20 +113,6 @@ class MainActivity : AppCompatActivity() {
         registerImagePickerCallback()
 
 }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_clothing_item, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.item_cancel -> {
-                setResult(RESULT_CANCELED)
-                finish()
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
 
     private fun registerImagePickerCallback() {
         imageIntentLauncher =
