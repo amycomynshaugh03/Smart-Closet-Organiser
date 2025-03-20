@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +17,7 @@ import ie.setu.project.databinding.ActivityMainBinding
 import ie.setu.project.helpers.showImagePicker
 import ie.setu.project.models.ClosetOrganiserModel
 import timber.log.Timber.i
+import timber.log.Timber.log
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,6 +43,8 @@ class MainActivity : AppCompatActivity() {
         binding.topAppBar.title = title
         setSupportActionBar(binding.topAppBar)
 
+        app = application as MainApp
+
 //        val weatherTextView: TextView = findViewById(R.id.weatherTextView)
 
 
@@ -57,7 +61,15 @@ class MainActivity : AppCompatActivity() {
 
 //        weatherViewModel.fetchWeather(city)
 
-        app = application as MainApp
+
+        val clothesButton: Button = findViewById(R.id.btnClothes)
+        clothesButton.setOnClickListener {
+            i("This works maybe")
+            val intent = Intent(this, clothingActivity::class.java)
+            startActivity(intent)
+        }
+
+
 
         if (intent.hasExtra("closet_item_edit")) {
             edit = true
@@ -68,7 +80,7 @@ class MainActivity : AppCompatActivity() {
             binding.clothingSize.setText(closetOrganiser.size)
             binding.clothingSeason.setText(closetOrganiser.season)
             binding.lastWorn.setText(closetOrganiser.lastWorn)
-            binding.btnAdd.text = getString(R.string.save_clothing_item)  // This now uses the correct string resource
+            binding.btnAdd.text = getString(R.string.save_clothing_item)
         }
 
         binding.btnAdd.setOnClickListener {
@@ -138,14 +150,12 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                         if (intent.hasExtra("closet_item_edit")) {
-                            // Handle the case where you are in edit mode
                             Picasso.get()
                                 .load(closetOrganiser.image)
                                 .into(binding.clothingImage)
                         }
                     }
                     RESULT_CANCELED -> {
-                        // Handle the canceled result if needed
                     }
                     else -> { }
                 }

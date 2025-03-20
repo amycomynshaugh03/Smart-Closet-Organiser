@@ -15,13 +15,8 @@
         tools:targetApi="31">
         <activity
             android:name=".activities.clothingActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.AddClothingActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.ClothesActivity"
-            android:exported="false" />
+            android:exported="true" />
+
         <activity
             android:name=".activities.ClothingListActivity"
             android:exported="true">
