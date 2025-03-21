@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,70 +15,58 @@ import ie.setu.project.adapters.ClosetItemListener
 import ie.setu.project.closet.main.MainApp
 import ie.setu.project.databinding.ActivityClothingListBinding
 import ie.setu.project.models.ClosetOrganiserModel
-import timber.log.Timber.i
 
-class ClothingListActivity : AppCompatActivity(), ClosetItemListener {
+ class ClothingListActivity : AppCompatActivity(), ClosetItemListener {
 
-    lateinit var app: MainApp
-    private lateinit var binding: ActivityClothingListBinding
+     lateinit var app: MainApp
+     private lateinit var binding: ActivityClothingListBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityClothingListBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        binding.topAppBar.title = title
-        setSupportActionBar(binding.topAppBar)
+     override fun onCreate(savedInstanceState: Bundle?) {
+         super.onCreate(savedInstanceState)
+         binding = ActivityClothingListBinding.inflate(layoutInflater)
+         setContentView(binding.root)
+         binding.topAppBar.title = title
+         setSupportActionBar(binding.topAppBar)
 
-        app = application as MainApp
+         app = application as MainApp
+
+         val layoutManager = LinearLayoutManager(this)
+         binding.recyclerView.layoutManager = layoutManager
+         binding.recyclerView.adapter = ClosetAdapter(app.clothingItems.findAll(), this)
+
+         val clothesButton: Button = findViewById(R.id.btnClothes)
+         clothesButton.setOnClickListener {
+             val intent = Intent(this, clothingActivity::class.java)
+             startActivity(intent)
+         }
+     }
+
+     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+         when (item.itemId) {
+             R.id.item_add -> {
+                 val launcherIntent = Intent(this, MainActivity::class.java)
+                 getResult.launch(launcherIntent)
+             }
+         }
+         return super.onOptionsItemSelected(item)
+     }
 
 
-        val layoutManager = LinearLayoutManager(this)
-        binding.recyclerView.layoutManager = layoutManager
-        binding.recyclerView.adapter = ClosetAdapter(app.clothingItems.findAll(), this)
+     override fun onClosetItemClick(item: ClosetOrganiserModel) {
+         Snackbar.make(binding.root, "Selected: ${item.title}", Snackbar.LENGTH_SHORT).show()
+     }
 
-        val clothesButton: Button = findViewById(R.id.btnClothes)
-        clothesButton.setOnClickListener {
-            val intent = Intent(this, clothingActivity::class.java)
-            startActivity(intent)
-        }
-
-
-    }
-
-    override fun onClosetItemClick(item: ClosetOrganiserModel) {
-        TODO("Not yet implemented")
-    }
-//
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        menuInflater.inflate(R.menu.menu_main, menu)
-//        return super.onCreateOptionsMenu(menu)
-//    }
-//
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when (item.itemId) {
-//            R.id.item_add -> {
-//                val launcherIntent = Intent(this, MainActivity::class.java)
-//                getResult.launch(launcherIntent)
-//            }
-//        }
-//        return super.onOptionsItemSelected(item)
-//    }
-//
-//    private val getResult =
-//        registerForActivityResult(
-//            ActivityResultContracts.StartActivityForResult()
-//        ) { result ->
-//            if (result.resultCode == Activity.RESULT_OK) {
-//                (binding.recyclerView.adapter)?.notifyItemRangeChanged(0, app.clothingItems.findAll().size)
-//            }
-//            if (result.resultCode == Activity.RESULT_CANCELED) {
-//                Snackbar.make(binding.root, "Clothing Item Add Cancelled", Snackbar.LENGTH_LONG).show()
-//            }
-//        }
-//
-//    override fun onClosetItemClick(item: ClosetOrganiserModel) {
-//        val launcherIntent = Intent(this, MainActivity::class.java)
-//        launcherIntent.putExtra("closet_item_edit", item)
-//        getResult.launch(launcherIntent)
-//    }
-}
+     private val getResult =
+         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+             if (result.resultCode == Activity.RESULT_OK) {
+                 (binding.recyclerView.adapter)?.notifyItemRangeChanged(
+                     0,
+                     app.clothingItems.findAll().size
+                 )
+             }
+             if (result.resultCode == Activity.RESULT_CANCELED) {
+                 Snackbar.make(binding.root, "Clothing Item Add Cancelled", Snackbar.LENGTH_LONG)
+                     .show()
+             }
+         }
+ }

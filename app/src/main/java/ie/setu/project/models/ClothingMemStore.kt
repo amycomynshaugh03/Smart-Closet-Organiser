@@ -2,7 +2,7 @@ package ie.setu.project.models
 import timber.log.Timber
 
 
-class ClothingMemStore : ClothingStore{
+class ClothingMemStore : ClothingStore {
     val clothingItems = ArrayList<ClosetOrganiserModel>()
     var lastId = 0L
     internal fun getId() = lastId++
@@ -25,7 +25,8 @@ class ClothingMemStore : ClothingStore{
         }
     }
 
+
     fun logAll() {
-        clothingItems.forEach{ Timber.i("${it}") }
+        clothingItems.forEach { Timber.i("${it}") }
     }
 }

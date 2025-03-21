@@ -10,9 +10,10 @@ interface ClosetItemListener {
     fun onClosetItemClick(item: ClosetOrganiserModel)
 }
 
-class ClosetAdapter constructor(private var closetItems: List<ClosetOrganiserModel>,
-                                private val listener: ClosetItemListener) :
-    RecyclerView.Adapter<ClosetAdapter.MainHolder>() {
+class ClosetAdapter(
+    private var closetItems: List<ClosetOrganiserModel>,
+    private val listener: ClosetItemListener
+) : RecyclerView.Adapter<ClosetAdapter.MainHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
         val binding = CardClothingBinding
@@ -27,14 +28,17 @@ class ClosetAdapter constructor(private var closetItems: List<ClosetOrganiserMod
 
     override fun getItemCount(): Int = closetItems.size
 
-    class MainHolder(private val binding : CardClothingBinding) :
+
+
+    class MainHolder(private val binding: CardClothingBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(closetItem: ClosetOrganiserModel, listener: ClosetItemListener) {
             binding.clothingItemTitle.text = closetItem.title
             binding.clothingDescription.text = closetItem.description
-            binding.root.setOnClickListener { listener.onClosetItemClick(closetItem) }
-        }
-    }
+            binding.root.setOnClickListener { listener.onClosetItemClick(closetItem)
 
+                }
+            }
+        }
 }

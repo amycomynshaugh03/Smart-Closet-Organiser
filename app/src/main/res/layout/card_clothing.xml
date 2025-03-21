@@ -28,6 +28,7 @@
             android:textAppearance="?attr/textAppearanceBodyMedium"
             tools:text="Category of the Clothing" />
 
+
     </RelativeLayout>
 
 </com.google.android.material.card.MaterialCardView>

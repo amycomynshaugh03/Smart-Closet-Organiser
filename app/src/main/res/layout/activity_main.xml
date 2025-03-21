@@ -154,6 +154,8 @@
                 android:backgroundTint="?attr/colorSecondary"
                 android:text="@string/add_clothing" />
 
+
+
         </LinearLayout>
     </ScrollView>
 

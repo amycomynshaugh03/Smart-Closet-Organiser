@@ -1,6 +1,7 @@
 package ie.setu.project.activities
 
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -17,7 +18,7 @@ import ie.setu.project.databinding.ActivityMainBinding
 import ie.setu.project.helpers.showImagePicker
 import ie.setu.project.models.ClosetOrganiserModel
 import timber.log.Timber.i
-import timber.log.Timber.log
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,6 +46,8 @@ class MainActivity : AppCompatActivity() {
 
         app = application as MainApp
 
+
+
 //        val weatherTextView: TextView = findViewById(R.id.weatherTextView)
 
 
@@ -60,8 +63,6 @@ class MainActivity : AppCompatActivity() {
 //        })
 
 //        weatherViewModel.fetchWeather(city)
-
-
 
 
         if (intent.hasExtra("closet_item_edit")) {
@@ -87,10 +88,10 @@ class MainActivity : AppCompatActivity() {
 
             if (closetOrganiser.title.isNotEmpty()) {
                 if (edit) {
-                    app!!.clothingItems.update(closetOrganiser.copy()) // Update existing item
+                    app!!.clothingItems.update(closetOrganiser.copy())
                     i("Update Button Pressed: ${closetOrganiser.title}")
                 } else if (closetOrganiser.id == 0L) {
-                    app!!.clothingItems.create(closetOrganiser.copy()) // Create new item
+                    app!!.clothingItems.create(closetOrganiser.copy())
                     i("Add Button Pressed: ${closetOrganiser.title}")
 
                     for (i in app!!.clothingItems.findAll().indices) {
@@ -113,6 +114,22 @@ class MainActivity : AppCompatActivity() {
         registerImagePickerCallback()
 
 }
+
+
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_clothing_item, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.item_cancel -> {
+                setResult(RESULT_CANCELED)
+                finish()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
     private fun registerImagePickerCallback() {
         imageIntentLauncher =
