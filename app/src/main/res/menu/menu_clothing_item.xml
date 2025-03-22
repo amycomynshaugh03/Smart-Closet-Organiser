@@ -8,12 +8,5 @@
         android:title="@string/menu_cancelClothingItem"
         app:showAsAction="always" />
 
-        <item
-            android:id="@+id/nav_to_clothing_list"
-            android:title="Go to Clothing List" />
-        <item
-            android:id="@+id/nav_to_main"
-            android:title="Go to Main Screen" />
-
 
 </menu>
