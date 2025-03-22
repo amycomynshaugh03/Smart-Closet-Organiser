@@ -92,6 +92,7 @@ class MainActivity : AppCompatActivity() {
             binding.clothingColour.setText(closetOrganiser.colourPattern)
             binding.clothingSize.setText(closetOrganiser.size)
 
+
             val seasonPosition = adapter.getPosition(closetOrganiser.season)
             seasonSpinner.setSelection(seasonPosition)
 
@@ -99,6 +100,12 @@ class MainActivity : AppCompatActivity() {
             val formattedDate = sdf.format(closetOrganiser.lastWorn)
 
             binding.lastWorn.setText(formattedDate)
+
+            Picasso.get()
+                .load(closetOrganiser.image)
+                .resize(800,600)
+                .into(binding.clothingImage)
+
             binding.btnAdd.text = getString(R.string.save_clothing_item)
         }
 
@@ -181,21 +188,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun registerImagePickerCallback() {
         imageIntentLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+            { result ->
                 when (result.resultCode) {
                     RESULT_OK -> {
                         if (result.data != null) {
-                            result.data?.data?.let { uri ->
-                                i("Got Result: $uri")
-                                closetOrganiser.image = uri
-                                Picasso.get()
-                                    .load(uri)
-                                    .into(binding.clothingImage)
-                            }
-                        }
-                        if (intent.hasExtra("closet_item_edit")) {
+                            i("Got Result ${result.data!!.data}")
+                            closetOrganiser.image = result.data!!.data!!
                             Picasso.get()
                                 .load(closetOrganiser.image)
+                                .resize(800,600)
                                 .into(binding.clothingImage)
                         }
                     }
