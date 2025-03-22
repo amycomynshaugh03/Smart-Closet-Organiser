@@ -168,7 +168,7 @@ class MainActivity : AppCompatActivity() {
         }
         registerImagePickerCallback()
 
-}
+    }
 
 
 
@@ -197,7 +197,8 @@ class MainActivity : AppCompatActivity() {
                             closetOrganiser.image = result.data!!.data!!
                             Picasso.get()
                                 .load(closetOrganiser.image)
-                                .resize(800,600)
+                                .rotate(90f)
+                                .resize(600,800)
                                 .into(binding.clothingImage)
                         }
                     }
