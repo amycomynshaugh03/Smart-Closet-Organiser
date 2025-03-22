@@ -3,6 +3,7 @@ package ie.setu.project.models
 import android.net.Uri
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import java.util.Date
 
 @Parcelize
 data class ClosetOrganiserModel(
@@ -12,6 +13,6 @@ data class ClosetOrganiserModel(
     var colourPattern: String = "",
     var size: String = "",
     var season: String = "",
-    var lastWorn: String = "",
+    var lastWorn: Date = Date(),
     var image: Uri = Uri.EMPTY
 ) : Parcelable

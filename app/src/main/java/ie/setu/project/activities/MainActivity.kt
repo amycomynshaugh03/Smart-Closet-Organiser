@@ -10,6 +10,7 @@ import android.widget.Button
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import ie.setu.project.R
@@ -18,6 +19,10 @@ import ie.setu.project.databinding.ActivityMainBinding
 import ie.setu.project.helpers.showImagePicker
 import ie.setu.project.models.ClosetOrganiserModel
 import timber.log.Timber.i
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 
 class MainActivity : AppCompatActivity() {
@@ -73,9 +78,36 @@ class MainActivity : AppCompatActivity() {
             binding.clothingColour.setText(closetOrganiser.colourPattern)
             binding.clothingSize.setText(closetOrganiser.size)
             binding.clothingSeason.setText(closetOrganiser.season)
-            binding.lastWorn.setText(closetOrganiser.lastWorn)
+
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val formattedDate = sdf.format(closetOrganiser.lastWorn)
+
+            binding.lastWorn.setText(formattedDate)
             binding.btnAdd.text = getString(R.string.save_clothing_item)
         }
+
+        binding.lastWorn.setOnClickListener {
+            val datePicker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText("Select Last Worn Date")
+                .build()
+
+            datePicker.addOnPositiveButtonClickListener { selection ->
+                val calendar = Calendar.getInstance()
+                calendar.timeInMillis = selection
+
+                closetOrganiser.lastWorn = calendar.time
+
+                val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                val selectedDate = sdf.format(closetOrganiser.lastWorn)
+
+                binding.lastWorn.setText(selectedDate)
+
+                datePicker.dismiss()
+            }
+
+            datePicker.show(supportFragmentManager, "DATE_PICKER")
+        }
+
 
         binding.btnAdd.setOnClickListener {
             closetOrganiser.title = binding.clothingItemTitle.text.toString()
@@ -83,7 +115,7 @@ class MainActivity : AppCompatActivity() {
             closetOrganiser.colourPattern = binding.clothingColour.text.toString()
             closetOrganiser.size = binding.clothingSize.text.toString()
             closetOrganiser.season = binding.clothingSeason.text.toString()
-            closetOrganiser.lastWorn = binding.lastWorn.text.toString()
+            //closetOrganiser.lastWorn = binding.lastWorn.text.toString()
 
 
             if (closetOrganiser.title.isNotEmpty()) {

@@ -21,11 +21,13 @@ class ClothingMemStore : ClothingStore {
         if (foundClosetItem != null) {
             foundClosetItem.title = closetItem.title
             foundClosetItem.description = closetItem.description
+            foundClosetItem.colourPattern = closetItem.colourPattern
+            foundClosetItem.size = closetItem.size
+            foundClosetItem.season = closetItem.season
+            foundClosetItem.lastWorn = closetItem.lastWorn
             logAll() // Log after updating
         }
     }
-
-
     fun logAll() {
         clothingItems.forEach { Timber.i("${it}") }
     }

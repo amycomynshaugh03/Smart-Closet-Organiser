@@ -5,4 +5,5 @@ interface ClothingStore {
     fun create(clothingItem: ClosetOrganiserModel)
     fun update(closetItem: ClosetOrganiserModel)
 
+
 }

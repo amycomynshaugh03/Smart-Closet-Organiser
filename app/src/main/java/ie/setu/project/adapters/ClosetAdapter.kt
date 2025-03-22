@@ -29,7 +29,6 @@ class ClosetAdapter(
     override fun getItemCount(): Int = closetItems.size
 
 
-
     class MainHolder(private val binding: CardClothingBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
