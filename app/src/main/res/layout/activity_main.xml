@@ -102,17 +102,21 @@
                 android:padding="8dp"
                 android:autofillHints="size"/>
 
-            <EditText
-                android:id="@+id/clothingSeason"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:hint="@string/enter_season"
-                android:inputType="textMultiLine"
-                android:minLines="2"
-                android:padding="8dp"
-                android:autofillHints="season"
-                android:textColor="@android:color/black" />
+                android:focusable="false"
+                android:clickable="true">
+
+                <Spinner
+                    android:id="@+id/clothingSeason"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:padding="8dp"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"

@@ -6,7 +6,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.Spinner
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -69,6 +71,18 @@ class MainActivity : AppCompatActivity() {
 
 //        weatherViewModel.fetchWeather(city)
 
+        val seasonSpinner: Spinner = findViewById(R.id.clothingSeason)
+
+        val adapter = ArrayAdapter.createFromResource(
+            this,
+            R.array.seasons_array,
+            android.R.layout.simple_spinner_item
+        )
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        seasonSpinner.adapter = adapter
+
+
 
         if (intent.hasExtra("closet_item_edit")) {
             edit = true
@@ -77,7 +91,9 @@ class MainActivity : AppCompatActivity() {
             binding.clothingDescription.setText(closetOrganiser.description)
             binding.clothingColour.setText(closetOrganiser.colourPattern)
             binding.clothingSize.setText(closetOrganiser.size)
-            binding.clothingSeason.setText(closetOrganiser.season)
+
+            val seasonPosition = adapter.getPosition(closetOrganiser.season)
+            seasonSpinner.setSelection(seasonPosition)
 
             val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             val formattedDate = sdf.format(closetOrganiser.lastWorn)
@@ -114,7 +130,7 @@ class MainActivity : AppCompatActivity() {
             closetOrganiser.description = binding.clothingDescription.text.toString()
             closetOrganiser.colourPattern = binding.clothingColour.text.toString()
             closetOrganiser.size = binding.clothingSize.text.toString()
-            closetOrganiser.season = binding.clothingSeason.text.toString()
+            closetOrganiser.season = seasonSpinner.selectedItem.toString()
             //closetOrganiser.lastWorn = binding.lastWorn.text.toString()
 
 
