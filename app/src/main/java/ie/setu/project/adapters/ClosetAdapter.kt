@@ -35,8 +35,7 @@ class ClosetAdapter(
         fun bind(closetItem: ClosetOrganiserModel, listener: ClosetItemListener) {
             binding.clothingItemTitle.text = closetItem.title
             binding.clothingDescription.text = closetItem.description
-            binding.root.setOnClickListener {
-                listener.onClosetItemClick(closetItem)
+            binding.root.setOnClickListener { listener.onClosetItemClick(closetItem)
 
             }
         }
