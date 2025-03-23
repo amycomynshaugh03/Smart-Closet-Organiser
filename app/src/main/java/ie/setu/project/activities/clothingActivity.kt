@@ -35,6 +35,7 @@ class clothingActivity : AppCompatActivity(), ClosetItemListener {
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = ClosetAdapter(app.clothingItems.findAll(), this)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -75,6 +76,20 @@ class clothingActivity : AppCompatActivity(), ClosetItemListener {
         launcherIntent.putExtra("closet_item_edit", item )
         getResult.launch(launcherIntent)
 
+    }
+
+    override fun onDeleteItemClick(item: ClosetOrganiserModel) {
+        // Remove the item from the app's data store (e.g., database)
+        app.clothingItems.delete(item)
+
+        // Create a new list without the deleted item
+        val updatedList = app.clothingItems.findAll().filter { it != item }
+
+        // Pass the updated list to the adapter and notify it to refresh
+        (binding.recyclerView.adapter as ClosetAdapter).updateItems(updatedList)
+
+        // Show a Snackbar to inform the user about the deletion
+        Snackbar.make(binding.root, "Clothing Item Deleted", Snackbar.LENGTH_LONG).show()
     }
 
 

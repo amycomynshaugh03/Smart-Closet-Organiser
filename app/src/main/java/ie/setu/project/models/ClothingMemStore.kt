@@ -29,6 +29,12 @@ class ClothingMemStore : ClothingStore {
             logAll() // Log after updating
         }
     }
+
+    override fun delete(clothingItem: ClosetOrganiserModel) {
+        clothingItems.remove(clothingItem)
+        logAll()
+    }
+
     fun logAll() {
         clothingItems.forEach { Timber.i("${it}") }
     }

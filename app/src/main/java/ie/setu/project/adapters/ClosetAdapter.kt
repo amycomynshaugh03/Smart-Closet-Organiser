@@ -9,6 +9,7 @@ import ie.setu.project.models.ClosetOrganiserModel
 
 interface ClosetItemListener {
     fun onClosetItemClick(item: ClosetOrganiserModel)
+    fun onDeleteItemClick(item: ClosetOrganiserModel)
 }
 
 class ClosetAdapter(
@@ -29,6 +30,18 @@ class ClosetAdapter(
 
     override fun getItemCount(): Int = closetItems.size
 
+    fun updateItems(newList: List<ClosetOrganiserModel>) {
+        closetItems = newList
+        notifyDataSetChanged()  // Notify the adapter to update the RecyclerView
+    }
+
+//    fun removeItem(item: ClosetOrganiserModel) {
+//        val position = closetItems.indexOf(item)
+//        if (position != -1) {
+//            closetItems.removeAt(position)
+//            notifyItemRemoved(position)
+//        }
+//    }
 
     class MainHolder(private val binding: CardClothingBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -37,6 +50,7 @@ class ClosetAdapter(
             binding.clothingItemTitle.text = closetItem.title
             binding.clothingDescription.text = closetItem.description
             Picasso.get().load(closetItem.image).resize(200,200).rotate(90f).into(binding.imageIcon)
+            binding.btnDelete.setOnClickListener { listener.onDeleteItemClick(closetItem) }
             binding.root.setOnClickListener { listener.onClosetItemClick(closetItem)
 
             }
