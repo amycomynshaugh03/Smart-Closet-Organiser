@@ -32,16 +32,9 @@ class ClosetAdapter(
 
     fun updateItems(newList: List<ClosetOrganiserModel>) {
         closetItems = newList
-        notifyDataSetChanged()  // Notify the adapter to update the RecyclerView
+        notifyDataSetChanged()
     }
 
-//    fun removeItem(item: ClosetOrganiserModel) {
-//        val position = closetItems.indexOf(item)
-//        if (position != -1) {
-//            closetItems.removeAt(position)
-//            notifyItemRemoved(position)
-//        }
-//    }
 
     class MainHolder(private val binding: CardClothingBinding) :
         RecyclerView.ViewHolder(binding.root) {

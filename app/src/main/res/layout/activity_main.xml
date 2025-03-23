@@ -24,22 +24,44 @@
             android:layout_height="match_parent"
             android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            android:gravity="center"
-            app:title="Closet Organiser"
-            app:titleTextColor="@android:color/white">
-        </com.google.android.material.appbar.MaterialToolbar>
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbarAdd"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             android:gravity="center">
 
-        </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_centerInParent="true">
 
+                <ImageView
+                    android:id="@+id/leftHeart"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_heart"
+                    android:contentDescription="Heart icon" />
+
+                <TextView
+                    android:id="@+id/titleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add Clothing"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp" />
+
+                <ImageView
+                    android:id="@+id/rightHeart"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_heart"
+                    android:contentDescription="Heart icon" />
+
+            </LinearLayout>
+
+        </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -56,7 +78,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
-
 
             <EditText
                 android:id="@+id/clothingItemTitle"
@@ -117,7 +138,6 @@
                     android:padding="8dp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -133,8 +153,6 @@
                     android:inputType="none"/>
 
             </com.google.android.material.textfield.TextInputLayout>
-
-
 
             <Button
                 android:id="@+id/chooseImage"
@@ -180,9 +198,6 @@
             android:layout_width="match_parent"
             android:layout_height="26dp"
             android:gravity="center">
-
-
-
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 

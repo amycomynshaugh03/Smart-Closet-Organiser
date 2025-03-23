@@ -57,8 +57,6 @@ class MainActivity : AppCompatActivity() {
         app = application as MainApp
 
 
-
-
 //        val weatherTextView: TextView = findViewById(R.id.weatherTextView)
 
 
