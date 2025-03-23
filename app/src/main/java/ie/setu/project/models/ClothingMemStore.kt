@@ -79,6 +79,6 @@ class ClothingMemStore : ClothingStore {
      * This is useful for debugging purposes.
      */
     fun logAll() {
-        clothingItems.forEach { Timber.i("${it}") }
+        clothingItems.forEach { Timber.i("$it") }
     }
 }

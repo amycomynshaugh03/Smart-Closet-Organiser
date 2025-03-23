@@ -19,8 +19,8 @@ import ie.setu.project.models.ClosetOrganiserModel
 // This Activity is responsible for displaying a list of clothing items in the closet.
 class clothingActivity : AppCompatActivity(), ClosetItemListener {
 
-    lateinit var app: MainApp   // MainApp instance to interact with the app's data
-    private lateinit var binding: ActivityClothingBinding  // Binding for the activity's UI components
+    lateinit var app: MainApp // MainApp instance to interact with the app's data
+    private lateinit var binding: ActivityClothingBinding // Binding for the activity's UI components
 
     // onCreate method: Called when the activity is first created.
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +55,6 @@ class clothingActivity : AppCompatActivity(), ClosetItemListener {
     // Method to handle item selection from the options menu
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-
             // When the "Go to Main" item is selected, launch the ClothingListActivity
             R.id.nav_to_main -> {
                 val intent = Intent(this, ClothingListActivity::class.java)

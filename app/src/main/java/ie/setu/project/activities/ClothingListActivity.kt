@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import ie.setu.project.R
 import ie.setu.project.adapters.ClosetAdapter
@@ -19,8 +18,8 @@ import ie.setu.project.models.ClosetOrganiserModel
 // This Activity displays the list of clothing items and allows the user to navigate to another screen for managing them.
 class ClothingListActivity : AppCompatActivity(), ClosetItemListener {
 
-    lateinit var app: MainApp  // MainApp instance to interact with the app's data
-    private lateinit var binding: ActivityClothingListBinding  // Binding for the activity's UI components
+    lateinit var app: MainApp // MainApp instance to interact with the app's data
+    private lateinit var binding: ActivityClothingListBinding // Binding for the activity's UI components
 //    private lateinit var imageList: List<Uri>  // Placeholder for image list if needed
 
     // onCreate method: Called when the activity is first created.
@@ -107,5 +106,4 @@ class ClothingListActivity : AppCompatActivity(), ClosetItemListener {
         // Show a Snackbar message indicating the item has been deleted
         Snackbar.make(binding.root, "Clothing Item Deleted", Snackbar.LENGTH_LONG).show()
     }
-
 }

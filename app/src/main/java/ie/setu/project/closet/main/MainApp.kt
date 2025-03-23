@@ -1,7 +1,6 @@
 package ie.setu.project.closet.main
 
 import android.app.Application
-import ie.setu.project.models.ClosetOrganiserModel
 import ie.setu.project.models.ClothingMemStore
 import timber.log.Timber
 import timber.log.Timber.i

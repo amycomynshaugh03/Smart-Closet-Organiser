@@ -1,6 +1,5 @@
 package ie.setu.project.activities
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -22,7 +21,6 @@ import ie.setu.project.models.ClosetOrganiserModel
 import timber.log.Timber.i
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 
 /**
@@ -34,8 +32,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var imageIntentLauncher: ActivityResultLauncher<Intent>
     var closetOrganiser = ClosetOrganiserModel()
-    //private lateinit var CarouselAdapter: CarouselAdapter
-    //private val imageUris = mutableListOf<Uri>()
+    // private lateinit var CarouselAdapter: CarouselAdapter
+    // private val imageUris = mutableListOf<Uri>()
 
     var app: MainApp? = null
     var edit = false
@@ -148,7 +146,6 @@ class MainActivity : AppCompatActivity() {
                 // Return result and finish the activity
                 setResult(RESULT_OK)
                 finish()
-
             } else {
                 // Show an error message if the title is missing
                 Snackbar.make(
@@ -195,8 +192,7 @@ class MainActivity : AppCompatActivity() {
      */
     private fun registerImagePickerCallback() {
         imageIntentLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult())
-            { result ->
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 when (result.resultCode) {
                     RESULT_OK -> {
                         if (result.data != null) {
@@ -220,5 +216,4 @@ class MainActivity : AppCompatActivity() {
                 }
             }
     }
-
 }
