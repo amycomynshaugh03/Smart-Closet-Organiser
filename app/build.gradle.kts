@@ -11,6 +11,14 @@ plugins {
     alias(libs.plugins.kotlin.android)
     // Apply Kotlin Parcelize plugin for Parcelable data classes
     id("kotlin-parcelize")
+    //Dokka
+    id("org.jetbrains.dokka") version "1.8.20"
+}
+
+
+
+tasks.dokkaHtml {
+    outputDirectory.set(layout.buildDirectory.dir("documentation/html"))
 }
 
 android {
@@ -97,4 +105,5 @@ dependencies {
 
     // Image loading library (Picasso)
     implementation(libs.picasso)
+
 }
