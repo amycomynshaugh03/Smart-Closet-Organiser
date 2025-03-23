@@ -1,8 +1,10 @@
 package ie.setu.project.activities
 
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -12,6 +14,10 @@ import android.widget.Spinner
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.carousel.CarouselLayoutManager
+import com.google.android.material.carousel.CarouselSnapHelper
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
@@ -32,6 +38,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var imageIntentLauncher : ActivityResultLauncher<Intent>
     var closetOrganiser = ClosetOrganiserModel()
+    //private lateinit var CarouselAdapter: CarouselAdapter
+    private val imageUris = mutableListOf<Uri>()
+
     var app: MainApp? = null
     var edit = false
 
@@ -55,6 +64,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
+
 //        val weatherTextView: TextView = findViewById(R.id.weatherTextView)
 
 
@@ -71,7 +81,27 @@ class MainActivity : AppCompatActivity() {
 
 //        weatherViewModel.fetchWeather(city)
 
-        val seasonSpinner: Spinner = findViewById(R.id.clothingSeason)
+
+//        val carouselRecyclerView = findViewById<RecyclerView>(R.id.carousel_recycler_view)
+//        carouselRecyclerView.layoutManager = CarouselLayoutManager()  // Set LayoutManager
+//        carouselRecyclerView.adapter = CarouselAdapter  // Set Adapter
+//
+//        CarouselAdapter = CarouselAdapter(imageUris)
+//        carouselRecyclerView.adapter = CarouselAdapter
+//
+//        val snapHelper = CarouselSnapHelper()
+//        snapHelper.attachToRecyclerView(carouselRecyclerView)
+//
+//        binding.chooseImage.setOnClickListener {
+//            showImagePicker(imageIntentLauncher)
+//        }
+//
+//        registerImagePickerCallback()
+
+
+
+
+    val seasonSpinner: Spinner = findViewById(R.id.clothingSeason)
 
         val adapter = ArrayAdapter.createFromResource(
             this,
@@ -103,7 +133,8 @@ class MainActivity : AppCompatActivity() {
 
             Picasso.get()
                 .load(closetOrganiser.image)
-                .resize(800,600)
+                .resize(600,600)
+                .rotate(90f)
                 .into(binding.clothingImage)
 
             binding.btnAdd.text = getString(R.string.save_clothing_item)
@@ -153,8 +184,10 @@ class MainActivity : AppCompatActivity() {
                         i("Clothing Item[i]: ${app!!.clothingItems.findAll()[i].title}, ${app!!.clothingItems.findAll()[i].description}")
                     }
                 }
+
                 setResult(RESULT_OK)
                 finish()
+
             } else {
                 Snackbar.make(
                     it,
@@ -186,6 +219,7 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun registerImagePickerCallback() {
         imageIntentLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult())
@@ -195,10 +229,13 @@ class MainActivity : AppCompatActivity() {
                         if (result.data != null) {
                             i("Got Result ${result.data!!.data}")
                             closetOrganiser.image = result.data!!.data!!
+//                            val pickedImageUri = result.data!!.data!!
+//                            imageUris.add(pickedImageUri)
+//                            CarouselAdapter.notifyDataSetChanged()
                             Picasso.get()
                                 .load(closetOrganiser.image)
                                 .rotate(90f)
-                                .resize(600,800)
+                                .resize(600,600)
                                 .into(binding.clothingImage)
                         }
                     }

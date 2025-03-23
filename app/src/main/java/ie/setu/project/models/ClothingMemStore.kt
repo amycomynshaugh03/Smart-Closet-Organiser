@@ -26,7 +26,6 @@ class ClothingMemStore : ClothingStore {
             foundClosetItem.season = closetItem.season
             foundClosetItem.lastWorn = closetItem.lastWorn
             foundClosetItem.image = closetItem.image
-            Timber.i("Updated item: $foundClosetItem")
             logAll() // Log after updating
         }
     }
