@@ -2,22 +2,16 @@ package ie.setu.project.activities
 
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.Spinner
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.carousel.CarouselLayoutManager
-import com.google.android.material.carousel.CarouselSnapHelper
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
@@ -39,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var imageIntentLauncher : ActivityResultLauncher<Intent>
     var closetOrganiser = ClosetOrganiserModel()
     //private lateinit var CarouselAdapter: CarouselAdapter
-    private val imageUris = mutableListOf<Uri>()
+    //private val imageUris = mutableListOf<Uri>()
 
     var app: MainApp? = null
     var edit = false
@@ -136,6 +130,9 @@ class MainActivity : AppCompatActivity() {
                 .resize(600,600)
                 .rotate(90f)
                 .into(binding.clothingImage)
+            if (closetOrganiser.image != Uri.EMPTY) {
+                binding.chooseImage.setText(R.string.change_clothing_image)
+            }
 
             binding.btnAdd.text = getString(R.string.save_clothing_item)
         }
@@ -156,7 +153,6 @@ class MainActivity : AppCompatActivity() {
 
                 binding.lastWorn.setText(selectedDate)
 
-                datePicker.dismiss()
             }
 
             datePicker.show(supportFragmentManager, "DATE_PICKER")
@@ -219,7 +215,6 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun registerImagePickerCallback() {
         imageIntentLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult())
@@ -237,6 +232,7 @@ class MainActivity : AppCompatActivity() {
                                 .rotate(90f)
                                 .resize(600,600)
                                 .into(binding.clothingImage)
+                            binding.chooseImage.setText(R.string.change_clothing_image)
                         }
                     }
                     RESULT_CANCELED -> {

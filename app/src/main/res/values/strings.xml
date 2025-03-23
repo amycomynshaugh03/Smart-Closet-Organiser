@@ -27,6 +27,8 @@
     <string name="save_clothing_item"> Save Clothing Item </string>
     <string name="button_addImage">Add Image</string>
     <string name="select_clothing_image">Select clothing image</string>
+    <string name="change_clothing_image">Change clothing image</string>
+
 
     <string-array name="seasons_array">
         <item>Spring</item>

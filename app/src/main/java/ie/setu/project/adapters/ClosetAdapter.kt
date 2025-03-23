@@ -3,6 +3,7 @@ package ie.setu.project.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import ie.setu.project.databinding.CardClothingBinding
 import ie.setu.project.models.ClosetOrganiserModel
 
@@ -35,6 +36,7 @@ class ClosetAdapter(
         fun bind(closetItem: ClosetOrganiserModel, listener: ClosetItemListener) {
             binding.clothingItemTitle.text = closetItem.title
             binding.clothingDescription.text = closetItem.description
+            Picasso.get().load(closetItem.image).resize(200,200).rotate(90f).into(binding.imageIcon)
             binding.root.setOnClickListener { listener.onClosetItemClick(closetItem)
 
             }

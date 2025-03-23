@@ -22,5 +22,6 @@
     <string name="enter_clothing_title">Saisissez le titre du vêtement</string>
     <string name="enter_colour">Entrez la couleur</string>
     <string name="enter_size">Entrez la taille</string>
+    <string name="change_clothing_image">Changer l\'image des vêtements</string>
 
 </resources>
