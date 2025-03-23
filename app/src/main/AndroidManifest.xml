@@ -2,30 +2,54 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!--
+        The root <application> element that contains all the app's components.
+        - android:name: Specifies the custom Application class to be used.
+        - android:allowBackup: Allows app data to be backed up.
+        - android:dataExtractionRules: Specifies data extraction rules.
+        - android:fullBackupContent: Specifies backup rules.
+        - android:icon: Defines the app icon.
+        - android:roundIcon: Defines the round icon for the app.
+        - android:supportsRtl: Specifies that the app supports right-to-left layouts.
+        - android:theme: The theme to be used for the app.
+        - tools:targetApi: The target API level used during development.
+    -->
     <application
         android:name=".closet.main.MainApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="31">
+
+        <!-- Activity for handling clothing actions -->
+        <activity
+            android:name=".activities.clothingActivity"
+            android:exported="true" />
+
+        <!--
+            Activity that serves as the main launcher for the app.
+            - android:name: Specifies the activity class.
+            - android:exported: If true, other apps can start this activity.
+            - <intent-filter>: Used to register the activity as the launcher with the MAIN action
+              and LAUNCHER category.
+        -->
         <activity
             android:name=".activities.ClothingListActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Activity for the main screen of the app -->
         <activity
             android:name=".activities.MainActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true" />
     </application>
 
 </manifest>

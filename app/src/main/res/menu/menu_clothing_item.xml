@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    This XML file defines a menu for the application.
+    It includes one item:
+    - A cancel action to cancel the clothing item.
+    - The cancel item has an icon and title.
+-->
+
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 

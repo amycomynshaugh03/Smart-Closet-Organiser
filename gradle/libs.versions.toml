@@ -1,6 +1,8 @@
+
+# Version definitions for all libraries and plugins
 [versions]
 picasso = "2.71828"
-agp = "8.8.0"
+agp = "8.8.0"  # Android Gradle Plugin version
 androidxLifecycleViewmodelKtx = "2.4.1"
 jetbrainsKotlinxCoroutinesAndroid = "1.4.3"
 kotlin = "1.9.24"
@@ -26,6 +28,7 @@ timber = "4.7.1"
 timberkt = "1.5.1"
 
 
+# Library definitions with group names, module names, and version references
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleViewmodelKtx" }
@@ -53,7 +56,7 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 timberkt = { module = "com.github.ajalt:timberkt", version.ref = "timberkt" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 
+# Plugin definitions for Android and Kotlin
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-

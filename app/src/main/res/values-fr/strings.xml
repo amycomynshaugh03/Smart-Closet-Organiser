@@ -1,20 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    This XML file contains string resources used in the application, including:
+    - Mode Strings: For toggling between Day and Night modes.
+    - Text Resources: For the UI fields related to adding clothing items,
+      such as clothing title, description, color, size, season, and image.
+    - Button Labels: For adding clothing items and interacting with UI buttons.
+    - Error Message: For prompting the user when a clothing item is missing.
+    - Menu Labels: For displaying actions like adding or cancelling clothing items.
+    - String Array: For providing the different seasons options.
+-->
+
 <resources>
-    <string name="app_name">projet</string>
-    <string name="button_label">Afficher le message d\'accueil</string>
-    <string name="greeting_text">Bienvenue dans mon projet !</string>
-    <string name="window_text">Appuyez sur le button ci-dessous pour un message</string>
-    <string name="day_mode">Jour</string>
-    <string name="night_mode">Nuit</string>
-    <string name="hint_clothingItem">Article vestimentaire</string>
-    <string name="button_addClothing">Ajouter un vetement!</string>
-    <string name="description_hint">Entrez la categorie</string>
-    <string name="menu_addClothingItem">Ajouter</string>
-    <string name="menu_cancelClothingItem">Annuler</string>
-    <string name="please_enter_clothing_item">Veuillez saisir un article vestimentaire</string>
-    <string name="please_enter_category">Veuillez entrer une catégorie</string>
-    <string name="save_clothing_item">Enregistrer l\'article vestimentaire</string>
-    <string name="button_addImage">Ajouter une image</string>
-    <string name="select_clothing_image">Sélectionnez l\'image du vêtement</string>
+    <!-- Day and Night Mode Toggle Strings -->
+    <string name="day_mode">Day</string>
+    <string name="night_mode">Night</string>
+
+    <!-- Strings for adding and managing clothing items -->
+    <string name="enter_description">Enter Description</string>
+    <string name="enter_season">Enter preferred season</string>
+    <string name="enter_lastworn">Enter date last worn: dd/mm/yy</string>
+    <string name="enter_image">Image</string>
+    <string name="clothes_button">Clothes</string>
+    <string name="search_bar">Search</string>
+
+    <!-- Hints and Labels for Clothing Item Management -->
+    <string name="hint_clothingItem">Clothing Item</string>
+    <string name="button_addClothing">Add a Clothing Item!</string>
+    <string name="description_hint">Enter Category</string>
+
+    <!-- Menu Actions -->
+    <string name="menu_addClothingItem">Add</string>
+    <string name="menu_cancelClothingItem">Cancel</string>
+
+    <!-- Error Message -->
+    <string name="please_enter_missing_item">Please enter a clothing item</string>
+
+    <!-- Save Button and Image Handling -->
+    <string name="save_clothing_item">Save Clothing Item</string>
+    <string name="button_addImage">Add Image</string>
+    <string name="select_clothing_image">Select clothing image</string>
+
+    <!-- Add Clothing Button and Labels for Clothing Management -->
+    <string name="add_clothing">Add Clothing</string>
+    <string name="enter_clothing_title">Enter Clothing Item Title</string>
+    <string name="enter_colour">Enter Colour</string>
+    <string name="enter_size">Enter Size</string>
+    <string name="change_clothing_image">Change Clothing Image</string>
 
 </resources>
