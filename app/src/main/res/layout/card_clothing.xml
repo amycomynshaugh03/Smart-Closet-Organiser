@@ -8,12 +8,14 @@
     android:layout_margin="8dp"
     android:elevation="24dp">
 
+    <!-- LinearLayout that contains the image and text content in a horizontal orientation -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp">
 
+        <!-- ImageView to display the clothing image icon -->
         <ImageView
             android:id="@+id/imageIcon"
             android:layout_width="64dp"
@@ -22,36 +24,39 @@
             android:layout_marginEnd="16dp"
             android:contentDescription="@string/change_clothing_image" />
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/clothingItemTitle"
-            android:layout_width="wrap_content"
+        <!-- Another LinearLayout to hold the text views and delete button -->
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            tools:text="Clothing Item Title" />
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/clothingDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            tools:text="Category of the Clothing" />
+            <!-- TextView to display the clothing item title -->
+            <TextView
+                android:id="@+id/clothingItemTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                tools:text="Clothing Item Title" />
 
-        <Button
-            android:id="@+id/btnDelete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Delete"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="8dp"/>
+            <!-- TextView to display the clothing item description (category) -->
+            <TextView
+                android:id="@+id/clothingDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                tools:text="Category of the Clothing" />
 
+            <!-- Button to delete the clothing item -->
+            <Button
+                android:id="@+id/btnDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="8dp" />
 
-    </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

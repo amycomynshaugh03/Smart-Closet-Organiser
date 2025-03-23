@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     tools:context="ie.setu.project.activities.ClothingListActivity">
 
+    <!-- AppBarLayout to hold the top app bar -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
@@ -15,6 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
+        <!-- MaterialToolbar for the action bar -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
@@ -23,6 +25,7 @@
             app:titleTextColor="?attr/colorOnPrimary"
             android:gravity="center">
 
+            <!-- LinearLayout to center the elements horizontally within the toolbar -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -30,6 +33,7 @@
                 android:gravity="center"
                 android:layout_centerInParent="true">
 
+                <!-- Left heart icon -->
                 <ImageView
                     android:id="@+id/leftHeart"
                     android:layout_width="24dp"
@@ -37,6 +41,7 @@
                     android:src="@drawable/ic_heart"
                     android:contentDescription="Heart icon" />
 
+                <!-- Centered title text -->
                 <TextView
                     android:id="@+id/titleText"
                     android:layout_width="wrap_content"
@@ -48,6 +53,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp" />
 
+                <!-- Right heart icon -->
                 <ImageView
                     android:id="@+id/rightHeart"
                     android:layout_width="24dp"
@@ -60,6 +66,7 @@
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
+    <!-- LinearLayout to contain buttons and search bar -->
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
@@ -72,12 +79,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Outfits Button -->
         <Button
             android:id="@+id/btnOutfits"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Outfits" />
 
+        <!-- Clothes Button -->
         <Button
             android:id="@+id/btnClothes"
             android:layout_width="wrap_content"
@@ -86,6 +95,7 @@
             android:contentDescription="@string/add_clothing"
             android:layout_margin="16dp"/>
 
+        <!-- Search Bar Layout -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="40dp"
@@ -94,6 +104,7 @@
             android:orientation="horizontal"
             android:padding="4dp">
 
+            <!-- Search Icon -->
             <ImageView
                 android:id="@+id/searchIcon"
                 android:layout_width="24dp"
@@ -101,6 +112,7 @@
                 android:contentDescription="@string/search_bar"
                 android:src="@drawable/ic_search" />
 
+            <!-- Search Input Field -->
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -112,6 +124,7 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!-- Placeholder for a carousel or other content -->
     <View
         android:id="@+id/carouselPlaceholder"
         android:layout_width="0dp"
@@ -125,6 +138,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- RecyclerView to display a list of clothing items -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"

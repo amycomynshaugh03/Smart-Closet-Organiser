@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    This XML file defines a simple menu for navigation.
+    It includes one item:
+    - A menu item that allows navigation to the main screen.
+    - The title of the menu item is "Go to Main Screen".
+-->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item

@@ -1,6 +1,5 @@
 package ie.setu.project.activities
 
-
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
@@ -26,11 +25,14 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-
+/**
+ * Main activity for managing a clothing item in the app.
+ * This allows the user to either add a new clothing item or edit an existing one.
+ */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var imageIntentLauncher : ActivityResultLauncher<Intent>
+    private lateinit var imageIntentLauncher: ActivityResultLauncher<Intent>
     var closetOrganiser = ClosetOrganiserModel()
     //private lateinit var CarouselAdapter: CarouselAdapter
     //private val imageUris = mutableListOf<Uri>()
@@ -38,63 +40,30 @@ class MainActivity : AppCompatActivity() {
     var app: MainApp? = null
     var edit = false
 
+    //    private val weatherViewModel: WeatherViewModel by viewModels()
+    //    private val city = "London"
 
-
-//    private val weatherViewModel: WeatherViewModel by viewModels()
-//    private val city = "London"
-
-
+    /**
+     * Called when the activity is first created.
+     * Initializes the UI components, sets up the spinner for clothing season,
+     * handles editing or adding new items, and sets listeners for buttons.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Inflate the layout and set up the binding for UI components
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
+        // Set up the action bar with the title
         binding.topAppBar.title = title
         setSupportActionBar(binding.topAppBar)
 
+        // Initialize the app instance
         app = application as MainApp
 
-
-//        val weatherTextView: TextView = findViewById(R.id.weatherTextView)
-
-
-//        // Observe the weather data and update the UI
-//        weatherViewModel.weatherData.observe(this, Observer { weatherData ->
-//            weatherData?.let {
-//                weatherTextView.text = "City: ${it.location.name}\n" +
-//                        "Country: ${it.location.country}\n" +
-//                        "Temperature: ${it.current.temp_c}°C\n" +
-//                        "Condition: ${it.current.condition.text}\n" +
-//                        "Humidity: ${it.current.humidity}%"
-//            }
-//        })
-
-//        weatherViewModel.fetchWeather(city)
-
-
-//        val carouselRecyclerView = findViewById<RecyclerView>(R.id.carousel_recycler_view)
-//        carouselRecyclerView.layoutManager = CarouselLayoutManager()  // Set LayoutManager
-//        carouselRecyclerView.adapter = CarouselAdapter  // Set Adapter
-//
-//        CarouselAdapter = CarouselAdapter(imageUris)
-//        carouselRecyclerView.adapter = CarouselAdapter
-//
-//        val snapHelper = CarouselSnapHelper()
-//        snapHelper.attachToRecyclerView(carouselRecyclerView)
-//
-//        binding.chooseImage.setOnClickListener {
-//            showImagePicker(imageIntentLauncher)
-//        }
-//
-//        registerImagePickerCallback()
-
-
-
-
-    val seasonSpinner: Spinner = findViewById(R.id.clothingSeason)
-
+        // Set up the season spinner with predefined values
+        val seasonSpinner: Spinner = findViewById(R.id.clothingSeason)
         val adapter = ArrayAdapter.createFromResource(
             this,
             R.array.seasons_array,
@@ -104,8 +73,7 @@ class MainActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         seasonSpinner.adapter = adapter
 
-
-
+        // If we are editing an existing clothing item, populate fields with the data
         if (intent.hasExtra("closet_item_edit")) {
             edit = true
             closetOrganiser = intent.getParcelableExtra("closet_item_edit")!!
@@ -114,18 +82,16 @@ class MainActivity : AppCompatActivity() {
             binding.clothingColour.setText(closetOrganiser.colourPattern)
             binding.clothingSize.setText(closetOrganiser.size)
 
-
             val seasonPosition = adapter.getPosition(closetOrganiser.season)
             seasonSpinner.setSelection(seasonPosition)
 
             val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             val formattedDate = sdf.format(closetOrganiser.lastWorn)
-
             binding.lastWorn.setText(formattedDate)
 
             Picasso.get()
                 .load(closetOrganiser.image)
-                .resize(600,600)
+                .resize(600, 600)
                 .rotate(90f)
                 .into(binding.clothingImage)
             if (closetOrganiser.image != Uri.EMPTY) {
@@ -135,6 +101,7 @@ class MainActivity : AppCompatActivity() {
             binding.btnAdd.text = getString(R.string.save_clothing_item)
         }
 
+        // Set up a listener for selecting a date for 'last worn'
         binding.lastWorn.setOnClickListener {
             val datePicker = MaterialDatePicker.Builder.datePicker()
                 .setTitleText("Select Last Worn Date")
@@ -150,22 +117,20 @@ class MainActivity : AppCompatActivity() {
                 val selectedDate = sdf.format(closetOrganiser.lastWorn)
 
                 binding.lastWorn.setText(selectedDate)
-
             }
 
             datePicker.show(supportFragmentManager, "DATE_PICKER")
         }
 
-
+        // Set up the listener for the 'add' button to save the clothing item
         binding.btnAdd.setOnClickListener {
             closetOrganiser.title = binding.clothingItemTitle.text.toString()
             closetOrganiser.description = binding.clothingDescription.text.toString()
             closetOrganiser.colourPattern = binding.clothingColour.text.toString()
             closetOrganiser.size = binding.clothingSize.text.toString()
             closetOrganiser.season = seasonSpinner.selectedItem.toString()
-            //closetOrganiser.lastWorn = binding.lastWorn.text.toString()
 
-
+            // Validate that the title is not empty before saving
             if (closetOrganiser.title.isNotEmpty()) {
                 if (edit) {
                     app!!.clothingItems.update(closetOrganiser.copy())
@@ -174,15 +139,18 @@ class MainActivity : AppCompatActivity() {
                     app!!.clothingItems.create(closetOrganiser.copy())
                     i("Add Button Pressed: ${closetOrganiser.title}")
 
+                    // Log all clothing items for debugging
                     for (i in app!!.clothingItems.findAll().indices) {
                         i("Clothing Item[i]: ${app!!.clothingItems.findAll()[i].title}, ${app!!.clothingItems.findAll()[i].description}")
                     }
                 }
 
+                // Return result and finish the activity
                 setResult(RESULT_OK)
                 finish()
 
             } else {
+                // Show an error message if the title is missing
                 Snackbar.make(
                     it,
                     getString(R.string.please_enter_missing_item),
@@ -190,19 +158,27 @@ class MainActivity : AppCompatActivity() {
                 ).show()
             }
         }
+
+        // Allow the user to pick an image for the clothing item
         binding.chooseImage.setOnClickListener {
             showImagePicker(imageIntentLauncher)
         }
-        registerImagePickerCallback()
 
+        // Register the image picker callback
+        registerImagePickerCallback()
     }
 
-
-
+    /**
+     * Creates the options menu for this activity.
+     */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_clothing_item, menu)
         return super.onCreateOptionsMenu(menu)
     }
+
+    /**
+     * Handles item selections from the options menu.
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.item_cancel -> {
@@ -213,6 +189,10 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    /**
+     * Registers the callback for handling the image picker result.
+     * When the user selects an image, the image is displayed in the UI.
+     */
     private fun registerImagePickerCallback() {
         imageIntentLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult())
@@ -222,14 +202,15 @@ class MainActivity : AppCompatActivity() {
                         if (result.data != null) {
                             i("Got Result ${result.data!!.data}")
                             closetOrganiser.image = result.data!!.data!!
-//                            val pickedImageUri = result.data!!.data!!
-//                            imageUris.add(pickedImageUri)
-//                            CarouselAdapter.notifyDataSetChanged()
+
+                            // Load the picked image into the ImageView
                             Picasso.get()
                                 .load(closetOrganiser.image)
                                 .rotate(90f)
-                                .resize(600,600)
+                                .resize(600, 600)
                                 .into(binding.clothingImage)
+
+                            // Update the button text to reflect a change in the image
                             binding.chooseImage.setText(R.string.change_clothing_image)
                         }
                     }
@@ -239,8 +220,5 @@ class MainActivity : AppCompatActivity() {
                 }
             }
     }
-
-
-
 
 }

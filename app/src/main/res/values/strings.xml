@@ -1,8 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This XML file contains string resources used in the application, including:
+    - Mode Strings: For toggling between Day and Night modes.
+    - Text Resources: For the UI fields related to adding clothing items,
+      such as clothing title, description, color, size, season, and image.
+    - Button Labels: For adding clothing items and interacting with UI buttons.
+    - Error Message: For prompting the user when a category is missing.
+    - Menu Labels: For displaying actions like adding or cancelling clothing items.
+    - String Array: For providing the different seasons options.
+-->
+
 <resources>
-    <string name="app_name">Closet Organiser App</string>
+    <!-- Day and Night Mode Toggle Strings -->
     <string name="day_mode">Day</string>
     <string name="night_mode">Night</string>
 
+    <!-- Strings for adding and managing clothing items -->
     <string name="add_clothing">Add Clothing</string>
     <string name="enter_clothing_title">Enter Clothing Item Title</string>
     <string name="enter_description">Enter Description</string>
@@ -14,22 +27,25 @@
     <string name="clothes_button">Clothes</string>
     <string name="search_bar">Search</string>
 
+    <!-- Hints and Labels for Clothing Item Management -->
     <string name="hint_clothingItem">Clothing Item</string>
     <string name="button_addClothing">Add a Clothing Item</string>
     <string name="description_hint">Enter Category</string>
 
+    <!-- Menu Actions -->
     <string name="menu_addClothingItem">Add</string>
     <string name="menu_cancelClothingItem">Cancel</string>
 
+    <!-- Error Message -->
     <string name="please_enter_missing_item">Please enter the missing Category!</string>
 
-
+    <!-- Save Button and Image Handling -->
     <string name="save_clothing_item"> Save Clothing Item </string>
     <string name="button_addImage">Add Image</string>
     <string name="select_clothing_image">Select clothing image</string>
     <string name="change_clothing_image">Change clothing image</string>
 
-
+    <!-- Seasons Options for Clothing -->
     <string-array name="seasons_array">
         <item>Spring</item>
         <item>Summer</item>
@@ -37,6 +53,5 @@
         <item>Winter</item>
         <item> All Seasons</item>
     </string-array>
-
 
 </resources>
