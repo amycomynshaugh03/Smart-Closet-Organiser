@@ -95,34 +95,14 @@
             android:contentDescription="@string/add_clothing"
             android:layout_margin="16dp"/>
 
-        <!-- Search Bar Layout -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="4dp">
+        <Button
+            android:id="@+id/btnSearchToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search" />
 
-            <!-- Search Icon -->
-            <ImageView
-                android:id="@+id/searchIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:contentDescription="@string/search_bar"
-                android:src="@drawable/ic_search" />
-
-            <!-- Search Input Field -->
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:hint="@string/search_bar"
-                android:maxLines="1"
-                android:paddingStart="8dp"
-                android:textSize="14sp" />
-        </LinearLayout>
     </LinearLayout>
+
 
     <!-- Placeholder for a carousel or other content -->
     <View
@@ -145,7 +125,9 @@
         android:layout_height="0dp"
         android:scrollbars="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

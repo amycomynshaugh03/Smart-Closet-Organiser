@@ -46,5 +46,6 @@
     <string name="enter_colour">Enter Colour</string>
     <string name="enter_size">Enter Size</string>
     <string name="change_clothing_image">Change Clothing Image</string>
+    <string name="search_hint">Recherche</string>
 
 </resources>

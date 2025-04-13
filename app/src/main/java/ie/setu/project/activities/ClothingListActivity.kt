@@ -1,26 +1,38 @@
 package ie.setu.project.activities
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
 import ie.setu.project.R
+import ie.setu.project.adapters.CarouselAdapter
 import ie.setu.project.adapters.ClosetAdapter
 import ie.setu.project.adapters.ClosetItemListener
 import ie.setu.project.closet.main.MainApp
 import ie.setu.project.databinding.ActivityClothingListBinding
 import ie.setu.project.models.ClosetOrganiserModel
+import timber.log.Timber.i
+import java.text.SimpleDateFormat
+import java.util.Date
 
 // This Activity displays the list of clothing items and allows the user to navigate to another screen for managing them.
 class ClothingListActivity : AppCompatActivity(), ClosetItemListener {
 
     lateinit var app: MainApp // MainApp instance to interact with the app's data
     private lateinit var binding: ActivityClothingListBinding // Binding for the activity's UI components
-//    private lateinit var imageList: List<Uri>  // Placeholder for image list if needed
+    private lateinit var imageList: List<Uri>
+    private lateinit var viewPager: ViewPager2
 
     // onCreate method: Called when the activity is first created.
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,27 +55,12 @@ class ClothingListActivity : AppCompatActivity(), ClosetItemListener {
         }
 
         // Uncommented sections for carousel and image picker setup (if required)
-//
-//        val imageListStrings = intent.getStringArrayListExtra("imageList") ?: emptyList()
-//        imageList = imageListStrings.mapNotNull { Uri.parse(it) }
-//
-//        setupCarouselRecyclerView()
-//
-//        registerImagePickerCallback()
-    }
 
-//    // Set up RecyclerView for displaying a carousel (if needed)
-//    private fun setupCarouselRecyclerView() {
-//        binding.carouselRecyclerView.layoutManager =
-//            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-//
-//        val carouselAdapter = CarouselAdapter(imageList)
-//        binding.carouselRecyclerView.adapter = carouselAdapter
-//    }
-//
-//    // Register a callback for image picker (if needed)
-//    private fun registerImagePickerCallback() {
-//    }
+        val imageListStrings = intent.getStringArrayListExtra("imageList") ?: emptyList()
+        imageList = imageListStrings.mapNotNull { Uri.parse(it) }
+
+        setupCarousel()
+    }
 
     // Register for activity result to handle adding or editing clothing items
     private val getResult =
@@ -72,7 +69,10 @@ class ClothingListActivity : AppCompatActivity(), ClosetItemListener {
         ) {
             if (it.resultCode == Activity.RESULT_OK) {
                 // Notify the RecyclerView adapter that the dataset has changed
-                (binding.recyclerView.adapter)?.notifyItemRangeChanged(0, app.clothingItems.findAll().size)
+                (binding.recyclerView.adapter)?.notifyItemRangeChanged(
+                    0,
+                    app.clothingItems.findAll().size
+                )
             }
             if (it.resultCode == Activity.RESULT_CANCELED) {
                 // Show a Snackbar message when the action is cancelled
@@ -105,5 +105,38 @@ class ClothingListActivity : AppCompatActivity(), ClosetItemListener {
         (binding.recyclerView.adapter as ClosetAdapter).updateItems(updatedList)
         // Show a Snackbar message indicating the item has been deleted
         Snackbar.make(binding.root, "Clothing Item Deleted", Snackbar.LENGTH_LONG).show()
+    }
+
+    private fun setupCarousel(){
+
+        viewPager = binding.carouselViewPager
+
+        val clothingList = arrayListOf(
+            ClosetOrganiserModel(
+                id = 0,
+                title = "jkj",
+                description = "k",
+                colourPattern = "k",
+                size = "9",
+                season = "Spring",
+                lastWorn = Date(),
+                image = Uri.parse("https://images2.drct2u.com/plp_full_width_1/products/sr/sr379/c01sr379750w.jpg")
+            ),
+            ClosetOrganiserModel(
+                id = 0,
+                title = "jkj",
+                description = "k",
+                colourPattern = "k",
+                size = "9",
+                season = "Spring",
+                lastWorn = Date(),
+                image=Uri.parse("content://com.android.providers.media.documents/document/image%3A43"))
+        )
+        val adapter = CarouselAdapter(clothingList)
+
+        //val adapter = CarouselAdapter(app.clothingItems.findAll())
+
+        viewPager.adapter = adapter
+
     }
 }
