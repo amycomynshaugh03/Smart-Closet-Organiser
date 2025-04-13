@@ -197,7 +197,12 @@ class MainActivity : AppCompatActivity() {
                     RESULT_OK -> {
                         if (result.data != null) {
                             i("Got Result ${result.data!!.data}")
-                            closetOrganiser.image = result.data!!.data!!
+                            val uri = result.data!!.data!!
+
+                            // Take persistable URI permission
+                            val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                            contentResolver.takePersistableUriPermission(uri, flags)
+                            closetOrganiser.image = uri
 
                             // Load the picked image into the ImageView
                             Picasso.get()
