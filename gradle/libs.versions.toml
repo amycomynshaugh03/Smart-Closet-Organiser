@@ -2,7 +2,7 @@
 # Version definitions for all libraries and plugins
 [versions]
 picasso = "2.71828"
-agp = "8.8.0"  # Android Gradle Plugin version
+agp = "8.8.0-alpha01"  # Android Gradle Plugin version
 androidxLifecycleViewmodelKtx = "2.4.1"
 jetbrainsKotlinxCoroutinesAndroid = "1.4.3"
 kotlin = "1.9.24"
