@@ -63,7 +63,7 @@ class clothingActivity : AppCompatActivity(), ClosetItemListener {
             }
             // When the "Add Item" item is selected, launch the MainActivity for adding a new item
             R.id.item_add -> {
-                val intent = Intent(this, MainActivity::class.java)
+                val intent = Intent(this, MainView::class.java)
                 // Register the activity for result to handle the result from MainActivity
                 getResult.launch(intent)
                 return true
@@ -87,7 +87,7 @@ class clothingActivity : AppCompatActivity(), ClosetItemListener {
 
     // When a clothing item is clicked, launch the MainActivity to edit the item
     override fun onClosetItemClick(item: ClosetOrganiserModel) {
-        val launcherIntent = Intent(this, MainActivity::class.java)
+        val launcherIntent = Intent(this, MainView::class.java)
         // Pass the clicked item as an extra in the intent for editing
         launcherIntent.putExtra("closet_item_edit", item)
         getResult.launch(launcherIntent)

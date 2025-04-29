@@ -82,7 +82,7 @@ class ClothingListActivity : AppCompatActivity(), ClosetItemListener {
 
     // Handle click event for a clothing item
     override fun onClosetItemClick(item: ClosetOrganiserModel) {
-        val launcherIntent = Intent(this, MainActivity::class.java)
+        val launcherIntent = Intent(this, MainView::class.java)
         // Pass the selected closet item for editing
         launcherIntent.putExtra("closet_item_edit", item)
         // Launch the activity to edit the item

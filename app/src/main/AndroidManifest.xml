@@ -48,7 +48,7 @@
 
         <!-- Activity for the main screen of the app -->
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.MainView"
             android:exported="true" />
     </application>
 
