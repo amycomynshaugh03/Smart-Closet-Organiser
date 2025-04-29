@@ -1,19 +1,27 @@
 package ie.setu.project.views.clothingList
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
 import ie.setu.project.R
+import ie.setu.project.adapters.CarouselAdapter
+import ie.setu.project.adapters.ClosetAdapter
 import ie.setu.project.adapters.ClosetItemListener
+import ie.setu.project.closet.main.MainApp
 import ie.setu.project.databinding.ActivityClothingListBinding
 import ie.setu.project.models.ClosetOrganiserModel
 import ie.setu.project.views.clothing.ClothingView
+import java.util.*
 
 class ClothingListView : AppCompatActivity(), ClosetItemListener {
     private lateinit var binding: ActivityClothingListBinding
     private lateinit var presenter: ClothingListPresenter
+    private lateinit var viewPager: ViewPager2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,10 +31,25 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
         setSupportActionBar(binding.topAppBar)
         presenter = ClothingListPresenter(this)
 
-        val clothesButton: Button = findViewById(R.id.btnClothes)
-        clothesButton.setOnClickListener {
-            startActivity(Intent(this, ClothingView::class.java))
+        setupClothingListRecyclerView()
+        setupCarousel()
+
+        findViewById<Button>(R.id.btnClothes).setOnClickListener {
+            startActivity(Intent(this,  ClothingView::class.java))
         }
+    }
+
+    private fun setupClothingListRecyclerView() {
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = ClosetAdapter(
+            (application as MainApp).clothingItems.findAll(),
+            this
+        )
+    }
+
+    private fun setupCarousel() {
+        viewPager = binding.carouselViewPager
+        viewPager.adapter = CarouselAdapter(presenter.getCarouselItems())
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -45,7 +68,14 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
         com.google.android.material.snackbar.Snackbar.make(binding.root, message, duration).show()
     }
 
-    fun notifyAdapterDataChanged() {
-        (binding.recyclerView.adapter)?.notifyItemRangeChanged(0, binding.recyclerView.adapter?.itemCount ?: 0)
+    fun notifyClothingListChanged() {
+        binding.recyclerView.adapter?.notifyItemRangeChanged(
+            0,
+            (application as MainApp).clothingItems.findAll().size
+        )
+    }
+
+    fun updateClothingList(items: List<ClosetOrganiserModel>) {
+        (binding.recyclerView.adapter as ClosetAdapter).updateItems(items)
     }
 }
