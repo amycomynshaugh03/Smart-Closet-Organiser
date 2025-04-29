@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.clothingActivity">
+    tools:context=".views.clothing.ClothingView">
 
     <!-- AppBarLayout to hold the top app bar with a Material Toolbar -->
     <com.google.android.material.appbar.AppBarLayout
