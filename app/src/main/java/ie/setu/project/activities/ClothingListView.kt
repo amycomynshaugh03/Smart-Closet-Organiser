@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import ie.setu.project.R
-import ie.setu.project.adapters.ClosetAdapter
 import ie.setu.project.adapters.ClosetItemListener
 import ie.setu.project.databinding.ActivityClothingListBinding
 import ie.setu.project.models.ClosetOrganiserModel
@@ -26,7 +25,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
 
         val clothesButton: Button = findViewById(R.id.btnClothes)
         clothesButton.setOnClickListener {
-            startActivity(Intent(this, clothingActivity::class.java))
+            startActivity(Intent(this, ClothingView::class.java))
         }
     }
 

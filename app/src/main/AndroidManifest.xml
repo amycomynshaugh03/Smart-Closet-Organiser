@@ -27,7 +27,7 @@
 
         <!-- Activity for handling clothing actions -->
         <activity
-            android:name=".activities.clothingActivity"
+            android:name=".activities.ClothingView"
             android:exported="true" />
 
         <!--
