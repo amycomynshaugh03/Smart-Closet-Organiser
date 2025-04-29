@@ -81,7 +81,7 @@ class clothingActivity : AppCompatActivity(), ClosetItemListener {
             }
             // If the result is cancelled, show a Snackbar message indicating cancellation
             if (result.resultCode == Activity.RESULT_CANCELED) {
-                Snackbar.make(binding.root, "Clothing Item Add Cancelled", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(binding.root, "Clothing Add Cancelled", Snackbar.LENGTH_LONG).show()
             }
         }
 
