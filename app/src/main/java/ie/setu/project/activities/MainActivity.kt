@@ -197,7 +197,12 @@ class MainActivity : AppCompatActivity() {
                     RESULT_OK -> {
                         if (result.data != null) {
                             i("Got Result ${result.data!!.data}")
-                            closetOrganiser.image = result.data!!.data!!
+
+                            val image = result.data!!.data!!
+                            contentResolver.takePersistableUriPermission(image,
+                                Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            closetOrganiser.image = image
+
 
                             // Load the picked image into the ImageView
                             Picasso.get()

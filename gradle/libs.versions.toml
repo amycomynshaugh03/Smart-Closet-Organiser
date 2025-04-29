@@ -26,6 +26,7 @@ slf4jSimple = "1.7.36"
 kotlinLogging = "2.1.23"
 timber = "4.7.1"
 timberkt = "1.5.1"
+gson = "2.10.1"
 
 
 # Library definitions with group names, module names, and version references
@@ -55,6 +56,7 @@ kotlin-logging = { module = "io.github.microutils:kotlin-logging", version.ref =
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 timberkt = { module = "com.github.ajalt:timberkt", version.ref = "timberkt" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
 # Plugin definitions for Android and Kotlin
 [plugins]

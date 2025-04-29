@@ -14,6 +14,7 @@ plugins {
     // Dokka
     id("org.jetbrains.dokka") version "1.8.20"
     id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
+
 }
 
 tasks.dokkaHtml {
@@ -104,4 +105,7 @@ dependencies {
 
     // Image loading library (Picasso)
     implementation(libs.picasso)
+
+    implementation (libs.gson)
+
 }
