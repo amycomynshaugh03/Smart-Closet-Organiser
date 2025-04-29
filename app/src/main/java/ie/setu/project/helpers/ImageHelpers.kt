@@ -4,18 +4,13 @@ import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import ie.setu.project.R
 
-/**
- * Helper function to launch an image picker intent.
- * This function opens the system's file chooser for selecting an image file.
- *
- * @param intentLauncher The ActivityResultLauncher used to start the intent.
- */
-fun showImagePicker(intentLauncher: ActivityResultLauncher<Intent>) {
-    // Create an intent to open the image picker (document picker).
-    var chooseFile = Intent(Intent.ACTION_OPEN_DOCUMENT)
 
-    // Set the MIME type to images only.
-    chooseFile.type = "image/*"
+fun showImagePicker(intentLauncher: ActivityResultLauncher<Intent>) {
+    var chooseFile = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+        addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        type = "image/*"
+    }
 
     // Create a chooser so the user can select an app to handle the intent.
     chooseFile = Intent.createChooser(chooseFile, R.string.select_clothing_image.toString())
