@@ -1,4 +1,4 @@
-package ie.setu.project.activities
+package ie.setu.project.views.clothing
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,6 +12,7 @@ import ie.setu.project.adapters.ClosetItemListener
 import ie.setu.project.closet.main.MainApp
 import ie.setu.project.databinding.ActivityClothingBinding
 import ie.setu.project.models.ClosetOrganiserModel
+import ie.setu.project.views.clothingList.ClothingListView
 
 class ClothingView : AppCompatActivity(), ClosetItemListener {
     private lateinit var binding: ActivityClothingBinding

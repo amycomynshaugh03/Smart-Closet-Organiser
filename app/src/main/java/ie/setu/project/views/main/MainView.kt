@@ -1,6 +1,5 @@
-package ie.setu.project.activities
+package ie.setu.project.views.main
 
-import ie.setu.project.MainPresenter
 import android.net.Uri
 import android.os.Bundle
 import android.view.Menu

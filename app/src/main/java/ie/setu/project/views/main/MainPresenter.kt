@@ -1,15 +1,12 @@
-package ie.setu.project
+package ie.setu.project.views.main
 
 import android.app.Activity.RESULT_CANCELED
-import ie.setu.project.activities.MainView
 import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.net.Uri
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.datepicker.MaterialDatePicker
-import ie.setu.project.R
 import ie.setu.project.closet.main.MainApp
 import ie.setu.project.helpers.showImagePicker
 import ie.setu.project.models.ClosetOrganiserModel

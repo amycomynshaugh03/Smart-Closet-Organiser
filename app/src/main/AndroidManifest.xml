@@ -27,7 +27,7 @@
 
         <!-- Activity for handling clothing actions -->
         <activity
-            android:name=".activities.ClothingView"
+            android:name=".views.clothing.ClothingView"
             android:exported="true" />
 
         <!--
@@ -38,7 +38,7 @@
               and LAUNCHER category.
         -->
         <activity
-            android:name=".activities.ClothingListView"
+            android:name=".views.clothingList.ClothingListView"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -48,7 +48,7 @@
 
         <!-- Activity for the main screen of the app -->
         <activity
-            android:name=".activities.MainView"
+            android:name=".views.main.MainView"
             android:exported="true" />
     </application>
 

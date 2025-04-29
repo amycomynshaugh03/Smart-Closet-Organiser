@@ -1,15 +1,16 @@
-package ie.setu.project.activities
+package ie.setu.project.views.clothingList
+
 
 import android.app.Activity
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.snackbar.Snackbar
-import ie.setu.project.R
 import ie.setu.project.closet.main.MainApp
 import ie.setu.project.models.ClosetOrganiserModel
+import ie.setu.project.views.main.MainView
 
-class ClothingPresenter(private val view: ClothingView) {
+class ClothingListPresenter(private val view: ClothingListView) {
     lateinit var app: MainApp
     private lateinit var getResult: ActivityResultLauncher<Intent>
 
@@ -18,30 +19,16 @@ class ClothingPresenter(private val view: ClothingView) {
         registerActivityResultCallback()
     }
 
-    fun handleMenuSelection(itemId: Int): Boolean {
-        return when (itemId) {
-            R.id.nav_to_main -> {
-                view.navigateToMain()
-                true
-            }
-            R.id.item_add -> {
-                val intent = Intent(view, MainView::class.java)
-                getResult.launch(intent)
-                true
-            }
-            else -> false
-        }
-    }
-
     fun onClosetItemClick(item: ClosetOrganiserModel) {
         val launcherIntent = Intent(view, MainView::class.java)
         launcherIntent.putExtra("closet_item_edit", item)
         getResult.launch(launcherIntent)
+        view.showSnackbar("Selected: ${item.title}", Snackbar.LENGTH_SHORT)
     }
 
     fun onDeleteItemClick(item: ClosetOrganiserModel) {
         app.clothingItems.delete(item)
-        view.updateAdapter()
+        view.notifyAdapterDataChanged()
         view.showSnackbar("Clothing Item Deleted", Snackbar.LENGTH_LONG)
     }
 
@@ -49,9 +36,11 @@ class ClothingPresenter(private val view: ClothingView) {
         getResult = view.registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            when (result.resultCode) {
-                Activity.RESULT_OK -> view.notifyAdapterChanged()
-                Activity.RESULT_CANCELED -> view.showSnackbar("Clothing Add Cancelled", Snackbar.LENGTH_LONG)
+            if (result.resultCode == Activity.RESULT_OK) {
+                view.notifyAdapterDataChanged()
+            }
+            if (result.resultCode == Activity.RESULT_CANCELED) {
+                view.showSnackbar("Placemark Add Cancelled", Snackbar.LENGTH_LONG)
             }
         }
     }
