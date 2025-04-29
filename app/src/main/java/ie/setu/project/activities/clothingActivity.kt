@@ -57,7 +57,7 @@ class clothingActivity : AppCompatActivity(), ClosetItemListener {
         when (item.itemId) {
             // When the "Go to Main" item is selected, launch the ClothingListActivity
             R.id.nav_to_main -> {
-                val intent = Intent(this, ClothingListActivity::class.java)
+                val intent = Intent(this, ClothingListView::class.java)
                 startActivity(intent)
                 return true
             }

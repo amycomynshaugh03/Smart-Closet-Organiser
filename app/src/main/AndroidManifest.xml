@@ -38,7 +38,7 @@
               and LAUNCHER category.
         -->
         <activity
-            android:name=".activities.ClothingListActivity"
+            android:name=".activities.ClothingListView"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
