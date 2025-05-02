@@ -8,7 +8,12 @@
     android:focusableInTouchMode="true"
     tools:context=".views.clothingList.ClothingListView">
 
+<<<<<<< HEAD
     <!-- App Bar (unchanged) -->
+=======
+    <!-- AppBarLayout to hold the top app bar -->
+
+>>>>>>> 56ab7798d941be2ee89844697b1ca5f158dc2242
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
@@ -16,6 +21,11 @@
         android:backgroundTint="?attr/colorPrimary"
         app:layout_constraintTop_toTopOf="parent">
 
+<<<<<<< HEAD
+=======
+        <!-- MaterialToolbar for the action bar -->
+
+>>>>>>> 56ab7798d941be2ee89844697b1ca5f158dc2242
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
@@ -49,6 +59,7 @@
                     android:src="@drawable/ic_heart" />
             </LinearLayout>
         </com.google.android.material.appbar.MaterialToolbar>
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- Buttons & Search Bar (SIMPLIFIED) -->
@@ -56,12 +67,19 @@
         android:id="@+id/buttonBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+<<<<<<< HEAD
         android:orientation="horizontal"
+=======
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:orientation="vertical"
+>>>>>>> 56ab7798d941be2ee89844697b1ca5f158dc2242
         android:padding="16dp"
         android:gravity="center_vertical"
         app:layout_constraintTop_toBottomOf="@id/appBarLayout">
 
         <!-- Outfits Button -->
+<<<<<<< HEAD
         <Button
             android:id="@+id/btnOutfits"
             android:layout_width="wrap_content"
@@ -106,6 +124,89 @@
         android:layout_margin="16dp"
         app:cardCornerRadius="8dp"
         app:layout_constraintTop_toBottomOf="@id/buttonBar">
+=======
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnOutfits"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Outfits" />
+
+            <Button
+                android:id="@+id/btnClothes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:contentDescription="@string/add_clothing"
+                android:text="Clothes" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="4dp">
+
+                <!-- Search Icon -->
+                <ImageView
+                    android:id="@+id/searchIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/search_bar"
+                    android:src="@drawable/ic_search" />
+
+                <!-- Search Input Field -->
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/search_bar"
+                    android:maxLines="1"
+                    android:minHeight="48dp"
+                    android:paddingStart="8dp"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Clothes Button -->
+
+        <!-- Search Bar Layout -->
+
+        <!-- Placeholder for a carousel or other content -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_margin="16dp"
+            app:cardCornerRadius="8dp"
+            app:strokeWidth="2dp"
+            app:strokeColor="@android:color/black">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/carouselViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="16dp"
+                tools:ignore="MissingConstraints" />
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+
+    <!-- RecyclerView to display a list of clothing items -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scrollbars="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+>>>>>>> 56ab7798d941be2ee89844697b1ca5f158dc2242
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/carouselViewPager"
