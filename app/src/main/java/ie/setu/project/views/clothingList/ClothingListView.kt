@@ -26,7 +26,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
         setSupportActionBar(binding.topAppBar)
         presenter = ClothingListPresenter(this)
 
-        // Initialize carousel first
+
         setupCarousel()
 
         binding.btnClothes.setOnClickListener {
@@ -36,7 +36,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
 
     override fun onResume() {
         super.onResume()
-        // Now safe to refresh as adapter is initialized
+
         refreshCarousel()
     }
 
@@ -44,11 +44,11 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
         viewPager = binding.carouselViewPager
         carouselAdapter = CarouselAdapter(emptyList(), this)
         viewPager.adapter = carouselAdapter
-        // Don't call refreshCarousel() here to avoid double refresh
+
     }
 
     fun refreshCarousel() {
-        // Add null check just in case (though lateinit should prevent this)
+
         if(::carouselAdapter.isInitialized) {
             carouselAdapter.submitList(presenter.getCarouselItems())
         }
