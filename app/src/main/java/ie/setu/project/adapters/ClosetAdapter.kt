@@ -35,6 +35,8 @@ class ClosetAdapter(
     private val listener: ClosetItemListener
 ) : RecyclerView.Adapter<ClosetAdapter.MainHolder>() {
 
+    private var closetItemsFull: List<ClosetOrganiserModel> = ArrayList(closetItems)
+
     /**
      * Called to create a new view holder. Inflates the layout for each clothing item card.
      *

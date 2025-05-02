@@ -1,6 +1,5 @@
 package ie.setu.project.views.clothingList
 
-
 import android.app.Activity
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
@@ -11,36 +10,42 @@ import ie.setu.project.models.ClosetOrganiserModel
 import ie.setu.project.views.main.MainView
 
 class ClothingListPresenter(private val view: ClothingListView) {
-    lateinit var app: MainApp
+    private var app: MainApp
     private lateinit var getResult: ActivityResultLauncher<Intent>
+    private var carouselItems = mutableListOf<ClosetOrganiserModel>()
 
     init {
         app = view.application as MainApp
         registerActivityResultCallback()
+        loadCarouselData()
     }
+
+    private fun loadCarouselData() {
+        carouselItems.clear()
+        carouselItems.addAll(app.clothingItems.findAll())
+        view.refreshCarousel()
+    }
+
+    fun getCarouselItems() = carouselItems.toList()
 
     fun onClosetItemClick(item: ClosetOrganiserModel) {
         val launcherIntent = Intent(view, MainView::class.java)
         launcherIntent.putExtra("closet_item_edit", item)
         getResult.launch(launcherIntent)
-        view.showSnackbar("Selected: ${item.title}", Snackbar.LENGTH_SHORT)
     }
 
     fun onDeleteItemClick(item: ClosetOrganiserModel) {
         app.clothingItems.delete(item)
-        view.notifyAdapterDataChanged()
-        view.showSnackbar("Clothing Item Deleted", Snackbar.LENGTH_LONG)
+        loadCarouselData()
     }
 
     private fun registerActivityResultCallback() {
         getResult = view.registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                view.notifyAdapterDataChanged()
-            }
-            if (result.resultCode == Activity.RESULT_CANCELED) {
-                view.showSnackbar("Placemark Add Cancelled", Snackbar.LENGTH_LONG)
+            when (result.resultCode) {
+                Activity.RESULT_OK -> view.refreshCarousel()
+                Activity.RESULT_CANCELED -> view.showSnackbar("Operation cancelled", Snackbar.LENGTH_SHORT)
             }
         }
     }

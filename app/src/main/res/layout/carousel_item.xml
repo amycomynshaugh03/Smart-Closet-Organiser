@@ -1,22 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.carousel.MaskableFrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="150dp"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginStart="4dp"
-    android:layout_marginEnd="4dp"
-    android:foreground="?attr/selectableItemBackground"
-    app:shapeAppearance="?attr/shapeAppearanceCornerExtraLarge">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <!-- TextView to display the carousel item text -->
-    <TextView
-        android:id="@+id/carousel_text_view"
+    <ImageView
+        android:id="@+id/carouselImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Sample Text"
-        android:textSize="16sp"
-        android:gravity="center"
-        android:textColor="@android:color/black"/>
-
-</com.google.android.material.carousel.MaskableFrameLayout>
+        android:scaleType="centerCrop" />
+</FrameLayout>
