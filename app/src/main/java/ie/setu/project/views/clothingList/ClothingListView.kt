@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import ie.setu.project.R
 import ie.setu.project.adapters.CarouselAdapter
+import ie.setu.project.adapters.ClosetAdapter
 import ie.setu.project.adapters.ClosetItemListener
 import ie.setu.project.databinding.ActivityClothingListBinding
 import ie.setu.project.models.ClosetOrganiserModel
@@ -48,6 +49,10 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
         if(::carouselAdapter.isInitialized) {
             carouselAdapter.submitList(presenter.getCarouselItems())
         }
+    }
+
+    fun onRefresh() {
+        (binding.carouselViewPager.adapter as? CarouselAdapter)?.updateItems(presenter.getCarouselItems())
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = super.onOptionsItemSelected(item)

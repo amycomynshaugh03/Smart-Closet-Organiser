@@ -8,8 +8,8 @@ import android.net.Uri
 import timber.log.Timber.i
 import java.util.Date
 
-// SQLite database constants
 private const val DATABASE_NAME = "closet.db"
+private const val DATABASE_VERSION = 1
 private const val TABLE_NAME = "clothing_items"
 private const val COLUMN_ID = "id"
 private const val COLUMN_TITLE = "title"
@@ -29,38 +29,76 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
     }
 
     override fun findAll(): List<ClosetOrganiserModel> {
-        val query = "SELECT * FROM $TABLE_NAME"
-        val cursor = database.rawQuery(query, null)
-
-        val items = ArrayList<ClosetOrganiserModel>()
-
-        cursor.use {
-            while (it.moveToNext()) {
-                items.add(
-                    ClosetOrganiserModel(
-                        id = it.getLong(0),
-                        title = it.getString(1),
-                        description = it.getString(2),
-                        colourPattern = it.getString(3),
-                        size = it.getString(4),
-                        season = it.getString(5),
-                        lastWorn = Date(it.getLong(6)), // Storing as timestamp
-                        image = Uri.parse(it.getString(7))
-                    )
-                )
+        return try {
+            val items = mutableListOf<ClosetOrganiserModel>()
+            database.rawQuery("SELECT * FROM $TABLE_NAME", null).use { cursor ->
+                while (cursor.moveToNext()) {
+                    items.add(createFromCursor(cursor))
+                }
             }
+            i("Found ${items.size} clothing items")
+            items
+        } catch (e: Exception) {
+            i("Error fetching items: ${e.message}")
+            emptyList()
         }
-
-        i("closetdb : findAll() - has ${items.size} records")
-        return items
     }
 
     override fun findById(id: Long): ClosetOrganiserModel? {
-        TODO("Not yet implemented")
+        return try {
+            database.rawQuery(
+                "SELECT * FROM $TABLE_NAME WHERE $COLUMN_ID = ?",
+                arrayOf(id.toString())
+            ).use { cursor ->
+                if (cursor.moveToFirst()) createFromCursor(cursor) else null
+            }
+        } catch (e: Exception) {
+            i("Error finding item $id: ${e.message}")
+            null
+        }
+    }
+
+    private fun createFromCursor(cursor: android.database.Cursor): ClosetOrganiserModel {
+        return ClosetOrganiserModel(
+            id = cursor.getLong(0),
+            title = cursor.getString(1),
+            description = cursor.getString(2),
+            colourPattern = cursor.getString(3),
+            size = cursor.getString(4),
+            season = cursor.getString(5),
+            lastWorn = Date(cursor.getLong(6)),
+            image = Uri.parse(cursor.getString(7))
+        )
     }
 
     override fun create(item: ClosetOrganiserModel) {
-        val values = ContentValues().apply {
+        val values = toContentValues(item)
+        item.id = database.insert(TABLE_NAME, null, values)
+        i("Created item ${item.id}")
+    }
+
+    override fun update(item: ClosetOrganiserModel) {
+        val values = toContentValues(item)
+        database.update(
+            TABLE_NAME,
+            values,
+            "$COLUMN_ID = ?",
+            arrayOf(item.id.toString())
+        )
+        i("Updated item ${item.id}")
+    }
+
+    override fun delete(item: ClosetOrganiserModel) {
+        database.delete(
+            TABLE_NAME,
+            "$COLUMN_ID = ?",
+            arrayOf(item.id.toString())
+        )
+        i("Deleted item ${item.id}")
+    }
+
+    private fun toContentValues(item: ClosetOrganiserModel): ContentValues {
+        return ContentValues().apply {
             put(COLUMN_TITLE, item.title)
             put(COLUMN_DESCRIPTION, item.description)
             put(COLUMN_COLOUR_PATTERN, item.colourPattern)
@@ -69,35 +107,29 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
             put(COLUMN_LAST_WORN, item.lastWorn.time)
             put(COLUMN_IMAGE, item.image?.toString())
         }
-
-        item.id = database.insert(TABLE_NAME, null, values)
     }
 
-    override fun update(item: ClosetOrganiserModel) {
-        TODO("Not yet implemented")
-    }
+    private inner class ClosetDbHelper(context: Context) :
+        SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
-    override fun delete(item: ClosetOrganiserModel) {
-        TODO("Not yet implemented")
-    }
-}
+        override fun onCreate(db: SQLiteDatabase) {
+            db.execSQL("""
+                CREATE TABLE $TABLE_NAME (
+                    $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    $COLUMN_TITLE TEXT,
+                    $COLUMN_DESCRIPTION TEXT,
+                    $COLUMN_COLOUR_PATTERN TEXT,
+                    $COLUMN_SIZE TEXT,
+                    $COLUMN_SEASON TEXT,
+                    $COLUMN_LAST_WORN INTEGER,
+                    $COLUMN_IMAGE TEXT
+                )
+            """.trimIndent())
+        }
 
-private class ClosetDbHelper(context: Context) :
-    SQLiteOpenHelper(context, DATABASE_NAME, null, 1) {
-
-    private val createTableSQL =
-        "CREATE TABLE $TABLE_NAME ($COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "$COLUMN_TITLE TEXT, $COLUMN_DESCRIPTION TEXT, " +
-                "$COLUMN_COLOUR_PATTERN TEXT, $COLUMN_SIZE TEXT, " +
-                "$COLUMN_SEASON TEXT, $COLUMN_LAST_WORN INTEGER, " + // Storing date as timestamp
-                "$COLUMN_IMAGE TEXT)" // Storing URI as string
-
-    override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL(createTableSQL)
-    }
-
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
-        onCreate(db)
+        override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+            db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
+            onCreate(db)
+        }
     }
 }

@@ -10,33 +10,34 @@ import ie.setu.project.models.ClosetOrganiserModel
 import ie.setu.project.views.main.MainView
 
 class ClothingListPresenter(private val view: ClothingListView) {
-    private var app: MainApp
+    private val app: MainApp = view.application as MainApp
     private lateinit var getResult: ActivityResultLauncher<Intent>
     private var carouselItems = mutableListOf<ClosetOrganiserModel>()
 
     init {
-        app = view.application as MainApp
         registerActivityResultCallback()
         loadCarouselData()
     }
 
-    private fun loadCarouselData() {
-        carouselItems.clear()
-        carouselItems.addAll(app.clothingItems.findAll())
-        view.refreshCarousel()
-    }
-
-    fun getCarouselItems() = carouselItems.toList()
+    fun getCarouselItems(): List<ClosetOrganiserModel> = carouselItems.toList()
+    fun getClosetItems(): List<ClosetOrganiserModel> = app.clothingItems.findAll()
 
     fun onClosetItemClick(item: ClosetOrganiserModel) {
-        val launcherIntent = Intent(view, MainView::class.java)
-        launcherIntent.putExtra("closet_item_edit", item)
-        getResult.launch(launcherIntent)
+        getResult.launch(Intent(view, MainView::class.java).apply {
+            putExtra("closet_item_edit", item)
+        })
     }
 
     fun onDeleteItemClick(item: ClosetOrganiserModel) {
         app.clothingItems.delete(item)
         loadCarouselData()
+        view.showSnackbar("Item deleted", Snackbar.LENGTH_SHORT)
+    }
+
+    private fun loadCarouselData() {
+        carouselItems.clear()
+        carouselItems.addAll(app.clothingItems.findAll().take(5)) // Show first 5 items
+        view.refreshCarousel()
     }
 
     private fun registerActivityResultCallback() {
@@ -45,7 +46,10 @@ class ClothingListPresenter(private val view: ClothingListView) {
         ) { result ->
             when (result.resultCode) {
                 Activity.RESULT_OK -> view.refreshCarousel()
-                Activity.RESULT_CANCELED -> view.showSnackbar("Operation cancelled", Snackbar.LENGTH_SHORT)
+                Activity.RESULT_CANCELED -> view.showSnackbar(
+                    "Operation cancelled",
+                    Snackbar.LENGTH_SHORT
+                )
             }
         }
     }

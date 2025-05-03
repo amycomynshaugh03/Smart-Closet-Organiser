@@ -1,6 +1,5 @@
 package ie.setu.project.adapters
 
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import ie.setu.project.R
 import ie.setu.project.models.ClosetOrganiserModel
-
-
 
 class CarouselAdapter(
     private var clothingList: List<ClosetOrganiserModel>,
@@ -22,8 +19,12 @@ class CarouselAdapter(
     }
 
     fun submitList(newList: List<ClosetOrganiserModel>) {
-        clothingList = newList
+        clothingList = newList.take(5) // Show first 5 items in carousel
         notifyDataSetChanged()
+    }
+
+    fun updateItems(newItems: List<ClosetOrganiserModel>) {
+        submitList(newItems)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CarouselViewHolder {

@@ -53,6 +53,12 @@ class ClothingView : AppCompatActivity(), ClosetItemListener {
         presenter.onDeleteItemClick(item)
     }
 
+    fun onRefresh() {
+        (binding.recyclerView.adapter as? ClosetAdapter)?.let { adapter ->
+            adapter.updateItems(presenter.getClosetItems())
+        }
+    }
+
     fun navigateToMain() {
         startActivity(Intent(this, ClothingListView::class.java))
     }
@@ -69,4 +75,5 @@ class ClothingView : AppCompatActivity(), ClosetItemListener {
     fun showSnackbar(message: String, duration: Int) {
         com.google.android.material.snackbar.Snackbar.make(binding.root, message, duration).show()
     }
+
 }
