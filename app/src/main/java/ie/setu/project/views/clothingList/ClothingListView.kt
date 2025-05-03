@@ -26,7 +26,6 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
         setSupportActionBar(binding.topAppBar)
         presenter = ClothingListPresenter(this)
 
-
         setupCarousel()
 
         binding.btnClothes.setOnClickListener {
@@ -36,7 +35,6 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
 
     override fun onResume() {
         super.onResume()
-
         refreshCarousel()
     }
 
@@ -44,11 +42,9 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
         viewPager = binding.carouselViewPager
         carouselAdapter = CarouselAdapter(emptyList(), this)
         viewPager.adapter = carouselAdapter
-
     }
 
     fun refreshCarousel() {
-
         if(::carouselAdapter.isInitialized) {
             carouselAdapter.submitList(presenter.getCarouselItems())
         }
