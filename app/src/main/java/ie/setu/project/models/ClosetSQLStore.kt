@@ -1,5 +1,6 @@
 package ie.setu.project.models
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
@@ -59,7 +60,17 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
     }
 
     override fun create(item: ClosetOrganiserModel) {
-        TODO("Not yet implemented")
+        val values = ContentValues().apply {
+            put(COLUMN_TITLE, item.title)
+            put(COLUMN_DESCRIPTION, item.description)
+            put(COLUMN_COLOUR_PATTERN, item.colourPattern)
+            put(COLUMN_SIZE, item.size)
+            put(COLUMN_SEASON, item.season)
+            put(COLUMN_LAST_WORN, item.lastWorn.time)
+            put(COLUMN_IMAGE, item.image?.toString())
+        }
+
+        item.id = database.insert(TABLE_NAME, null, values)
     }
 
     override fun update(item: ClosetOrganiserModel) {
