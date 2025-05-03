@@ -39,6 +39,8 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
         refreshCarousel()
     }
 
+    override fun onOptionsItemSelected(item: MenuItem) = super.onOptionsItemSelected(item)
+
     private fun setupCarousel() {
         viewPager = binding.carouselViewPager
         carouselAdapter = CarouselAdapter(emptyList(), this)
@@ -46,16 +48,9 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
     }
 
     fun refreshCarousel() {
-        if(::carouselAdapter.isInitialized) {
-            carouselAdapter.submitList(presenter.getCarouselItems())
-        }
+        (binding.carouselViewPager.adapter as? CarouselAdapter)?.submitList(presenter.getCarouselItems())
     }
 
-    fun onRefresh() {
-        (binding.carouselViewPager.adapter as? CarouselAdapter)?.updateItems(presenter.getCarouselItems())
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem) = super.onOptionsItemSelected(item)
 
     override fun onClosetItemClick(item: ClosetOrganiserModel) {
         presenter.onClosetItemClick(item)
@@ -63,6 +58,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
 
     override fun onDeleteItemClick(item: ClosetOrganiserModel) {
         presenter.onDeleteItemClick(item)
+        refreshCarousel()
     }
 
     fun showSnackbar(message: String, duration: Int) {

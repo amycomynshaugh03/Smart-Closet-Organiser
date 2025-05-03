@@ -74,6 +74,7 @@ class ClothingMemStore : ClothingStore {
         logAll() // Log after deletion
     }
 
+
     /**
      * Logs the current list of all clothing items.
      * This is useful for debugging purposes.

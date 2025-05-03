@@ -32,7 +32,7 @@ class MainApp : Application() {
         super.onCreate()
         // Set up Timber logging for debugging.
         Timber.plant(Timber.DebugTree())
-        items = ClosetJSONStore(applicationContext)
+        //items = ClosetJSONStore(applicationContext)
         closetStore = ClosetSQLStore(applicationContext)
         // Log a message indicating the app has started.
         i("Closet Organiser started >3")

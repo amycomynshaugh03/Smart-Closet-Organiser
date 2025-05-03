@@ -51,12 +51,12 @@ class ClothingView : AppCompatActivity(), ClosetItemListener {
 
     override fun onDeleteItemClick(item: ClosetOrganiserModel) {
         presenter.onDeleteItemClick(item)
+        onRefresh()
     }
 
-    fun onRefresh() {
-        (binding.recyclerView.adapter as? ClosetAdapter)?.let { adapter ->
-            adapter.updateItems(presenter.getClosetItems())
-        }
+    private fun onRefresh() {
+        (binding.recyclerView.adapter as ClosetAdapter)
+            .updateItems(presenter.getClosetItems())
     }
 
     fun navigateToMain() {

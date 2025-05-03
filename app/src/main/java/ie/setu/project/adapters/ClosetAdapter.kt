@@ -32,12 +32,12 @@ class ClosetAdapter(
 
     override fun getItemCount(): Int = closetItems.size
 
-    fun updateItems(newList: List<ClosetOrganiserModel>) {
-        closetItems = newList
-        closetItemsFull = ArrayList(newList)
-        notifyDataSetChanged()
+    fun updateItems(newItems: List<ClosetOrganiserModel>) {
+        if (closetItems.size != newItems.size) {
+            closetItems = newItems
+            notifyDataSetChanged()
+        }
     }
-
     class MainHolder(private val binding: CardClothingBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
