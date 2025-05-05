@@ -51,7 +51,6 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
         (binding.carouselViewPager.adapter as? CarouselAdapter)?.submitList(presenter.getCarouselItems())
     }
 
-
     override fun onClosetItemClick(item: ClosetOrganiserModel) {
         presenter.onClosetItemClick(item)
     }

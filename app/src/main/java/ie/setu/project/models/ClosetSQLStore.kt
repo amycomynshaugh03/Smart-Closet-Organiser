@@ -2,6 +2,7 @@ package ie.setu.project.models
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.net.Uri
@@ -29,19 +30,13 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
     }
 
     override fun findAll(): List<ClosetOrganiserModel> {
-        return try {
-            val items = mutableListOf<ClosetOrganiserModel>()
-            database.rawQuery("SELECT * FROM $TABLE_NAME", null).use { cursor ->
-                while (cursor.moveToNext()) {
-                    items.add(createFromCursor(cursor))
-                }
+        val items = mutableListOf<ClosetOrganiserModel>()
+        database.rawQuery("SELECT * FROM $TABLE_NAME", null).use { cursor ->
+            while (cursor.moveToNext()) {
+                items.add(createFromCursor(cursor))
             }
-            i("Found ${items.size} clothing items")
-            items
-        } catch (e: Exception) {
-            i("Error fetching items: ${e.message}")
-            emptyList()
         }
+        return items
     }
 
     override fun findById(id: Long): ClosetOrganiserModel? {
@@ -58,7 +53,7 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
         }
     }
 
-    private fun createFromCursor(cursor: android.database.Cursor): ClosetOrganiserModel {
+    private fun createFromCursor(cursor: Cursor): ClosetOrganiserModel {
         return ClosetOrganiserModel(
             id = cursor.getLong(0),
             title = cursor.getString(1),
@@ -71,30 +66,37 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
         )
     }
 
-    override fun create(item: ClosetOrganiserModel) {
-        val values = toContentValues(item)
-        item.id = database.insert(TABLE_NAME, null, values)
-        i("Created item ${item.id}")
+    override fun create(clothingItem: ClosetOrganiserModel) {
+        val values = ContentValues().apply {
+            put(COLUMN_TITLE, clothingItem.title)
+            put(COLUMN_DESCRIPTION, clothingItem.description)
+            put(COLUMN_COLOUR_PATTERN, clothingItem.colourPattern)
+            put(COLUMN_SIZE, clothingItem.size)
+            put(COLUMN_SEASON, clothingItem.season)
+            put(COLUMN_LAST_WORN, clothingItem.lastWorn.time)
+            put(COLUMN_IMAGE, clothingItem.image?.toString())
+        }
+        clothingItem.id = database.insert(TABLE_NAME, null, values)
     }
 
-    override fun update(item: ClosetOrganiserModel) {
-        val values = toContentValues(item)
+    override fun update(closetItem: ClosetOrganiserModel) {
+        val values = toContentValues(closetItem)
         database.update(
             TABLE_NAME,
             values,
             "$COLUMN_ID = ?",
-            arrayOf(item.id.toString())
+            arrayOf(closetItem.id.toString())
         )
-        i("Updated item ${item.id}")
+        i("Updated item ${closetItem.id}")
     }
 
-    override fun delete(item: ClosetOrganiserModel) {
+    override fun delete(clothingItem: ClosetOrganiserModel) {
         database.delete(
             TABLE_NAME,
             "$COLUMN_ID = ?",
-            arrayOf(item.id.toString())
+            arrayOf(clothingItem.id.toString())
         )
-        i("Deleted item ${item.id}")
+        i("Deleted item ${clothingItem.id}")
     }
 
     private fun toContentValues(item: ClosetOrganiserModel): ContentValues {

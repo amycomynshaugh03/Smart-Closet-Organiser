@@ -35,4 +35,5 @@ interface ClothingStore {
     fun delete(clothingItem: ClosetOrganiserModel)
 
     fun findById(id: Long): ClosetOrganiserModel?
+
 }

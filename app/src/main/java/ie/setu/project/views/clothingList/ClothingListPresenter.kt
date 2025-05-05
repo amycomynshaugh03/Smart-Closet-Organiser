@@ -36,7 +36,7 @@ class ClothingListPresenter(private val view: ClothingListView) {
 
     private fun loadCarouselData() {
         carouselItems.clear()
-        carouselItems.addAll(app.clothingItems.findAll().take(5)) // Show first 5 items
+        carouselItems.addAll(app.clothingItems.findAll().take(5))
         view.refreshCarousel()
     }
 

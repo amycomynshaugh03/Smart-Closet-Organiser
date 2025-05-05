@@ -74,6 +74,11 @@ class ClothingMemStore : ClothingStore {
         logAll() // Log after deletion
     }
 
+    override fun findById(id: Long): ClosetOrganiserModel? {
+        return clothingItems.find { it.id == id }?.also {
+            Timber.i("Found item by ID $id: $it")
+        }
+    }
 
     /**
      * Logs the current list of all clothing items.
