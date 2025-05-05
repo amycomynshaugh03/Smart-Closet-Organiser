@@ -2,6 +2,7 @@ package ie.setu.project.closet.main
 
 import android.app.Application
 import ie.setu.project.models.ClosetJSONStore
+import ie.setu.project.models.ClosetSQLStore
 import ie.setu.project.models.ClothingMemStore
 import ie.setu.project.models.ClothingStore
 import timber.log.Timber
@@ -15,6 +16,7 @@ import timber.log.Timber.i
 class MainApp : Application() {
 
     lateinit var items: ClothingStore
+    lateinit var closetStore: ClothingStore
 
     /**q
      * In-memory storage for clothing items.
@@ -30,7 +32,8 @@ class MainApp : Application() {
         super.onCreate()
         // Set up Timber logging for debugging.
         Timber.plant(Timber.DebugTree())
-        items = ClosetJSONStore(applicationContext)
+        //items = ClosetJSONStore(applicationContext)
+        closetStore = ClosetSQLStore(applicationContext)
         // Log a message indicating the app has started.
         i("Closet Organiser started >3")
 

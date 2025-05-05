@@ -62,6 +62,11 @@ class ClosetJSONStore(private val context: Context) : ClothingStore {
         logAll()
     }
 
+    override fun findById(id: Long): ClosetOrganiserModel? {
+        return clothingItems.find { it.id == id }
+    }
+
+
     private fun serialize() {
         val jsonString = gsonBuilder.toJson(clothingItems, listType)
         write(context, JSON_FILE, jsonString)

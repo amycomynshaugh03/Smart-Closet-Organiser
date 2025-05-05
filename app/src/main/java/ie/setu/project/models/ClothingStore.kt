@@ -33,4 +33,7 @@ interface ClothingStore {
      * @param clothingItem The clothing item to be deleted.
      */
     fun delete(clothingItem: ClosetOrganiserModel)
+
+    fun findById(id: Long): ClosetOrganiserModel?
+
 }

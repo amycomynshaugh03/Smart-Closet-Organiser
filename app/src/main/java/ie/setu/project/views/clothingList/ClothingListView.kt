@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import ie.setu.project.R
 import ie.setu.project.adapters.CarouselAdapter
+import ie.setu.project.adapters.ClosetAdapter
 import ie.setu.project.adapters.ClosetItemListener
 import ie.setu.project.databinding.ActivityClothingListBinding
 import ie.setu.project.models.ClosetOrganiserModel
@@ -38,6 +39,8 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
         refreshCarousel()
     }
 
+    override fun onOptionsItemSelected(item: MenuItem) = super.onOptionsItemSelected(item)
+
     private fun setupCarousel() {
         viewPager = binding.carouselViewPager
         carouselAdapter = CarouselAdapter(emptyList(), this)
@@ -45,12 +48,8 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
     }
 
     fun refreshCarousel() {
-        if(::carouselAdapter.isInitialized) {
-            carouselAdapter.submitList(presenter.getCarouselItems())
-        }
+        (binding.carouselViewPager.adapter as? CarouselAdapter)?.submitList(presenter.getCarouselItems())
     }
-
-    override fun onOptionsItemSelected(item: MenuItem) = super.onOptionsItemSelected(item)
 
     override fun onClosetItemClick(item: ClosetOrganiserModel) {
         presenter.onClosetItemClick(item)
@@ -58,6 +57,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
 
     override fun onDeleteItemClick(item: ClosetOrganiserModel) {
         presenter.onDeleteItemClick(item)
+        refreshCarousel()
     }
 
     fun showSnackbar(message: String, duration: Int) {
