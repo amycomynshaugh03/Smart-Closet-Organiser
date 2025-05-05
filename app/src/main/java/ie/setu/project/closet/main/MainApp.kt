@@ -5,6 +5,8 @@ import ie.setu.project.models.ClosetJSONStore
 import ie.setu.project.models.ClosetSQLStore
 import ie.setu.project.models.ClothingMemStore
 import ie.setu.project.models.ClothingStore
+import ie.setu.project.models.OutfitMemStore
+import ie.setu.project.models.OutfitStore
 import timber.log.Timber
 import timber.log.Timber.i
 
@@ -17,6 +19,7 @@ class MainApp : Application() {
 
     lateinit var items: ClothingStore
     lateinit var closetStore: ClothingStore
+    val outfitItems: OutfitStore = OutfitMemStore()
 
     /**q
      * In-memory storage for clothing items.

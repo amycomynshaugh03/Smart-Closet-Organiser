@@ -47,5 +47,6 @@
     <string name="enter_size">Enter Size</string>
     <string name="change_clothing_image">Change Clothing Image</string>
     <string name="search_hint">Recherche</string>
+    <string name="add_outfits">Ajouter une tenue</string>
 
 </resources>
