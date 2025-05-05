@@ -7,6 +7,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.datepicker.MaterialDatePicker
+import ie.setu.project.activities.SelectClothingActivity
 import ie.setu.project.closet.main.MainApp
 import ie.setu.project.models.ClosetOrganiserModel
 import ie.setu.project.models.OutfitModel

@@ -5,16 +5,16 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import ie.setu.project.R
 import ie.setu.project.adapters.OutfitAdapter
-import ie.setu.project.adapters.OutfitListener
-import ie.setu.project.closet.main.MainApp
 import ie.setu.project.databinding.ActivityOutfitBinding
-import ie.setu.project.models.OutfitModel
 
-class OutfitView : AppCompatActivity(), OutfitListener {
+
+class OutfitView : AppCompatActivity() {
     private lateinit var binding: ActivityOutfitBinding
     private lateinit var presenter: OutfitPresenter
+    private lateinit var adapter: OutfitAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,47 +25,34 @@ class OutfitView : AppCompatActivity(), OutfitListener {
         setSupportActionBar(binding.topAppBar)
 
         presenter = OutfitPresenter(this)
+        setupRecyclerView()
+        loadOutfits()
+    }
 
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        binding.recyclerView.adapter = OutfitAdapter(
-            (application as MainApp).outfitItems.findAll(),
-            this
-        )
+    private fun setupRecyclerView() {
+        adapter = OutfitAdapter(mutableListOf()) { outfit ->
+            presenter.onOutfitClick(outfit)
+        }
+        binding.recyclerView.apply {
+            layoutManager = LinearLayoutManager(this@OutfitView)
+            adapter = this@OutfitView.adapter
+        }
+    }
+
+    fun loadOutfits() {
+        adapter.updateItems(presenter.getOutfits())
+    }
+
+    fun showSnackbar(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_outfit, menu)
-        return super.onCreateOptionsMenu(menu)
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return presenter.handleMenuSelection(item.itemId) || super.onOptionsItemSelected(item)
-    }
-
-    override fun onOutfitClick(outfit: OutfitModel) {
-        presenter.onOutfitClick(outfit)
-    }
-
-    override fun onDeleteOutfitClick(outfit: OutfitModel) {
-        presenter.onDeleteOutfitClick(outfit)
-        onRefresh()
-    }
-
-    private fun onRefresh() {
-        (binding.recyclerView.adapter as OutfitAdapter)
-            .updateItems(presenter.getOutfits())
-    }
-
-    fun notifyAdapterChanged() {
-        (binding.recyclerView.adapter)?.notifyItemRangeChanged(0, binding.recyclerView.adapter?.itemCount ?: 0)
-    }
-
-    fun updateAdapter() {
-        val updatedList = (application as MainApp).outfitItems.findAll()
-        (binding.recyclerView.adapter as OutfitAdapter).updateItems(updatedList)
-    }
-
-    fun showSnackbar(message: String, duration: Int) {
-        com.google.android.material.snackbar.Snackbar.make(binding.root, message, duration).show()
     }
 }

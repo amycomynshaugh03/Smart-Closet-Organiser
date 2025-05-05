@@ -4,11 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import com.google.android.material.snackbar.Snackbar
 import ie.setu.project.R
 import ie.setu.project.closet.main.MainApp
 import ie.setu.project.models.OutfitModel
-import ie.setu.project.views.outfit.AddOutfitView
+import ie.setu.project.views.addOutfit.AddOutfitView
+
 
 class OutfitPresenter(private val view: OutfitView) {
     private val app: MainApp = view.application as MainApp
@@ -22,7 +22,7 @@ class OutfitPresenter(private val view: OutfitView) {
 
     fun handleMenuSelection(itemId: Int): Boolean {
         return when (itemId) {
-            R.id.item_add_outfit -> {
+            R.id.item_add -> {
                 launchAddOutfit()
                 true
             }
@@ -39,8 +39,8 @@ class OutfitPresenter(private val view: OutfitView) {
 
     fun onDeleteOutfitClick(outfit: OutfitModel) {
         app.outfitItems.delete(outfit)
-        view.showSnackbar("Outfit deleted", Snackbar.LENGTH_SHORT)
-        view.updateAdapter()
+        view.showSnackbar("Outfit deleted")
+        view.loadOutfits()
     }
 
     private fun launchAddOutfit() {
@@ -52,11 +52,8 @@ class OutfitPresenter(private val view: OutfitView) {
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             when (result.resultCode) {
-                Activity.RESULT_OK -> view.notifyAdapterChanged()
-                Activity.RESULT_CANCELED -> view.showSnackbar(
-                    "Operation cancelled",
-                    Snackbar.LENGTH_SHORT
-                )
+                Activity.RESULT_OK -> view.loadOutfits()
+                Activity.RESULT_CANCELED -> view.showSnackbar("Operation cancelled")
             }
         }
     }

@@ -12,6 +12,7 @@ import ie.setu.project.adapters.ClosetItemListener
 import ie.setu.project.databinding.ActivityClothingListBinding
 import ie.setu.project.models.ClosetOrganiserModel
 import ie.setu.project.views.clothing.ClothingView
+import ie.setu.project.views.outfit.OutfitView
 
 class ClothingListView : AppCompatActivity(), ClosetItemListener {
     private lateinit var binding: ActivityClothingListBinding
@@ -31,6 +32,10 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
 
         binding.btnClothes.setOnClickListener {
             startActivity(Intent(this, ClothingView::class.java))
+        }
+
+        binding.btnOutfits.setOnClickListener {
+            startActivity(Intent(this, OutfitView::class.java))
         }
     }
 
