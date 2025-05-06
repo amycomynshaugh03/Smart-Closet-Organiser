@@ -14,6 +14,7 @@ plugins {
     // Dokka
     id("org.jetbrains.dokka") version "1.8.20"
     id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
+    kotlin("plugin.serialization") version "1.9.0"
 
 }
 
@@ -107,5 +108,21 @@ dependencies {
     implementation(libs.picasso)
 
     implementation (libs.gson)
+
+    // Ktor for Open-Meteo
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+
+    // Kotlinx Serialization
+    implementation(libs.kotlinx.serialization.json)
+
+    // DateTime support
+    implementation(libs.kotlinx.datetime)
+
+    // Location services (optional)
+    implementation(libs.play.services.location)
+
 
 }
