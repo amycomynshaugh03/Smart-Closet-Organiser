@@ -70,5 +70,12 @@ class OutfitMemStoreTest {
         assertEquals(0, store.findAll().size)
     }
 
+    @Test
+    fun `delete does nothing when item not found`() {
+        val outfit = OutfitModel(id = 99, title = "Non-existent")
+        store.delete(outfit)
+        assertEquals(0, store.findAll().size)
+    }
+
 
 }
