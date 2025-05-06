@@ -53,4 +53,11 @@ class OutfitMemStoreTest {
         assertEquals("Updated", foundOutfit.title)
     }
 
+    @Test
+    fun `update does nothing when item not found`() {
+        val outfit = OutfitModel(id = 99, title = "Non-existent")
+        store.update(outfit)
+        assertEquals(0, store.findAll().size)
+    }
+
 }
