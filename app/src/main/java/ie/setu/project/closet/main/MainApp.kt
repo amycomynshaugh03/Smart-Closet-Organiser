@@ -16,10 +16,10 @@ import timber.log.Timber.i
 class MainApp : Application() {
 
     // Clothing store (JSON implementation)
-    lateinit var clothingStore: ClothingStore
+    lateinit var clothingItems: ClothingStore
 
     // Outfit store (JSON implementation)
-    lateinit var outfitStore: OutfitStore
+    lateinit var outfitItems: OutfitStore
 
     /**
      * Called when the application is created.
@@ -32,8 +32,8 @@ class MainApp : Application() {
         Timber.plant(Timber.DebugTree())
 
         // Initialize stores
-        clothingStore = ClothingJSONStore(applicationContext)
-        outfitStore = OutfitJSONStore(applicationContext)
+        clothingItems = ClothingJSONStore(applicationContext)
+        outfitItems = OutfitJSONStore(applicationContext)
 
         // Log startup message
         i("Closet Organiser started with JSON stores")

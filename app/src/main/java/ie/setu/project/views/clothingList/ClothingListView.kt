@@ -3,14 +3,20 @@ package ie.setu.project.views.clothingList
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
 import ie.setu.project.adapters.carousel.CarouselAdapter
 import ie.setu.project.adapters.ClosetItemListener
+import ie.setu.project.adapters.SearchResultsAdapter
 import ie.setu.project.databinding.ActivityClothingListBinding
 import ie.setu.project.models.clothing.ClosetOrganiserModel
+import ie.setu.project.models.outfit.OutfitModel
 import ie.setu.project.models.weather.WeatherCondition
 import ie.setu.project.models.weather.WeatherResponse
 import ie.setu.project.views.clothing.ClothingView
@@ -21,7 +27,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
     private lateinit var presenter: ClothingListPresenter
     private lateinit var viewPager: ViewPager2
     private lateinit var carouselAdapter: CarouselAdapter
-
+    private lateinit var searchResultsAdapter: SearchResultsAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +39,10 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
         presenter = ClothingListPresenter(this)
         presenter.fetchWeather()
 
+
         setupCarousel()
+        setupSearchRecyclerView()
+        setupSearchListener()
 
         binding.btnClothes.setOnClickListener {
             startActivity(Intent(this, ClothingView::class.java))
@@ -93,5 +102,50 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
             binding.weatherDescription.text = message
             showSnackbar(message, Snackbar.LENGTH_SHORT)
         }
+    }
+
+    private fun setupSearchRecyclerView() {
+        searchResultsAdapter = SearchResultsAdapter { item ->
+            when (item) {
+                is ClosetOrganiserModel -> openClothingDetails(item)
+                is OutfitModel -> openOutfitDetails(item)
+            }
+            binding.searchResultsRecyclerView.visibility = View.GONE
+        }
+
+        binding.searchResultsRecyclerView.apply {
+            adapter = searchResultsAdapter
+            layoutManager = LinearLayoutManager(this@ClothingListView)
+        }
+    }
+
+    private fun setupSearchListener() {
+        binding.searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val query = s.toString()
+                if (query.isNotEmpty()) {
+                    val results = presenter.performSearch(query)
+                    searchResultsAdapter.updateList(results)
+                    binding.searchResultsRecyclerView.visibility = View.VISIBLE
+                } else {
+                    binding.searchResultsRecyclerView.visibility = View.GONE
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        })
+    }
+
+    private fun openClothingDetails(item: ClosetOrganiserModel) {
+        startActivity(Intent(this, ClothingView::class.java).apply {
+            putExtra("closet_item_edit", item)
+        })
+    }
+
+    private fun openOutfitDetails(item: OutfitModel) {
+        startActivity(Intent(this, OutfitView::class.java).apply {
+            putExtra("outfit_item_edit", item)
+        })
     }
 }
