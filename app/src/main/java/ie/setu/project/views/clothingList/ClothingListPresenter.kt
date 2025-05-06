@@ -35,14 +35,14 @@ class ClothingListPresenter(private val view: ClothingListView) {
     }
 
     fun onDeleteItemClick(item: ClosetOrganiserModel) {
-        app.clothingStore.delete(item)
+        app.clothingItems.delete(item)
         loadCarouselData()
         view.showSnackbar("Item deleted", Snackbar.LENGTH_SHORT)
     }
 
     private fun loadCarouselData() {
         carouselItems.clear()
-        carouselItems.addAll(app.clothingStore.findAll().take(5))
+        carouselItems.addAll(app.clothingItems.findAll().take(5))
         view.refreshCarousel()
     }
 
@@ -81,14 +81,14 @@ class ClothingListPresenter(private val view: ClothingListView) {
     fun performSearch(query: String): List<Any> {
         val results = mutableListOf<Any>()
 
-        val clothingResults = app.clothingStore.findAll().filter {
+        val clothingResults = app.clothingItems.findAll().filter {
             it.title.contains(query, ignoreCase = true) ||
                     it.description.contains(query, ignoreCase = true) ||
                     it.colourPattern.contains(query, ignoreCase = true) ||
                     it.season.contains(query, ignoreCase = true)
         }
-        
-        val outfitResults = app.outfitStore.findAll().filter {
+
+        val outfitResults = app.outfitItems.findAll().filter {
             it.title.contains(query, ignoreCase = true) ||
                     it.description.contains(query, ignoreCase = true) ||
                     it.season.contains(query, ignoreCase = true) ||
