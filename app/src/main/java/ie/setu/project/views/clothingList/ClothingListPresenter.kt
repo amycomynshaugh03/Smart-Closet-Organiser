@@ -35,14 +35,14 @@ class ClothingListPresenter(private val view: ClothingListView) {
     }
 
     fun onDeleteItemClick(item: ClosetOrganiserModel) {
-        app.clothingItems.delete(item)
+        app.clothingStore.delete(item)
         loadCarouselData()
         view.showSnackbar("Item deleted", Snackbar.LENGTH_SHORT)
     }
 
     private fun loadCarouselData() {
         carouselItems.clear()
-        carouselItems.addAll(app.clothingItems.findAll().take(5))
+        carouselItems.addAll(app.clothingStore.findAll().take(5))
         view.refreshCarousel()
     }
 
