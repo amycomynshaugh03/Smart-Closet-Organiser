@@ -8,11 +8,17 @@ import com.google.android.material.snackbar.Snackbar
 import ie.setu.project.closet.main.MainApp
 import ie.setu.project.models.clothing.ClosetOrganiserModel
 import ie.setu.project.views.main.MainView
+import ie.setu.project.weather.WeatherService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ClothingListPresenter(private val view: ClothingListView) {
     private val app: MainApp = view.application as MainApp
     private lateinit var getResult: ActivityResultLauncher<Intent>
     private var carouselItems = mutableListOf<ClosetOrganiserModel>()
+    private val weatherService = WeatherService()
 
     init {
         registerActivityResultCallback()
@@ -20,7 +26,7 @@ class ClothingListPresenter(private val view: ClothingListView) {
     }
 
     fun getCarouselItems(): List<ClosetOrganiserModel> = carouselItems.toList()
-    fun getClosetItems(): List<ClosetOrganiserModel> = app.clothingItems.findAll()
+
 
     fun onClosetItemClick(item: ClosetOrganiserModel) {
         getResult.launch(Intent(view, MainView::class.java).apply {
@@ -50,6 +56,24 @@ class ClothingListPresenter(private val view: ClothingListView) {
                     "Operation cancelled",
                     Snackbar.LENGTH_SHORT
                 )
+            }
+        }
+    }
+    fun fetchWeather() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                println("Attempting to fetch weather...")
+                val weather = weatherService.getWeather(53.3498, -6.2603)
+                println("Weather data received: $weather")
+                withContext(Dispatchers.Main) {
+                    view.updateWeatherUI(weather)
+                }
+            } catch (e: Exception) {
+                println("Weather fetch failed: ${e.message}")
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    view.showWeatherError("Failed to load weather data")
+                }
             }
         }
     }
