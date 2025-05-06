@@ -28,4 +28,17 @@ class OutfitMemStoreTest {
         assertEquals(0L, outfit.id)
         assertEquals(outfit, store.findAll().first())
     }
+
+    @Test
+    fun `create assigns correct IDs`() {
+        val outfit1 = OutfitModel(title = "First")
+        val outfit2 = OutfitModel(title = "Second")
+
+        store.create(outfit1)
+        store.create(outfit2)
+
+        assertEquals(0L, outfit1.id)
+        assertEquals(1L, outfit2.id)
+    }
+
 }
