@@ -5,10 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import ie.setu.project.adapters.SelectClothingAdapter
+import ie.setu.project.adapters.outfit.SelectClothingAdapter
 import ie.setu.project.closet.main.MainApp
 import ie.setu.project.databinding.ActivitySelectClothingBinding
-import ie.setu.project.models.ClosetOrganiserModel
+import ie.setu.project.models.clothing.ClosetOrganiserModel
 
 class SelectClothingActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySelectClothingBinding

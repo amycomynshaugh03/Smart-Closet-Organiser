@@ -1,16 +1,14 @@
 package ie.setu.project.views.addOutfit
 
-import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.datepicker.MaterialDatePicker
 import ie.setu.project.activities.SelectClothingActivity
 import ie.setu.project.closet.main.MainApp
-import ie.setu.project.models.ClosetOrganiserModel
-import ie.setu.project.models.OutfitModel
+import ie.setu.project.models.clothing.ClosetOrganiserModel
+import ie.setu.project.models.outfit.OutfitModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale

@@ -1,4 +1,4 @@
-package ie.setu.project.models
+package ie.setu.project.models.clothing
 
 import timber.log.Timber
 

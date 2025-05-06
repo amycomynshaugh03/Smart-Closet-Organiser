@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import ie.setu.project.R
 import ie.setu.project.databinding.ActivityAddOutfitBinding
-import ie.setu.project.models.OutfitModel
+import ie.setu.project.models.outfit.OutfitModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 

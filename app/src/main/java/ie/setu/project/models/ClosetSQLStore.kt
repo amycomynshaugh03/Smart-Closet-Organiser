@@ -6,6 +6,8 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.net.Uri
+import ie.setu.project.models.clothing.ClosetOrganiserModel
+import ie.setu.project.models.clothing.ClothingStore
 import timber.log.Timber.i
 import java.util.Date
 

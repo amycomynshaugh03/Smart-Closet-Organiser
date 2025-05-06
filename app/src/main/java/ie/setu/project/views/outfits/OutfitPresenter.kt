@@ -6,7 +6,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import ie.setu.project.R
 import ie.setu.project.closet.main.MainApp
-import ie.setu.project.models.OutfitModel
+import ie.setu.project.models.outfit.OutfitModel
 import ie.setu.project.views.addOutfit.AddOutfitView
 
 

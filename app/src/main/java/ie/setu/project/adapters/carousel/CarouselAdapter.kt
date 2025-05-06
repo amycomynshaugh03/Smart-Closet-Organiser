@@ -1,11 +1,12 @@
-package ie.setu.project.adapters
+package ie.setu.project.adapters.carousel
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import ie.setu.project.adapters.ClosetItemListener
 import ie.setu.project.databinding.CarouselItemBinding
-import ie.setu.project.models.ClosetOrganiserModel
+import ie.setu.project.models.clothing.ClosetOrganiserModel
 
 class CarouselAdapter(
     private var items: List<ClosetOrganiserModel>,

@@ -1,15 +1,14 @@
-package ie.setu.project.adapters
+package ie.setu.project.adapters.outfit
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ie.setu.project.R
-import ie.setu.project.models.ClosetOrganiserModel
+import ie.setu.project.models.clothing.ClosetOrganiserModel
 
 class SelectClothingAdapter(
     private var clothingList: List<ClosetOrganiserModel>,

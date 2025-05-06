@@ -11,7 +11,7 @@ import ie.setu.project.adapters.ClosetAdapter
 import ie.setu.project.adapters.ClosetItemListener
 import ie.setu.project.closet.main.MainApp
 import ie.setu.project.databinding.ActivityClothingBinding
-import ie.setu.project.models.ClosetOrganiserModel
+import ie.setu.project.models.clothing.ClosetOrganiserModel
 import ie.setu.project.views.clothingList.ClothingListView
 
 class ClothingView : AppCompatActivity(), ClosetItemListener {

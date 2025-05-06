@@ -1,4 +1,4 @@
-package ie.setu.project.models
+package ie.setu.project.models.clothing
 
 /**
  * Interface that defines the operations for managing clothing items in a store.

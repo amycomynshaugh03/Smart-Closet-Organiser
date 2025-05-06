@@ -5,6 +5,8 @@ import android.net.Uri
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import ie.setu.project.helpers.*
+import ie.setu.project.models.clothing.ClosetOrganiserModel
+import ie.setu.project.models.clothing.ClothingStore
 import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.*

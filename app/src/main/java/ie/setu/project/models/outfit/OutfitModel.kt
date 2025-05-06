@@ -1,7 +1,7 @@
-package ie.setu.project.models
+package ie.setu.project.models.outfit
 
-import android.net.Uri
 import android.os.Parcelable
+import ie.setu.project.models.clothing.ClosetOrganiserModel
 import kotlinx.parcelize.Parcelize
 import java.util.Date
 

@@ -11,7 +11,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import ie.setu.project.R
 import ie.setu.project.databinding.ActivityMainBinding
-import ie.setu.project.models.ClosetOrganiserModel
+import ie.setu.project.models.clothing.ClosetOrganiserModel
 import timber.log.Timber.i
 import java.text.SimpleDateFormat
 import java.util.Locale

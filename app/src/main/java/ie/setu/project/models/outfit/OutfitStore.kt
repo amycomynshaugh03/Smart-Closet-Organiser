@@ -1,4 +1,4 @@
-package ie.setu.project.models
+package ie.setu.project.models.outfit
 
 
 interface OutfitStore {

@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.datepicker.MaterialDatePicker
 import ie.setu.project.closet.main.MainApp
 import ie.setu.project.helpers.showImagePicker
-import ie.setu.project.models.ClosetOrganiserModel
+import ie.setu.project.models.clothing.ClosetOrganiserModel
 import timber.log.Timber.i
 import java.text.SimpleDateFormat
 import java.util.Calendar

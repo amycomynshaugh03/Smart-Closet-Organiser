@@ -5,12 +5,10 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
-import ie.setu.project.R
-import ie.setu.project.adapters.CarouselAdapter
-import ie.setu.project.adapters.ClosetAdapter
+import ie.setu.project.adapters.carousel.CarouselAdapter
 import ie.setu.project.adapters.ClosetItemListener
 import ie.setu.project.databinding.ActivityClothingListBinding
-import ie.setu.project.models.ClosetOrganiserModel
+import ie.setu.project.models.clothing.ClosetOrganiserModel
 import ie.setu.project.views.clothing.ClothingView
 import ie.setu.project.views.outfit.OutfitView
 

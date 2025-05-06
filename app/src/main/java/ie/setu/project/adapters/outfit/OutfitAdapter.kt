@@ -1,4 +1,4 @@
-package ie.setu.project.adapters
+package ie.setu.project.adapters.outfit
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import ie.setu.project.databinding.OutfitItemBinding
-import ie.setu.project.models.OutfitModel
+import ie.setu.project.models.outfit.OutfitModel
 
 class OutfitAdapter(
     private var outfits: List<OutfitModel>,

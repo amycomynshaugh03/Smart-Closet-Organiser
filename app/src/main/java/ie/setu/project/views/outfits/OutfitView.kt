@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import ie.setu.project.R
-import ie.setu.project.adapters.OutfitAdapter
+import ie.setu.project.adapters.outfit.OutfitAdapter
 import ie.setu.project.databinding.ActivityOutfitBinding
 
 

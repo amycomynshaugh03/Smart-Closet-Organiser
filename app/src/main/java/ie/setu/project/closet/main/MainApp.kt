@@ -1,12 +1,11 @@
 package ie.setu.project.closet.main
 
 import android.app.Application
-import ie.setu.project.models.ClosetJSONStore
 import ie.setu.project.models.ClosetSQLStore
-import ie.setu.project.models.ClothingMemStore
-import ie.setu.project.models.ClothingStore
-import ie.setu.project.models.OutfitMemStore
-import ie.setu.project.models.OutfitStore
+import ie.setu.project.models.clothing.ClothingMemStore
+import ie.setu.project.models.clothing.ClothingStore
+import ie.setu.project.models.outfit.OutfitMemStore
+import ie.setu.project.models.outfit.OutfitStore
 import timber.log.Timber
 import timber.log.Timber.i
 

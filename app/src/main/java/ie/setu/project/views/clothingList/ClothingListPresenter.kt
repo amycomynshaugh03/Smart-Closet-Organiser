@@ -6,7 +6,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.snackbar.Snackbar
 import ie.setu.project.closet.main.MainApp
-import ie.setu.project.models.ClosetOrganiserModel
+import ie.setu.project.models.clothing.ClosetOrganiserModel
 import ie.setu.project.views.main.MainView
 
 class ClothingListPresenter(private val view: ClothingListView) {
