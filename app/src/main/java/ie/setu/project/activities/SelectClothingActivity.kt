@@ -20,20 +20,34 @@ class SelectClothingActivity : AppCompatActivity() {
         binding = ActivitySelectClothingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Get previously selected items or initialize empty list
         selectedClothing = intent.getParcelableArrayListExtra<ClosetOrganiserModel>("selected_clothing")?.toMutableList() ?: mutableListOf()
 
-        // Setup toolbar
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Select Clothing Items"
+        updateSelectionCount()
 
-        // Setup RecyclerView
         val allClothing = (application as MainApp).clothingItems.findAll()
         adapter = SelectClothingAdapter(
             allClothing,
             selectedClothing,
-            this::onClothingItemSelected
+            { item, isSelected ->
+                if (isSelected) {
+                    if (!selectedClothing.contains(item)) {
+                        selectedClothing.add(item)
+                    }
+                } else {
+                    selectedClothing.remove(item)
+                }
+                updateSelectionCount()
+            },
+            { item ->
+                // Handle delete
+                (application as MainApp).clothingItems.delete(item)
+                selectedClothing.remove(item)
+                adapter.updateList((application as MainApp).clothingItems.findAll())
+                updateSelectionCount()
+            }
         )
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
@@ -44,15 +58,7 @@ class SelectClothingActivity : AppCompatActivity() {
         }
     }
 
-    private fun onClothingItemSelected(item: ClosetOrganiserModel, isSelected: Boolean) {
-        if (isSelected) {
-            if (!selectedClothing.contains(item)) {
-                selectedClothing.add(item)
-            }
-        } else {
-            selectedClothing.remove(item)
-        }
-        // Update the selected count display
+    private fun updateSelectionCount() {
         supportActionBar?.subtitle = "${selectedClothing.size} selected"
     }
 

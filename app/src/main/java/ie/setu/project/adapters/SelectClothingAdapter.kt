@@ -3,7 +3,9 @@ package ie.setu.project.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.CheckBox
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ie.setu.project.R
@@ -12,13 +14,16 @@ import ie.setu.project.models.ClosetOrganiserModel
 class SelectClothingAdapter(
     private var clothingList: List<ClosetOrganiserModel>,
     private var selectedItems: MutableList<ClosetOrganiserModel>,
-    private val onItemSelected: (ClosetOrganiserModel, Boolean) -> Unit
+    private val onItemSelected: (ClosetOrganiserModel, Boolean) -> Unit,
+    private val onDeleteClicked: (ClosetOrganiserModel) -> Unit
 ) : RecyclerView.Adapter<SelectClothingAdapter.ClothingSelectionHolder>() {
 
     inner class ClothingSelectionHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val checkbox: CheckBox = itemView.findViewById(R.id.checkbox)
+        val clothingImage: ImageView = itemView.findViewById(R.id.clothingImage)
+        val selectionCheckbox: CheckBox = itemView.findViewById(R.id.selectionCheckbox) // Updated to match XML
         val clothingTitle: TextView = itemView.findViewById(R.id.clothingTitle)
         val clothingDescription: TextView = itemView.findViewById(R.id.clothingDescription)
+        val deleteButton: Button = itemView.findViewById(R.id.deleteButton)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClothingSelectionHolder {
@@ -29,17 +34,21 @@ class SelectClothingAdapter(
 
     override fun onBindViewHolder(holder: ClothingSelectionHolder, position: Int) {
         val clothing = clothingList[position]
+
         holder.clothingTitle.text = clothing.title
         holder.clothingDescription.text = clothing.description
-        holder.checkbox.isChecked = selectedItems.contains(clothing)
+        holder.selectionCheckbox.isChecked = selectedItems.contains(clothing)
 
-        holder.itemView.setOnClickListener {
-            holder.checkbox.isChecked = !holder.checkbox.isChecked
-            onItemSelected(clothing, holder.checkbox.isChecked)
+        clothing.image?.let { uri ->
+            holder.clothingImage.setImageURI(uri)
         }
 
-        holder.checkbox.setOnCheckedChangeListener { _, isChecked ->
+        holder.selectionCheckbox.setOnCheckedChangeListener { _, isChecked ->
             onItemSelected(clothing, isChecked)
+        }
+
+        holder.itemView.setOnClickListener {
+            holder.selectionCheckbox.isChecked = !holder.selectionCheckbox.isChecked
         }
     }
 
