@@ -41,4 +41,16 @@ class OutfitMemStoreTest {
         assertEquals(1L, outfit2.id)
     }
 
+    @Test
+    fun `update modifies existing item`() {
+        val originalOutfit = OutfitModel(title = "Original")
+        store.create(originalOutfit)
+
+        val updatedOutfit = OutfitModel(id = 0, title = "Updated")
+        store.update(updatedOutfit)
+
+        val foundOutfit = store.findAll().first()
+        assertEquals("Updated", foundOutfit.title)
+    }
+
 }
