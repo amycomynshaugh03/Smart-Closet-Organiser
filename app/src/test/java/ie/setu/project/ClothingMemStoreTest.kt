@@ -80,4 +80,15 @@ class ClothingMemStoreTest {
         assertEquals(0, store.findAll().size)
     }
 
+    @Test
+    fun `findById returns correct item`() {
+        val item1 = ClosetOrganiserModel(id = 1, title = "First")
+        val item2 = ClosetOrganiserModel(id = 2, title = "Second")
+        store.create(item1)
+        store.create(item2)
+
+        val found = store.findById(2)
+        assertEquals(item2, found)
+    }
+
 }
