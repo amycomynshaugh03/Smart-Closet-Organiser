@@ -5,7 +5,6 @@ import junit.framework.TestCase.assertNull
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
-import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
 
