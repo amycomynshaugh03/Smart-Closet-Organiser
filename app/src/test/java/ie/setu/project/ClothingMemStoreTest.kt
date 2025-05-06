@@ -2,6 +2,7 @@ package ie.setu.project.models.clothing
 
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNull
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
 import java.time.LocalDate
@@ -95,6 +96,13 @@ class ClothingMemStoreTest {
     @Test
     fun `findById returns null for non-existent id`() {
         assertNull(store.findById(999))
+    }
+
+    @Test
+    fun `getId generates unique IDs`() {
+        val id1 = store.getId()
+        val id2 = store.getId()
+        assertNotEquals(id1, id2)
     }
 
 }
