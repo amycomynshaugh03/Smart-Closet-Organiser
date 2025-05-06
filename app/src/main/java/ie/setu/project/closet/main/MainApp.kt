@@ -1,43 +1,41 @@
 package ie.setu.project.closet.main
 
 import android.app.Application
-import ie.setu.project.models.ClosetSQLStore
-import ie.setu.project.models.clothing.ClothingMemStore
+import ie.setu.project.models.ClothingJSONStore
+import ie.setu.project.models.OutfitJSONStore
 import ie.setu.project.models.clothing.ClothingStore
-import ie.setu.project.models.outfit.OutfitMemStore
 import ie.setu.project.models.outfit.OutfitStore
 import timber.log.Timber
 import timber.log.Timber.i
 
 /**
  * Application class for the Closet Organiser app.
- * This class is responsible for initializing the app and setting up the in-memory store
- * for clothing items.
+ * This class is responsible for initializing the app and setting up the stores
+ * for both clothing items and outfits.
  */
 class MainApp : Application() {
 
-    lateinit var items: ClothingStore
-    lateinit var closetStore: ClothingStore
-    val outfitItems: OutfitStore = OutfitMemStore()
+    // Clothing store (JSON implementation)
+    lateinit var clothingStore: ClothingStore
 
-    /**q
-     * In-memory storage for clothing items.
-     * Uses the `ClothingMemStore` to manage the list of clothing items.
-     */
-    val clothingItems = ClothingMemStore()
+    // Outfit store (JSON implementation)
+    lateinit var outfitStore: OutfitStore
 
     /**
      * Called when the application is created.
-     * This method initializes logging using Timber and sets up the in-memory store.
+     * Initializes logging using Timber and sets up both stores.
      */
     override fun onCreate() {
         super.onCreate()
-        // Set up Timber logging for debugging.
-        Timber.plant(Timber.DebugTree())
-        //items = ClosetJSONStore(applicationContext)
-        closetStore = ClosetSQLStore(applicationContext)
-        // Log a message indicating the app has started.
-        i("Closet Organiser started >3")
 
+        // Set up Timber logging for debugging
+        Timber.plant(Timber.DebugTree())
+
+        // Initialize stores
+        clothingStore = ClothingJSONStore(applicationContext)
+        outfitStore = OutfitJSONStore(applicationContext)
+
+        // Log startup message
+        i("Closet Organiser started with JSON stores")
     }
 }

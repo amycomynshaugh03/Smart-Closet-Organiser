@@ -21,7 +21,7 @@ val listType: Type = object : TypeToken<ArrayList<ClosetOrganiserModel>>() {}.ty
 
 fun generateRandomId(): Long = Random().nextLong()
 
-class ClosetJSONStore(private val context: Context) : ClothingStore {
+class ClothingJSONStore(private val context: Context) : ClothingStore {
 
     private var clothingItems = mutableListOf<ClosetOrganiserModel>()
 
