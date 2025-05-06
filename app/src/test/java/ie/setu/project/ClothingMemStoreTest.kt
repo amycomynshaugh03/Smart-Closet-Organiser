@@ -69,4 +69,15 @@ class ClothingMemStoreTest {
         assertEquals("Updated Description", foundItem.description)
         assertEquals("Summer", foundItem.season)
     }
+
+    @Test
+    fun `delete removes item from store`() {
+        val item = ClosetOrganiserModel(id = 1, title = "To Delete")
+        store.create(item)
+        assertEquals(1, store.findAll().size)
+
+        store.delete(item)
+        assertEquals(0, store.findAll().size)
+    }
+
 }
