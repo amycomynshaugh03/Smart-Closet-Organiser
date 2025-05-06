@@ -1,8 +1,6 @@
 package ie.setu.project.views.addOutfit
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
@@ -22,9 +20,6 @@ class AddOutfitView : AppCompatActivity() {
         binding = ActivityAddOutfitBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        presenter = AddOutfitPresenter(this)
-
-        // Setup season spinner
         val seasonSpinner: Spinner = findViewById(R.id.outfitSeason)
         ArrayAdapter.createFromResource(
             this,
@@ -34,6 +29,8 @@ class AddOutfitView : AppCompatActivity() {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             seasonSpinner.adapter = adapter
         }
+
+        presenter = AddOutfitPresenter(this)
 
         binding.lastWorn.setOnClickListener {
             presenter.showDatePicker()
@@ -61,12 +58,25 @@ class AddOutfitView : AppCompatActivity() {
         binding.outfitDescription.setText(outfit.description)
 
         val seasonSpinner: Spinner = findViewById(R.id.outfitSeason)
-        val adapter = seasonSpinner.adapter as ArrayAdapter<String>
-        val seasonPosition = adapter.getPosition(outfit.season)
-        seasonSpinner.setSelection(seasonPosition)
+        val seasonsArray = resources.getStringArray(R.array.seasons_array)
 
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        binding.lastWorn.setText(sdf.format(outfit.lastWorn))
+
+        try {
+            val seasonPosition = seasonsArray.indexOf(outfit.season)
+            if (seasonPosition >= 0) {
+                seasonSpinner.setSelection(seasonPosition)
+            }
+        } catch (e: Exception) {
+            seasonSpinner.setSelection(0)
+        }
+
+
+        try {
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            binding.lastWorn.setText(sdf.format(outfit.lastWorn))
+        } catch (e: Exception) {
+            binding.lastWorn.setText("")
+        }
     }
 
     fun updateLastWornDate(date: String) {

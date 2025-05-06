@@ -1,41 +1,52 @@
 package ie.setu.project.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import ie.setu.project.databinding.CardSelectClothingBinding
+import ie.setu.project.R
 import ie.setu.project.models.ClosetOrganiserModel
 
 class SelectClothingAdapter(
-    private var clothingItems: List<ClosetOrganiserModel>,
-    private val selectedItems: List<ClosetOrganiserModel>,
+    private var clothingList: List<ClosetOrganiserModel>,
+    private var selectedItems: MutableList<ClosetOrganiserModel>,
     private val onItemSelected: (ClosetOrganiserModel, Boolean) -> Unit
-) : RecyclerView.Adapter<SelectClothingAdapter.MainHolder>() {
+) : RecyclerView.Adapter<SelectClothingAdapter.ClothingSelectionHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
-        val binding = CardSelectClothingBinding
-            .inflate(LayoutInflater.from(parent.context), parent, false)
-        return MainHolder(binding)
+    inner class ClothingSelectionHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val checkbox: CheckBox = itemView.findViewById(R.id.checkbox)
+        val clothingTitle: TextView = itemView.findViewById(R.id.clothingTitle)
+        val clothingDescription: TextView = itemView.findViewById(R.id.clothingDescription)
     }
 
-    override fun onBindViewHolder(holder: MainHolder, position: Int) {
-        val item = clothingItems[position]
-        holder.bind(item, selectedItems.contains(item), onItemSelected)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClothingSelectionHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.card_select_clothing, parent, false)
+        return ClothingSelectionHolder(view)
     }
 
-    override fun getItemCount(): Int = clothingItems.size
+    override fun onBindViewHolder(holder: ClothingSelectionHolder, position: Int) {
+        val clothing = clothingList[position]
+        holder.clothingTitle.text = clothing.title
+        holder.clothingDescription.text = clothing.description
+        holder.checkbox.isChecked = selectedItems.contains(clothing)
 
-    class MainHolder(private val binding: CardSelectClothingBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(item: ClosetOrganiserModel, isSelected: Boolean, onItemSelected: (ClosetOrganiserModel, Boolean) -> Unit) {
-            binding.clothingTitle.text = item.title
-            binding.clothingDescription.text = item.description
-            binding.checkbox.isChecked = isSelected
-
-            binding.checkbox.setOnCheckedChangeListener { _, checked ->
-                onItemSelected(item, checked)
-            }
+        holder.itemView.setOnClickListener {
+            holder.checkbox.isChecked = !holder.checkbox.isChecked
+            onItemSelected(clothing, holder.checkbox.isChecked)
         }
+
+        holder.checkbox.setOnCheckedChangeListener { _, isChecked ->
+            onItemSelected(clothing, isChecked)
+        }
+    }
+
+    override fun getItemCount(): Int = clothingList.size
+
+    fun updateList(newList: List<ClosetOrganiserModel>) {
+        clothingList = newList
+        notifyDataSetChanged()
     }
 }
