@@ -4,14 +4,13 @@ import android.support.annotation.DrawableRes
 import ie.setu.project.R
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class WeatherResponse(
     val latitude: Double,
     val longitude: Double,
     val current_weather: CurrentWeather,
-    val hourly: HourlyUnits,
-    val daily: DailyUnits
+    val hourly: HourlyUnits? = null,
+    val daily: DailyUnits? = null
 )
 
 @Serializable
@@ -28,7 +27,7 @@ data class CurrentWeather(
 data class HourlyUnits(
     val time: List<String>,
     val temperature_2m: List<Float>,
-    val precipitation_probability: List<Int>,
+    val precipitation_probability: List<Int>? = null,
     val weathercode: List<Int>
 )
 
@@ -38,8 +37,8 @@ data class DailyUnits(
     val weathercode: List<Int>,
     val temperature_2m_max: List<Float>,
     val temperature_2m_min: List<Float>,
-    val sunrise: List<String>,
-    val sunset: List<String>
+    val sunrise: List<String>? = null,
+    val sunset: List<String>? = null
 )
 
 enum class WeatherCondition(

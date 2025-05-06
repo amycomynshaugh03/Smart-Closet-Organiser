@@ -12,6 +12,7 @@ import ie.setu.project.weather.WeatherService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ClothingListPresenter(private val view: ClothingListView) {
     private val app: MainApp = view.application as MainApp
@@ -61,10 +62,18 @@ class ClothingListPresenter(private val view: ClothingListView) {
     fun fetchWeather() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val weather = weatherService.getWeather(53.3498, -6.2603) // Dublin
-                view.updateWeatherUI(weather)
+                println("Attempting to fetch weather...")
+                val weather = weatherService.getWeather(53.3498, -6.2603)
+                println("Weather data received: $weather")
+                withContext(Dispatchers.Main) {
+                    view.updateWeatherUI(weather)
+                }
             } catch (e: Exception) {
-                view.showWeatherError(e.message ?: "Weather unavailable")
+                println("Weather fetch failed: ${e.message}")
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    view.showWeatherError("Failed to load weather data")
+                }
             }
         }
     }
