@@ -60,4 +60,15 @@ class OutfitMemStoreTest {
         assertEquals(0, store.findAll().size)
     }
 
+    @Test
+    fun `delete removes item from store`() {
+        val outfit = OutfitModel(id = 0, title = "To be deleted")
+        store.create(outfit)
+        assertEquals(1, store.findAll().size)
+
+        store.delete(outfit)
+        assertEquals(0, store.findAll().size)
+    }
+
+
 }
