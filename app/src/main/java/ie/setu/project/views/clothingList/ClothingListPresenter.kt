@@ -77,4 +77,29 @@ class ClothingListPresenter(private val view: ClothingListView) {
             }
         }
     }
+
+    fun performSearch(query: String): List<Any> {
+        val results = mutableListOf<Any>()
+
+        val clothingResults = app.clothingStore.findAll().filter {
+            it.title.contains(query, ignoreCase = true) ||
+                    it.description.contains(query, ignoreCase = true) ||
+                    it.colourPattern.contains(query, ignoreCase = true) ||
+                    it.season.contains(query, ignoreCase = true)
+        }
+        
+        val outfitResults = app.outfitStore.findAll().filter {
+            it.title.contains(query, ignoreCase = true) ||
+                    it.description.contains(query, ignoreCase = true) ||
+                    it.season.contains(query, ignoreCase = true) ||
+                    it.clothingItems.any { clothing ->
+                        clothing.title.contains(query, ignoreCase = true) ||
+                                clothing.description.contains(query, ignoreCase = true)
+                    }
+        }
+
+        results.addAll(clothingResults)
+        results.addAll(outfitResults)
+        return results
+    }
 }
