@@ -23,7 +23,7 @@ class SelectClothingAdapter(
         val selectionCheckbox: CheckBox = itemView.findViewById(R.id.selectionCheckbox) // Updated to match XML
         val clothingTitle: TextView = itemView.findViewById(R.id.clothingTitle)
         val clothingDescription: TextView = itemView.findViewById(R.id.clothingDescription)
-        val deleteButton: Button = itemView.findViewById(R.id.deleteButton)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClothingSelectionHolder {
