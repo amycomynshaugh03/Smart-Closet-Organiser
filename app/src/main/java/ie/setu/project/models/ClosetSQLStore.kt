@@ -26,7 +26,7 @@ private const val COLUMN_IMAGE = "image"
 
 class ClosetSQLStore(private val context: Context) : ClothingStore {
 
-    private var database: SQLiteDatabase
+    var database: SQLiteDatabase
 
     init {
         database = ClosetDbHelper(context).writableDatabase

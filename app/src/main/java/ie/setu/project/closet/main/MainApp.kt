@@ -2,9 +2,7 @@ package ie.setu.project.closet.main
 
 import android.app.Application
 import ie.setu.project.models.ClosetSQLStore
-import ie.setu.project.models.ClothingJSONStore
 import ie.setu.project.models.OutfitJSONStore
-import ie.setu.project.models.OutfitSQLStore
 import ie.setu.project.models.clothing.ClothingStore
 import ie.setu.project.models.outfit.OutfitStore
 import timber.log.Timber
@@ -23,6 +21,7 @@ class MainApp : Application() {
     // Outfit store (JSON implementation)
     lateinit var outfitItems: OutfitStore
 
+
     /**
      * Called when the application is created.
      * Initializes logging using Timber and sets up both stores.
@@ -35,10 +34,12 @@ class MainApp : Application() {
 
         // Initialize stores
 //        clothingItems = ClothingJSONStore(applicationContext)
-//        outfitItems = OutfitJSONStore(applicationContext)
+        outfitItems = OutfitJSONStore(applicationContext)
 
         clothingItems = ClosetSQLStore(applicationContext)
-        outfitItems = OutfitSQLStore(applicationContext)
+        //outfitItems = OutfitSQLStore(applicationContext)
+
+
 
         // Log startup message
         i("Closet Organiser started with JSON stores")
