@@ -1,15 +1,20 @@
 <h1> Closet Organiser App </h1>
 Welcome to my Closet Organise App for my Mobile App Development Assignment! This app is designed to help users manage their closet, allowing them to keep track of their clothing items, seasons, and last-worn dates.
 
-<h2> Wireframes</h2>
-Original Wireframe:
-![IMG_1314](https://github.com/user-attachments/assets/f82eb26c-f27d-46e5-9274-818aa15dbbc0)
 
-Updated Wireframe: 
-<br>Main: ![IMG_1311](https://github.com/user-attachments/assets/ab2c0ce7-2a04-4c81-91cb-839853a9ecd5)
-Clothing: ![IMG_1312](https://github.com/user-attachments/assets/c5a236b3-7f21-4949-8fe0-107260ff6669)
+<h2> Wireframes</h2> 
+
+<br>Main: ![IMG_1767](https://github.com/user-attachments/assets/9159229a-b830-447b-b45c-553177d6b292)
+
+Clothing: ![IMG_1768](https://github.com/user-attachments/assets/3f2f5cd0-e8d2-4310-8fd8-772f4eabc542)
+
 Add Clothing: ![IMG_1313](https://github.com/user-attachments/assets/d3a56a07-d279-47a0-a1c9-ea1cf7921f04) 
 
+Outfit: ![IMG_1770](https://github.com/user-attachments/assets/e5da3d1f-4638-44b5-a368-2a30bd9bf372)
+
+Add Outfit: ![IMG_1771](https://github.com/user-attachments/assets/6889adba-ed90-45be-b7a1-b5f6d177139e)
+
+Select Clothing Items: ![IMG_1772](https://github.com/user-attachments/assets/8f45831f-4799-40a7-898a-4ae2d6d4c787)
 
 <h2> Final Submission Overview </h2>
 In this final submission, I have implemented a fully-functional Closet Organiser App with new features, improved design, and seamless functionality based on all the provided files, including integration of outfits, persistence via local storage, carousel images, and the weather API for a complete and polished user experience. Below is a detailed breakdown of the work done:
