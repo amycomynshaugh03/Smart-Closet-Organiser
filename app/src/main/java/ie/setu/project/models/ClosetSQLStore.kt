@@ -98,7 +98,8 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
             size = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SIZE)),
             season = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SEASON)),
             lastWorn = Date(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_LAST_WORN))),
-            image = Uri.parse(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE))))
+            image = Uri.parse(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE)))
+        )
     }
 
     private fun toContentValues(item: ClosetOrganiserModel): ContentValues {
@@ -117,24 +118,52 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
         SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
         override fun onCreate(db: SQLiteDatabase) {
-            db.execSQL("""
-                CREATE TABLE $TABLE_NAME (
-                    $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                    $COLUMN_TITLE TEXT NOT NULL,
-                    $COLUMN_DESCRIPTION TEXT,
-                    $COLUMN_COLOUR_PATTERN TEXT,
-                    $COLUMN_SIZE TEXT,
-                    $COLUMN_SEASON TEXT,
-                    $COLUMN_LAST_WORN INTEGER,
-                    $COLUMN_IMAGE TEXT
-                )
-            """.trimIndent())
-            i("Created database table $TABLE_NAME")
+
+            db.execSQL(
+                """
+            CREATE TABLE clothing_items (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                description TEXT,
+                colour_pattern TEXT,
+                size TEXT,
+                season TEXT,
+                last_worn INTEGER,
+                image TEXT
+            )
+        """
+            )
+
+
+            db.execSQL(
+                """
+            CREATE TABLE outfits (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                description TEXT,
+                season TEXT,
+                last_worn INTEGER
+            )
+        """
+            )
+
+            db.execSQL(
+                """
+            CREATE TABLE outfit_clothing (
+                outfit_id INTEGER,
+                clothing_id INTEGER,
+                PRIMARY KEY (outfit_id, clothing_id),
+                FOREIGN KEY (outfit_id) REFERENCES outfits(id),
+                FOREIGN KEY (clothing_id) REFERENCES clothing_items(id)
+            )
+        """
+            )
         }
 
         override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-            db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
-            i("Upgraded database from version $oldVersion to $newVersion")
+            db.execSQL("DROP TABLE IF EXISTS clothing_items")
+            db.execSQL("DROP TABLE IF EXISTS outfits")
+            db.execSQL("DROP TABLE IF EXISTS outfit_clothing")
             onCreate(db)
         }
     }

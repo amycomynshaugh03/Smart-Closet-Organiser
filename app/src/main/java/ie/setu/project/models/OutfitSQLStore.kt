@@ -12,7 +12,7 @@ import ie.setu.project.models.outfit.OutfitStore
 import timber.log.Timber.i
 import java.util.Date
 
-private const val DATABASE_NAME = "outfits.db"
+private const val DATABASE_NAME = "closet.db" // Should match ClosetSQLStore
 private const val DATABASE_VERSION = 1
 private const val OUTFIT_TABLE = "outfits"
 private const val COLUMN_ID = "id"
@@ -20,10 +20,10 @@ private const val COLUMN_TITLE = "title"
 private const val COLUMN_DESCRIPTION = "description"
 private const val COLUMN_SEASON = "season"
 private const val COLUMN_LAST_WORN = "last_worn"
+
 private const val JUNCTION_TABLE = "outfit_clothing"
 private const val COLUMN_OUTFIT_ID = "outfit_id"
 private const val COLUMN_CLOTHING_ID = "clothing_id"
-
 
 private const val CLOTHING_TABLE = "clothing_items"
 private const val CLOTHING_COLUMN_ID = "id"
@@ -147,7 +147,8 @@ class OutfitSQLStore(private val context: Context) : OutfitStore {
             title = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
             description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION)),
             season = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SEASON)),
-            lastWorn = Date(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_LAST_WORN))))
+            lastWorn = Date(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_LAST_WORN)))
+        )
     }
 
     private fun getClothingItemsForOutfit(outfitId: Long): MutableList<ClosetOrganiserModel> {
@@ -184,7 +185,13 @@ class OutfitSQLStore(private val context: Context) : OutfitStore {
     private inner class OutfitDbHelper(context: Context) :
         SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
+        override fun onConfigure(db: SQLiteDatabase) {
+            super.onConfigure(db)
+            db.setForeignKeyConstraintsEnabled(true)
+        }
+
         override fun onCreate(db: SQLiteDatabase) {
+
             db.execSQL("""
                 CREATE TABLE $OUTFIT_TABLE (
                     $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -194,6 +201,7 @@ class OutfitSQLStore(private val context: Context) : OutfitStore {
                     $COLUMN_LAST_WORN INTEGER
                 )
             """.trimIndent())
+
 
             db.execSQL("""
                 CREATE TABLE $JUNCTION_TABLE (
