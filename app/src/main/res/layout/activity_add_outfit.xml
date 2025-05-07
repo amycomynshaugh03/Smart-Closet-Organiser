@@ -23,12 +23,43 @@
             android:layout_height="match_parent"
             android:background="?attr/colorPrimary">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_centerInParent="true">
+
+            <!-- Left heart icon in the toolbar -->
+            <ImageView
+                android:id="@+id/leftHeart"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_heart"
+                android:contentDescription="Heart icon" />
+
+            <!-- Title text in the center of the toolbar -->
             <TextView
+                android:id="@+id/titleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/add_outfits"
+                android:fontFamily="cursive"
+                android:text="Outfits"
                 android:textColor="@android:color/white"
-                android:textSize="20sp"/>
+                android:textSize="30sp"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp" />
+
+            <!-- Right heart icon in the toolbar -->
+            <ImageView
+                android:id="@+id/rightHeart"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_heart"
+                android:contentDescription="Heart icon" />
+
+            </LinearLayout>
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -95,7 +126,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="@string/save_clothing_item"/>
+                android:text="@string/save_outfit"/>
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -22,7 +22,7 @@ class SelectClothingActivity : AppCompatActivity() {
 
         selectedClothing = intent.getParcelableArrayListExtra<ClosetOrganiserModel>("selected_clothing")?.toMutableList() ?: mutableListOf()
 
-        setSupportActionBar(binding.toolbar)
+        setSupportActionBar(binding.topAppBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Select Clothing Items"
         updateSelectionCount()
