@@ -2,7 +2,8 @@
 Welcome to my Closet Organise App for my Mobile App Development Assignment! This app is designed to help users manage their closet, allowing them to keep track of their clothing items, seasons, and last-worn dates.
 
 
-Updated Wireframe: 
+<h2> Wireframes</h2> 
+
 <br>Main: ![IMG_1767](https://github.com/user-attachments/assets/9159229a-b830-447b-b45c-553177d6b292)
 
 Clothing: ![IMG_1768](https://github.com/user-attachments/assets/3f2f5cd0-e8d2-4310-8fd8-772f4eabc542)
