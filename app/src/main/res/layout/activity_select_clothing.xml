@@ -69,10 +69,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingBottom="72dp"  <!-- Ensures space for the button -->
-    android:scrollbars="vertical"
-    app:layout_constraintBottom_toTopOf="@+id/btnSave"
-    app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
+        android:paddingBottom="72dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/btnSave"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
 
     <!-- Save button positioned at the bottom of the screen -->
     <Button

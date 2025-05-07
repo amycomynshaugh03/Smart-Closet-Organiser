@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
     This XML file contains string resources used in the application, including:
     - Mode Strings: For toggling between Day and Night modes.
     - Text Resources: For the UI fields related to adding clothing items,
@@ -10,7 +11,7 @@
 -->
 
 <resources>
-    <!-- Day and Night Mode Toggle Strings -->
+    <!-- Mode Strings: For toggling between Day and Night modes -->
     <string name="day_mode">Day</string>
     <string name="night_mode">Night</string>
 
@@ -31,14 +32,14 @@
     <string name="button_addClothing">Add your Clothing Items</string>
     <string name="description_hint">Enter Category</string>
 
-    <!-- Menu Actions -->
+    <!-- Menu Actions for Adding or Cancelling Clothing Items -->
     <string name="menu_addClothingItem">Add</string>
     <string name="menu_cancelClothingItem">Cancel</string>
 
-    <!-- Error Message -->
+    <!-- Error Message to Prompt User for Missing Category -->
     <string name="please_enter_missing_item">Please enter the missing Category!</string>
 
-    <!-- Save Button and Image Handling -->
+    <!-- Save Button and Image Handling Text -->
     <string name="save_clothing_item"> Save Clothing Item</string>
     <string name="save_outfit"> Save Outfit </string>
     <string name="button_addImage">Add Image</string>
@@ -54,9 +55,9 @@
         <item> All Seasons</item>
     </string-array>
 
+    <!-- Search Bar Hint -->
     <string name="search_hint">Search </string>
 
+    <!-- Label for Outfits -->
     <string name="add_outfits">Outfits</string>
-
-
 </resources>
