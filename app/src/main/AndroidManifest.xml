@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!--
+        Declares permission for internet access.
+        Required for networking tasks such as API calls.
+     -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -14,42 +18,62 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="31">
+
+        <!--
+            Activity for viewing details of a specific clothing item.
+            @name: .views.clothing.ClothingView
+            @exported: true - can be launched from outside the app.
+         -->
         <activity
             android:name=".views.clothing.ClothingView"
             android:exported="true" />
+
         <!--
-            Activity that serves as the main launcher for the app.
-            - android:name: Specifies the activity class.
-            - android:exported: If true, other apps can start this activity.
-            - <intent-filter>: Used to register the activity as the launcher with the MAIN action
-              and LAUNCHER category.
-        -->
+            Main launcher activity.
+            This is the entry point when the app is started.
+            @name: .views.clothingList.ClothingListView
+            @intent-filter: Registers the activity to handle MAIN action and LAUNCHER category.
+         -->
         <activity
             android:name=".views.clothingList.ClothingListView"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Activity for the main screen of the app -->
+        </activity>
+
+        <!--
+            Activity displaying the main dashboard or home view.
+            @name: .views.main.MainView
+         -->
         <activity
             android:name=".views.main.MainView"
             android:exported="true" />
 
+        <!--
+            Activity for viewing and managing outfits.
+            @name: .views.outfit.OutfitView
+         -->
         <activity
             android:name=".views.outfit.OutfitView"
             android:exported="true" />
 
+        <!--
+            Activity for adding a new outfit.
+            @name: .views.addOutfit.AddOutfitView
+         -->
         <activity
             android:name=".views.addOutfit.AddOutfitView"
             android:exported="true" />
 
+        <!--
+            Activity for selecting clothing items, likely for building outfits.
+            @name: .activities.SelectClothingActivity
+         -->
         <activity
             android:name=".activities.SelectClothingActivity"
-            android:exported="true">
-        </activity>
-
+            android:exported="true" />
 
     </application>
 
