@@ -16,24 +16,28 @@
         android:backgroundTint="?attr/colorPrimary"
         app:layout_constraintTop_toTopOf="parent">
 
+        <!-- Material Toolbar for AppBar -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:titleTextColor="?attr/colorOnPrimary">
 
+            <!-- LinearLayout to organize elements inside the toolbar -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="horizontal">
 
+                <!-- Left heart icon in the toolbar -->
                 <ImageView
                     android:id="@+id/leftHeart"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_heart" />
 
+                <!-- Title in the center of the toolbar -->
                 <TextView
                     android:id="@+id/titleText"
                     android:layout_width="wrap_content"
@@ -44,6 +48,7 @@
                     android:text="Closet Organiser"
                     android:textSize="30sp" />
 
+                <!-- Right heart icon in the toolbar -->
                 <ImageView
                     android:id="@+id/rightHeart"
                     android:layout_width="24dp"
@@ -53,7 +58,7 @@
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Buttons & Search Bar -->
+    <!-- Button bar for various actions -->
     <LinearLayout
         android:id="@+id/buttonBar"
         android:layout_width="match_parent"
@@ -63,12 +68,14 @@
         android:gravity="center_vertical"
         app:layout_constraintTop_toBottomOf="@id/appBarLayout">
 
+        <!-- Button for Outfits -->
         <Button
             android:id="@+id/btnOutfits"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Outfits"/>
 
+        <!-- Button for Clothes -->
         <Button
             android:id="@+id/btnClothes"
             android:layout_width="wrap_content"
@@ -77,6 +84,7 @@
             android:text="Clothes"
             android:clickable="true" />
 
+        <!-- Search bar with icon -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -84,12 +92,14 @@
             android:orientation="horizontal"
             android:paddingStart="16dp">
 
+            <!-- Search icon -->
             <ImageView
                 android:id="@+id/searchIcon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_search" />
 
+            <!-- EditText for search input -->
             <EditText
                 android:id="@+id/searchEditText"
                 android:layout_width="match_parent"
@@ -99,7 +109,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Search Results -->
+    <!-- RecyclerView for displaying search results -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/searchResultsRecyclerView"
         android:layout_width="0dp"
@@ -113,7 +123,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Recently Added Text -->
+    <!-- Text for "Recently Added" section -->
     <TextView
         android:id="@+id/recentlyAddedText"
         android:layout_width="wrap_content"
@@ -127,7 +137,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchResultsRecyclerView" />
 
-    <!-- Carousel -->
+    <!-- Carousel to display images/items -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="250dp"
@@ -143,7 +153,7 @@
             android:layout_height="match_parent" />
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Weather Card - Properly constrained below carousel -->
+    <!-- Weather card to display current weather -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/weatherCard"
         android:layout_width="match_parent"
@@ -156,6 +166,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         tools:ignore="NotSibling">
 
+        <!-- Linear layout to hold weather data -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -163,6 +174,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- Weather title -->
             <TextView
                 android:id="@+id/weatherTitle"
                 android:layout_width="match_parent"
@@ -172,17 +184,20 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
+            <!-- Weather information -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal">
 
+                <!-- Weather icon -->
                 <ImageView
                     android:id="@+id/weatherIcon"
                     android:layout_width="48dp"
                     android:layout_height="48dp" />
 
+                <!-- Weather details like temperature and description -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

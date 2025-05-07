@@ -10,7 +10,7 @@
     android:clickable="true"
     android:focusable="true">
 
-
+    <!-- ImageView Section: Displays the clothing image -->
     <ImageView
         android:id="@+id/clothingImage"
         android:layout_width="60dp"
@@ -20,7 +20,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
+    <!-- CheckBox Section: Represents the selection status of the clothing item -->
     <CheckBox
         android:id="@+id/selectionCheckbox"
         android:layout_width="wrap_content"
@@ -30,7 +30,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/clothingImage" />
 
-
+    <!-- LinearLayout Section: Contains the clothing title and description -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -42,14 +42,17 @@
         app:layout_constraintStart_toEndOf="@id/clothingImage"
         app:layout_constraintTop_toTopOf="@id/clothingImage">
 
+        <!-- TextView Section: Displays the clothing title -->
         <TextView
             android:id="@+id/clothingTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <!-- TextView Section: Displays the clothing description -->
         <TextView
             android:id="@+id/clothingDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

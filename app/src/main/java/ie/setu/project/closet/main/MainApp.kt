@@ -15,16 +15,15 @@ import timber.log.Timber.i
  */
 class MainApp : Application() {
 
-    // Clothing store (JSON implementation)
+    /** Interface for accessing clothing items (currently using SQL implementation). */
     lateinit var clothingItems: ClothingStore
 
-    // Outfit store (JSON implementation)
+    /** Interface for accessing outfits (currently using JSON implementation). */
     lateinit var outfitItems: OutfitStore
-
 
     /**
      * Called when the application is created.
-     * Initializes logging using Timber and sets up both stores.
+     * Initializes Timber for logging and sets up storage interfaces for clothing and outfits.
      */
     override fun onCreate() {
         super.onCreate()
@@ -32,14 +31,11 @@ class MainApp : Application() {
         // Set up Timber logging for debugging
         Timber.plant(Timber.DebugTree())
 
-        // Initialize stores
+        // Initialize data stores
 //        clothingItems = ClothingJSONStore(applicationContext)
         outfitItems = OutfitJSONStore(applicationContext)
-
         clothingItems = ClosetSQLStore(applicationContext)
         //outfitItems = OutfitSQLStore(applicationContext)
-
-
 
         // Log startup message
         i("Closet Organiser started with JSON stores")
