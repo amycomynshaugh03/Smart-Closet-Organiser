@@ -1,13 +1,13 @@
 package ie.setu.project.weather
 
 import ie.setu.project.models.weather.WeatherResponse
-import io.ktor.client.*
+import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 /**
@@ -19,10 +19,12 @@ class WeatherService {
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
             // Set up JSON serialization with lenient parsing and ignoring unknown keys
-            json(Json {
-                ignoreUnknownKeys = true
-                isLenient = true
-            })
+            json(
+                Json {
+                    ignoreUnknownKeys = true
+                    isLenient = true
+                }
+            )
         }
     }
 
@@ -42,6 +44,6 @@ class WeatherService {
             parameter("hourly", "temperature_2m,weathercode")
             parameter("daily", "weathercode,temperature_2m_max,temperature_2m_min")
             parameter("timezone", "auto")
-        }.body()  // Parse the response body into a WeatherResponse object
+        }.body() // Parse the response body into a WeatherResponse object
     }
 }

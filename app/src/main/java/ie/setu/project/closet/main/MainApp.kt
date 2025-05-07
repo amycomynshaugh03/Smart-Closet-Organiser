@@ -35,7 +35,7 @@ class MainApp : Application() {
 //        clothingItems = ClothingJSONStore(applicationContext)
         outfitItems = OutfitJSONStore(applicationContext)
         clothingItems = ClosetSQLStore(applicationContext)
-        //outfitItems = OutfitSQLStore(applicationContext)
+        // outfitItems = OutfitSQLStore(applicationContext)
 
         // Log startup message
         i("Closet Organiser started with JSON stores")

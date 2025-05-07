@@ -36,7 +36,7 @@
     <string name="please_enter_missing_item">Please enter a clothing item</string>
 
     <!-- Save Button and Image Handling -->
-    <string name="save_clothing_item">Enregistrer l'article vestimentaire</string>
+    <string name="save_clothing_item">Enregistrer larticle vestimentaire</string>
     <string name="save_outfit">Enregistrer la tenue</string>
     <string name="button_addImage">Add Image</string>
     <string name="select_clothing_image">Select clothing image</string>

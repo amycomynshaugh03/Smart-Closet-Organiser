@@ -99,7 +99,7 @@ class MainView : AppCompatActivity() {
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.item_cancel -> presenter.doCancel()  // Cancel the operation
+            R.id.item_cancel -> presenter.doCancel() // Cancel the operation
         }
         return super.onOptionsItemSelected(item)
     }
@@ -154,7 +154,7 @@ class MainView : AppCompatActivity() {
             .rotate(90f)
             .resize(600, 600)
             .into(binding.clothingImage)
-        binding.chooseImage.setText(R.string.change_clothing_image)  // Update the button text
+        binding.chooseImage.setText(R.string.change_clothing_image) // Update the button text
     }
 
     /**

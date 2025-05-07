@@ -11,9 +11,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
-import ie.setu.project.adapters.carousel.CarouselAdapter
 import ie.setu.project.adapters.ClosetItemListener
 import ie.setu.project.adapters.SearchResultsAdapter
+import ie.setu.project.adapters.carousel.CarouselAdapter
 import ie.setu.project.databinding.ActivityClothingListBinding
 import ie.setu.project.models.clothing.ClosetOrganiserModel
 import ie.setu.project.models.outfit.OutfitModel
@@ -45,18 +45,18 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
 
         setSupportActionBar(binding.topAppBar)
         presenter = ClothingListPresenter(this)
-        presenter.fetchWeather()  // Fetch the weather information
+        presenter.fetchWeather() // Fetch the weather information
 
-        setupCarousel()  // Setup the carousel view
-        setupSearchRecyclerView()  // Setup the search results recycler view
-        setupSearchListener()  // Setup the search listener for real-time searching
+        setupCarousel() // Setup the carousel view
+        setupSearchRecyclerView() // Setup the search results recycler view
+        setupSearchListener() // Setup the search listener for real-time searching
 
         binding.btnClothes.setOnClickListener {
-            startActivity(Intent(this, ClothingView::class.java))  // Navigate to the clothing view
+            startActivity(Intent(this, ClothingView::class.java)) // Navigate to the clothing view
         }
 
         binding.btnOutfits.setOnClickListener {
-            startActivity(Intent(this, OutfitView::class.java))  // Navigate to the outfit view
+            startActivity(Intent(this, OutfitView::class.java)) // Navigate to the outfit view
         }
     }
 
@@ -105,7 +105,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
      */
     override fun onDeleteItemClick(item: ClosetOrganiserModel) {
         presenter.onDeleteItemClick(item)
-        refreshCarousel()  // Refresh carousel after deletion
+        refreshCarousel() // Refresh carousel after deletion
     }
 
     /**
@@ -153,10 +153,10 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
     private fun setupSearchRecyclerView() {
         searchResultsAdapter = SearchResultsAdapter { item ->
             when (item) {
-                is ClosetOrganiserModel -> openClothingDetails(item)  // Open clothing details
-                is OutfitModel -> openOutfitDetails(item)  // Open outfit details
+                is ClosetOrganiserModel -> openClothingDetails(item) // Open clothing details
+                is OutfitModel -> openOutfitDetails(item) // Open outfit details
             }
-            binding.searchResultsRecyclerView.visibility = View.GONE  // Hide search results after selection
+            binding.searchResultsRecyclerView.visibility = View.GONE // Hide search results after selection
         }
 
         binding.searchResultsRecyclerView.apply {
@@ -176,9 +176,9 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                 if (query.isNotEmpty()) {
                     val results = presenter.performSearch(query)
                     searchResultsAdapter.updateList(results)
-                    binding.searchResultsRecyclerView.visibility = View.VISIBLE  // Show search results
+                    binding.searchResultsRecyclerView.visibility = View.VISIBLE // Show search results
                 } else {
-                    binding.searchResultsRecyclerView.visibility = View.GONE  // Hide search results if query is empty
+                    binding.searchResultsRecyclerView.visibility = View.GONE // Hide search results if query is empty
                 }
             }
 
@@ -192,9 +192,11 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
      * @param item The clothing item to view.
      */
     private fun openClothingDetails(item: ClosetOrganiserModel) {
-        startActivity(Intent(this, ClothingView::class.java).apply {
-            putExtra("closet_item_edit", item)
-        })
+        startActivity(
+            Intent(this, ClothingView::class.java).apply {
+                putExtra("closet_item_edit", item)
+            }
+        )
     }
 
     /**
@@ -202,8 +204,10 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
      * @param item The outfit item to view.
      */
     private fun openOutfitDetails(item: OutfitModel) {
-        startActivity(Intent(this, OutfitView::class.java).apply {
-            putExtra("outfit_item_edit", item)
-        })
+        startActivity(
+            Intent(this, OutfitView::class.java).apply {
+                putExtra("outfit_item_edit", item)
+            }
+        )
     }
 }

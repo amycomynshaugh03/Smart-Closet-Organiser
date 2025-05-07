@@ -41,7 +41,7 @@ class MainPresenter(private val view: MainView) {
             closetOrganiser = view.intent.getParcelableExtra("closet_item_edit")!!
             view.showClosetItem(closetOrganiser)
         }
-        registerImagePickerCallback()  // Register the image picker callback
+        registerImagePickerCallback() // Register the image picker callback
     }
 
     /**
@@ -126,8 +126,10 @@ class MainPresenter(private val view: MainView) {
                             i("Got Result ${result.data!!.data}")
                             val image = result.data!!.data!!
                             // Grant the app permission to read the image URI
-                            view.contentResolver.takePersistableUriPermission(image,
-                                Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            view.contentResolver.takePersistableUriPermission(
+                                image,
+                                Intent.FLAG_GRANT_READ_URI_PERMISSION
+                            )
                             closetOrganiser.image = image
                             view.updateImage(image)
                         }

@@ -141,5 +141,4 @@ class ClothingMemStoreTest {
         val id2 = store.getId()
         assertNotEquals(id1, id2)
     }
-
 }

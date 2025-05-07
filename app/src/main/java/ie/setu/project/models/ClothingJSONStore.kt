@@ -2,14 +2,23 @@ package ie.setu.project.models
 
 import android.content.Context
 import android.net.Uri
-import com.google.gson.*
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonPrimitive
+import com.google.gson.JsonSerializationContext
+import com.google.gson.JsonSerializer
 import com.google.gson.reflect.TypeToken
-import ie.setu.project.helpers.*
+import ie.setu.project.helpers.exists
+import ie.setu.project.helpers.read
+import ie.setu.project.helpers.write
 import ie.setu.project.models.clothing.ClosetOrganiserModel
 import ie.setu.project.models.clothing.ClothingStore
 import timber.log.Timber
 import java.lang.reflect.Type
-import java.util.*
+import java.util.Random
 
 const val JSON_FILE = "clothingitems.json"
 

@@ -15,7 +15,6 @@ plugins {
     id("org.jetbrains.dokka") version "1.8.20"
     id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
     kotlin("plugin.serialization") version "1.9.0"
-
 }
 
 tasks.dokkaHtml {
@@ -107,7 +106,7 @@ dependencies {
     // Image loading library (Picasso)
     implementation(libs.picasso)
 
-    implementation (libs.gson)
+    implementation(libs.gson)
 
     // Ktor for Open-Meteo
     implementation(libs.ktor.client.core)
@@ -123,6 +122,4 @@ dependencies {
 
     // Location services (optional)
     implementation(libs.play.services.location)
-
-
 }

@@ -45,9 +45,11 @@ class ClothingListPresenter(private val view: ClothingListView) {
      * @param item The closet item that was clicked.
      */
     fun onClosetItemClick(item: ClosetOrganiserModel) {
-        getResult.launch(Intent(view, MainView::class.java).apply {
-            putExtra("closet_item_edit", item)
-        })
+        getResult.launch(
+            Intent(view, MainView::class.java).apply {
+                putExtra("closet_item_edit", item)
+            }
+        )
     }
 
     /**
@@ -57,7 +59,7 @@ class ClothingListPresenter(private val view: ClothingListView) {
      */
     fun onDeleteItemClick(item: ClosetOrganiserModel) {
         app.clothingItems.delete(item)
-        loadCarouselData()  // Refresh carousel data after deletion
+        loadCarouselData() // Refresh carousel data after deletion
         view.showSnackbar("Item deleted", Snackbar.LENGTH_SHORT)
     }
 
@@ -79,9 +81,10 @@ class ClothingListPresenter(private val view: ClothingListView) {
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             when (result.resultCode) {
-                Activity.RESULT_OK -> view.refreshCarousel()  // Refresh carousel on success
+                Activity.RESULT_OK -> view.refreshCarousel() // Refresh carousel on success
                 Activity.RESULT_CANCELED -> view.showSnackbar(
-                    "Operation cancelled", Snackbar.LENGTH_SHORT
+                    "Operation cancelled",
+                    Snackbar.LENGTH_SHORT
                 )
             }
         }
@@ -96,16 +99,16 @@ class ClothingListPresenter(private val view: ClothingListView) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 println("Attempting to fetch weather...")
-                val weather = weatherService.getWeather(53.3498, -6.2603)  // Fetch weather for coordinates (Dublin)
+                val weather = weatherService.getWeather(53.3498, -6.2603) // Fetch weather for coordinates (Dublin)
                 println("Weather data received: $weather")
                 withContext(Dispatchers.Main) {
-                    view.updateWeatherUI(weather)  // Update UI on main thread
+                    view.updateWeatherUI(weather) // Update UI on main thread
                 }
             } catch (e: Exception) {
                 println("Weather fetch failed: ${e.message}")
                 e.printStackTrace()
                 withContext(Dispatchers.Main) {
-                    view.showWeatherError("Failed to load weather data")  // Show error on UI if fetching fails
+                    view.showWeatherError("Failed to load weather data") // Show error on UI if fetching fails
                 }
             }
         }
@@ -123,24 +126,24 @@ class ClothingListPresenter(private val view: ClothingListView) {
         // Search in clothing items
         val clothingResults = app.clothingItems.findAll().filter {
             it.title.contains(query, ignoreCase = true) ||
-                    it.description.contains(query, ignoreCase = true) ||
-                    it.colourPattern.contains(query, ignoreCase = true) ||
-                    it.season.contains(query, ignoreCase = true)
+                it.description.contains(query, ignoreCase = true) ||
+                it.colourPattern.contains(query, ignoreCase = true) ||
+                it.season.contains(query, ignoreCase = true)
         }
 
         // Search in outfits
         val outfitResults = app.outfitItems.findAll().filter {
             it.title.contains(query, ignoreCase = true) ||
-                    it.description.contains(query, ignoreCase = true) ||
-                    it.season.contains(query, ignoreCase = true) ||
-                    it.clothingItems.any { clothing ->
-                        clothing.title.contains(query, ignoreCase = true) ||
-                                clothing.description.contains(query, ignoreCase = true)
-                    }
+                it.description.contains(query, ignoreCase = true) ||
+                it.season.contains(query, ignoreCase = true) ||
+                it.clothingItems.any { clothing ->
+                    clothing.title.contains(query, ignoreCase = true) ||
+                        clothing.description.contains(query, ignoreCase = true)
+                }
         }
 
-        results.addAll(clothingResults)  // Add clothing results to the final list
-        results.addAll(outfitResults)  // Add outfit results to the final list
+        results.addAll(clothingResults) // Add clothing results to the final list
+        results.addAll(outfitResults) // Add outfit results to the final list
         return results
     }
 }

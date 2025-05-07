@@ -2,7 +2,11 @@ package ie.setu.project.helpers
 
 import android.content.Context
 import timber.log.Timber.e
-import java.io.*
+import java.io.BufferedReader
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 
 /**
  * Writes the provided data to a file in the app's private storage.

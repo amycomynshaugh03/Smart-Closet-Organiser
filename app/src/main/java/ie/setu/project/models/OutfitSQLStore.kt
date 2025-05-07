@@ -1,35 +1,35 @@
-//package ie.setu.project.models
+// package ie.setu.project.models
 //
-//import android.content.ContentValues
-//import android.content.Context
-//import android.database.Cursor
-//import android.database.sqlite.SQLiteDatabase
-//import android.database.sqlite.SQLiteOpenHelper
-//import android.net.Uri
-//import ie.setu.project.models.clothing.ClosetOrganiserModel
-//import ie.setu.project.models.outfit.OutfitModel
-//import ie.setu.project.models.outfit.OutfitStore
-//import timber.log.Timber.i
-//import java.util.Date
+// import android.content.ContentValues
+// import android.content.Context
+// import android.database.Cursor
+// import android.database.sqlite.SQLiteDatabase
+// import android.database.sqlite.SQLiteOpenHelper
+// import android.net.Uri
+// import ie.setu.project.models.clothing.ClosetOrganiserModel
+// import ie.setu.project.models.outfit.OutfitModel
+// import ie.setu.project.models.outfit.OutfitStore
+// import timber.log.Timber.i
+// import java.util.Date
 //
-//private const val DATABASE_NAME = "closet.db" // Should match ClosetSQLStore
-//private const val DATABASE_VERSION = 1
-//private const val OUTFIT_TABLE = "outfits"
-//private const val COLUMN_ID = "id"
-//private const val COLUMN_TITLE = "title"
-//private const val COLUMN_DESCRIPTION = "description"
-//private const val COLUMN_SEASON = "season"
-//private const val COLUMN_LAST_WORN = "last_worn"
+// private const val DATABASE_NAME = "closet.db" // Should match ClosetSQLStore
+// private const val DATABASE_VERSION = 1
+// private const val OUTFIT_TABLE = "outfits"
+// private const val COLUMN_ID = "id"
+// private const val COLUMN_TITLE = "title"
+// private const val COLUMN_DESCRIPTION = "description"
+// private const val COLUMN_SEASON = "season"
+// private const val COLUMN_LAST_WORN = "last_worn"
 //
-//private const val JUNCTION_TABLE = "outfit_clothing"
-//private const val COLUMN_OUTFIT_ID = "outfit_id"
-//private const val COLUMN_CLOTHING_ID = "clothing_id"
+// private const val JUNCTION_TABLE = "outfit_clothing"
+// private const val COLUMN_OUTFIT_ID = "outfit_id"
+// private const val COLUMN_CLOTHING_ID = "clothing_id"
 //
-//private const val CLOTHING_TABLE = "clothing_items"
-//private const val CLOTHING_COLUMN_ID = "id"
-//private const val CLOTHING_COLUMN_TITLE = "title"
+// private const val CLOTHING_TABLE = "clothing_items"
+// private const val CLOTHING_COLUMN_ID = "id"
+// private const val CLOTHING_COLUMN_TITLE = "title"
 //
-//class OutfitSQLStore(private val context: Context) : OutfitStore {
+// class OutfitSQLStore(private val context: Context) : OutfitStore {
 //
 //    private lateinit var database: SQLiteDatabase
 //    private val dbHelper = OutfitDbHelper(context)
@@ -254,5 +254,5 @@
 //            }
 //        }
 //    }
-//}
+// }
 //
