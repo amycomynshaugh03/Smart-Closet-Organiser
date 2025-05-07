@@ -7,6 +7,7 @@
     android:padding="12dp"
     android:background="?android:attr/selectableItemBackground">
 
+    <!-- TextView Section: Displays the title of the search item -->
     <TextView
         android:id="@+id/searchItemTitle"
         android:layout_width="match_parent"
@@ -14,6 +15,7 @@
         android:textSize="16sp"
         android:textColor="@android:color/black" />
 
+    <!-- TextView Section: Displays the type of the search item -->
     <TextView
         android:id="@+id/searchItemType"
         android:layout_width="match_parent"
