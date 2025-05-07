@@ -7,13 +7,54 @@
     android:layout_height="match_parent"
     tools:context=".activities.SelectClothingActivity">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:backgroundTint="?attr/colorPrimary"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="Select Clothing Items"/>
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/leftHeart"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_heart"
+                    android:contentDescription="Heart icon" />
+
+                <TextView
+                    android:id="@+id/titleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select Clothing Items"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp" />
+
+                <ImageView
+                    android:id="@+id/rightHeart"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_heart"
+                    android:contentDescription="Heart icon" />
+            </LinearLayout>
+        </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -21,8 +62,9 @@
         android:layout_height="0dp"
         android:clipToPadding="false"
         android:paddingBottom="72dp"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/btnSave"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"/>
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout"/>
 
     <Button
         android:id="@+id/btnSave"
