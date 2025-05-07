@@ -77,10 +77,8 @@ class ClosetAdapter(
      * @param newItems The updated list of closet items.
      */
     fun updateItems(newItems: List<ClosetOrganiserModel>) {
-        if (closetItems.size != newItems.size) {
-            closetItems = newItems
-            notifyDataSetChanged()
-        }
+        closetItems = newItems
+        notifyDataSetChanged()
     }
 
     /**

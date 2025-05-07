@@ -118,7 +118,13 @@ class MainView : AppCompatActivity() {
 
         // Set the season spinner to the correct season value
         val seasonSpinner: Spinner = findViewById(R.id.clothingSeason)
-        val adapter = seasonSpinner.adapter as ArrayAdapter<String>
+        val adapter = ArrayAdapter.createFromResource(
+            this,
+            R.array.seasons_array,
+            android.R.layout.simple_spinner_item
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        seasonSpinner.adapter = adapter
         val seasonPosition = adapter.getPosition(item.season)
         seasonSpinner.setSelection(seasonPosition)
 

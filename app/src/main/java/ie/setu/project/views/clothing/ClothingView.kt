@@ -101,7 +101,7 @@ class ClothingView : AppCompatActivity(), ClosetItemListener {
      * Notifies the adapter that the data set has changed and it should refresh.
      */
     fun notifyAdapterChanged() {
-        (binding.recyclerView.adapter)?.notifyItemRangeChanged(0, binding.recyclerView.adapter?.itemCount ?: 0)
+        updateAdapter()
     }
 
     /**
