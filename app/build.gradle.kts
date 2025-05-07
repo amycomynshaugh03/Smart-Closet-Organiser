@@ -80,6 +80,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.firebase.inappmessaging)
 
     // Testing dependencies for unit and UI tests
     testImplementation(libs.junit)
