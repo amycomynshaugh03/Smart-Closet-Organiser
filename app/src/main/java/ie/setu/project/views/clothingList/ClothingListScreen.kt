@@ -1,16 +1,22 @@
 package ie.setu.project.views.clothingList
 
 import android.content.Context
-import android.content.Intent
-import androidx.compose.foundation.*
+import android.net.Uri
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Checkroom
+import androidx.compose.material.icons.filled.Style
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,22 +25,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import ie.setu.project.R
 import ie.setu.project.models.clothing.ClosetOrganiserModel
 import ie.setu.project.models.outfit.OutfitModel
 import ie.setu.project.models.weather.WeatherCondition
 import ie.setu.project.models.weather.WeatherResponse
 import ie.setu.project.viewmodels.ClothingListPresenter
-import ie.setu.project.views.clothing.ClothingView
-import ie.setu.project.views.outfit.OutfitView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,8 +60,16 @@ fun ClothingListScreen(
     var searchQuery by remember { mutableStateOf("") }
     var currentCarouselPage by remember { mutableIntStateOf(0) }
 
+    var lastWeatherKey by remember { mutableStateOf<String?>(null) }
     LaunchedEffect(weatherData) {
-        weatherData?.let { updateWeatherUI(it) }
+        weatherData?.let { w ->
+            val c = w.current_weather
+            val key = "${c.temperature}_${c.weathercode}_${c.is_day}"
+            if (key != lastWeatherKey) {
+                lastWeatherKey = key
+                updateWeatherUI(w)
+            }
+        }
     }
 
     Scaffold(
@@ -94,7 +104,8 @@ fun ClothingListScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF6200EE)
+                    containerColor = Color(0xFF6200EE),
+                    titleContentColor = Color.White
                 )
             )
         }
@@ -114,21 +125,16 @@ fun ClothingListScreen(
             ) {
                 Button(
                     onClick = onNavigateToOutfit,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF6200EE)
-                    )
-                ) {
-                    Text("Outfits")
-                }
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
+                ) { Text("Outfits") }
+
                 Spacer(modifier = Modifier.width(16.dp))
+
                 Button(
                     onClick = onNavigateToClothing,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF6200EE)
-                    )
-                ) {
-                    Text("Clothes")
-                }
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
+                ) { Text("Clothes") }
+
                 Row(
                     modifier = Modifier
                         .weight(1f)
@@ -158,15 +164,27 @@ fun ClothingListScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(300.dp)
-                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                        .height(320.dp)
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    LazyColumn {
+                    LazyColumn(
+                        contentPadding = PaddingValues(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         items(searchResults) { item ->
                             SearchResultItem(
                                 item = item,
-                                onClothingClick = onClothingItemClick,
-                                onOutfitClick = onOutfitItemClick
+                                onClothingClick = { clothing ->
+                                    presenter.hideSearchResults()
+                                    searchQuery = ""
+                                    onClothingItemClick(clothing)
+                                },
+                                onOutfitClick = { outfit ->
+                                    presenter.hideSearchResults()
+                                    searchQuery = ""
+                                    onOutfitItemClick(outfit)
+                                }
                             )
                         }
                     }
@@ -186,7 +204,7 @@ fun ClothingListScreen(
                     .fillMaxWidth()
                     .height(250.dp)
                     .padding(horizontal = 16.dp, vertical = 8.dp),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Column {
                     Box(
@@ -202,20 +220,15 @@ fun ClothingListScreen(
                                         .fillMaxSize()
                                         .clickable { onClothingItemClick(item) }
                                 ) {
-                                    val imageUrl = if (item::class.members.any { it.name == "imageUrl" }) {
-                                        item::class.members.first { it.name == "imageUrl" }.call(item) as? String
-                                    } else null
-
-                                    imageUrl?.let { url ->
+                                    val uri = item.image
+                                    if (uri != null && uri != Uri.EMPTY && uri.toString().isNotBlank()) {
                                         AsyncImage(
-                                            model = ImageRequest.Builder(LocalContext.current)
-                                                .data(url)
-                                                .build(),
+                                            model = uri,
                                             contentDescription = "Carousel item",
                                             modifier = Modifier.fillMaxSize(),
                                             contentScale = ContentScale.Crop
                                         )
-                                    } ?: run {
+                                    } else {
                                         Box(
                                             modifier = Modifier
                                                 .fillMaxSize()
@@ -247,10 +260,11 @@ fun ClothingListScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 IconButton(
-                                    onClick = {
-                                        if (currentCarouselPage > 0) currentCarouselPage--
-                                    },
-                                    modifier = Modifier.background(Color.Black.copy(alpha = 0.5f), CircleShape)
+                                    onClick = { if (currentCarouselPage > 0) currentCarouselPage-- },
+                                    modifier = Modifier.background(
+                                        Color.Black.copy(alpha = 0.5f),
+                                        CircleShape
+                                    )
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.ArrowBack,
@@ -263,7 +277,10 @@ fun ClothingListScreen(
                                     onClick = {
                                         if (currentCarouselPage < carouselItems.size - 1) currentCarouselPage++
                                     },
-                                    modifier = Modifier.background(Color.Black.copy(alpha = 0.5f), CircleShape)
+                                    modifier = Modifier.background(
+                                        Color.Black.copy(alpha = 0.5f),
+                                        CircleShape
+                                    )
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.ArrowForward,
@@ -302,7 +319,7 @@ fun ClothingListScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Box(
                     modifier = Modifier
@@ -371,26 +388,120 @@ fun SearchResultItem(
     onClothingClick: (ClosetOrganiserModel) -> Unit,
     onOutfitClick: (OutfitModel) -> Unit
 ) {
+    val thumbUri: Uri? = when (item) {
+        is ClosetOrganiserModel -> item.image
+        is OutfitModel -> item.clothingItems.firstOrNull()?.image
+        else -> null
+    }
+
+    val isValidThumb = thumbUri != null && thumbUri != Uri.EMPTY && thumbUri.toString().isNotBlank()
+
+    val title = when (item) {
+        is ClosetOrganiserModel -> item.title.ifBlank { "No title" }
+        is OutfitModel -> item.title.ifBlank { "No title" }
+        else -> "Unknown"
+    }
+
+    val subtitle = when (item) {
+        is ClosetOrganiserModel -> item.description.ifBlank { "No description" }
+        is OutfitModel -> item.description.ifBlank { "No description" }
+        else -> ""
+    }
+
+    val icon = when (item) {
+        is ClosetOrganiserModel -> Icons.Default.Checkroom
+        is OutfitModel -> Icons.Default.Style
+        else -> Icons.Default.Style
+    }
+
+    val onClick = {
+        when (item) {
+            is ClosetOrganiserModel -> onClothingClick(item)
+            is OutfitModel -> onOutfitClick(item)
+        }
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-                when (item) {
-                    is ClosetOrganiserModel -> onClothingClick(item)
-                    is OutfitModel -> onOutfitClick(item)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(52.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color.LightGray),
+                contentAlignment = Alignment.Center
+            ) {
+                if (isValidThumb) {
+                    AsyncImage(
+                        model = thumbUri,
+                        contentDescription = "Result image",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(26.dp)
+                    )
                 }
             }
-            .padding(horizontal = 8.dp, vertical = 4.dp)
-    ) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            when (item) {
-                is ClosetOrganiserModel -> {
-                    Text(item.title ?: "No title", fontWeight = FontWeight.Bold)
-                    Text(item.description ?: "No description", fontSize = 12.sp)
-                }
-                is OutfitModel -> {
-                    Text(item.title ?: "No title", fontWeight = FontWeight.Bold)
-                    Text(item.description ?: "No description", fontSize = 12.sp)
+
+            Spacer(Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(title, fontWeight = FontWeight.Bold)
+                Text(subtitle, fontSize = 12.sp, maxLines = 2)
+            }
+
+            if (item is OutfitModel) {
+                val strip = rememberScrollState()
+                Row(
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .height(42.dp)
+                        .widthIn(max = 150.dp)
+                        .horizontalScroll(strip),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    item.clothingItems.take(4).forEach { clothing ->
+                        val u = clothing.image
+                        val ok = u != null && u != Uri.EMPTY && u.toString().isNotBlank()
+                        Box(
+                            modifier = Modifier
+                                .size(42.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color.LightGray),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (ok) {
+                                AsyncImage(
+                                    model = u,
+                                    contentDescription = "Mini image",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.Checkroom,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

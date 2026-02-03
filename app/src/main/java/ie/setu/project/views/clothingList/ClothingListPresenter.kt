@@ -38,7 +38,9 @@ class ClothingListPresenter(application: Application) : AndroidViewModel(applica
 
     private fun loadCarouselData() {
         viewModelScope.launch {
-            _carouselItems.value = app.clothingItems.findAll().take(5)
+            _carouselItems.value = app.clothingItems.findAll()
+                .takeLast(5)
+                .reversed()
         }
     }
 
