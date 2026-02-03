@@ -14,7 +14,8 @@ plugins {
     // Dokka
     id("org.jetbrains.dokka") version "1.8.20"
     id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
-    kotlin("plugin.serialization") version "1.9.0"
+    kotlin("plugin.serialization") version "1.9.21"
+
 }
 
 tasks.dokkaHtml {
@@ -30,6 +31,7 @@ android {
     buildFeatures {
         // Enable view binding for easy access to views
         viewBinding = true
+        compose = true
     }
 
     defaultConfig {
@@ -71,6 +73,19 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            force("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.3")
+            force("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+        }
+    }
+
+
 }
 
 dependencies {
@@ -81,6 +96,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.inappmessaging)
+    implementation(libs.androidx.compose.foundation)
 
     // Testing dependencies for unit and UI tests
     testImplementation(libs.junit)
@@ -123,4 +139,31 @@ dependencies {
 
     // Location services (optional)
     implementation(libs.play.services.location)
+
+    implementation(platform(libs.androidx.compose.bom))
+
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material3)
+
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+
+    implementation("io.coil-kt:coil-compose:2.5.0")
+
+
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+
+    implementation(libs.kotlinx.coroutines.android)
+
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.ktor.client.content.negotiation)
+
+
 }
