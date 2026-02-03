@@ -65,7 +65,8 @@
          -->
         <activity
             android:name=".views.addOutfit.AddOutfitView"
-            android:exported="true" />
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
 
         <!--
             Activity for selecting clothing items, likely for building outfits.
