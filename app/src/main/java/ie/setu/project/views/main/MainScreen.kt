@@ -1,7 +1,6 @@
 package ie.setu.project.views.main
 
 import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -56,7 +55,6 @@ fun MainScreen(
     val seasons = stringArrayResource(id = R.array.seasons_array).toList()
     var seasonExpanded by remember { mutableStateOf(false) }
 
-    // If season is blank, give a default
     LaunchedEffect(Unit) {
         if (season.isBlank() && seasons.isNotEmpty()) onSeasonChange(seasons.first())
     }
