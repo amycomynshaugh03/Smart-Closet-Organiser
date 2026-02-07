@@ -26,40 +26,35 @@ import ie.setu.project.R
 fun MainScreen(
     title: String,
     onTitleChange: (String) -> Unit,
-
     description: String,
     onDescriptionChange: (String) -> Unit,
-
     colour: String,
     onColourChange: (String) -> Unit,
-
     size: String,
     onSizeChange: (String) -> Unit,
-
     season: String,
     onSeasonChange: (String) -> Unit,
-
+    category: String,
+    onCategoryChange: (String) -> Unit,
     lastWornText: String,
     onPickLastWorn: () -> Unit,
-
     imageUri: Uri?,
     onChooseImage: () -> Unit,
-
     isEdit: Boolean,
     onCancel: () -> Unit,
     onSave: () -> Unit,
-
     snackbarHostState: SnackbarHostState
 ) {
     val seasons = stringArrayResource(id = R.array.seasons_array).toList()
     var seasonExpanded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        if (season.isBlank() && seasons.isNotEmpty()) onSeasonChange(seasons.first())
-    }
+    val categories = listOf("All", "Tops", "Bottoms", "Shoes", "Jackets")
+    var categoryExpanded by remember { mutableStateOf(false) }
 
-    val saveLabel = if (isEdit) stringResource(R.string.save_clothing_item) else stringResource(R.string.add_clothing)
-    val imageButtonLabel = if (imageUri != null) stringResource(R.string.change_clothing_image) else stringResource(R.string.button_addImage)
+    val saveLabel =
+        if (isEdit) stringResource(R.string.save_clothing_item) else stringResource(R.string.add_clothing)
+    val imageButtonLabel =
+        if (imageUri != null) stringResource(R.string.change_clothing_image) else stringResource(R.string.button_addImage)
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -71,32 +66,16 @@ fun MainScreen(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_heart),
-                            contentDescription = null
-                        )
+                        Icon(painter = painterResource(R.drawable.ic_heart), contentDescription = null)
                         Spacer(Modifier.width(8.dp))
-                        Text(
-                            text = "Add Clothing",
-                            fontSize = 30.sp,
-                            fontFamily = FontFamily.Cursive
-                        )
+                        Text(text = "Add Clothing", fontSize = 30.sp, fontFamily = FontFamily.Cursive)
                         Spacer(Modifier.width(8.dp))
-                        Icon(
-                            painter = painterResource(R.drawable.ic_heart),
-                            contentDescription = null
-                        )
+                        Icon(painter = painterResource(R.drawable.ic_heart), contentDescription = null)
                     }
                 },
                 actions = {
-                    IconButton(
-                        onClick = onCancel,
-                        modifier = Modifier.size(48.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Cancel"
-                        )
+                    IconButton(onClick = onCancel, modifier = Modifier.size(48.dp)) {
+                        Icon(imageVector = Icons.Default.Close, contentDescription = "Cancel")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -107,7 +86,6 @@ fun MainScreen(
             )
         }
     ) { padding ->
-
         Column(
             modifier = Modifier
                 .padding(padding)
@@ -124,6 +102,35 @@ fun MainScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
+            ExposedDropdownMenuBox(
+                expanded = categoryExpanded,
+                onExpandedChange = { categoryExpanded = !categoryExpanded }
+            ) {
+                OutlinedTextField(
+                    value = category,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Category") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded) },
+                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                )
+
+                ExposedDropdownMenu(
+                    expanded = categoryExpanded,
+                    onDismissRequest = { categoryExpanded = false }
+                ) {
+                    categories.forEach { c ->
+                        DropdownMenuItem(
+                            text = { Text(c) },
+                            onClick = {
+                                if (c != "All") onCategoryChange(c)
+                                categoryExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
             OutlinedTextField(
                 value = description,
                 onValueChange = onDescriptionChange,
@@ -136,7 +143,6 @@ fun MainScreen(
                 value = colour,
                 onValueChange = onColourChange,
                 label = { Text(stringResource(R.string.enter_colour)) },
-                minLines = 1,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -148,7 +154,6 @@ fun MainScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Season dropdown (Spinner replacement)
             ExposedDropdownMenuBox(
                 expanded = seasonExpanded,
                 onExpandedChange = { seasonExpanded = !seasonExpanded }
@@ -159,9 +164,7 @@ fun MainScreen(
                     readOnly = true,
                     label = { Text(stringResource(R.string.enter_season)) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = seasonExpanded) },
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
+                    modifier = Modifier.menuAnchor().fillMaxWidth()
                 )
 
                 ExposedDropdownMenu(
@@ -180,51 +183,34 @@ fun MainScreen(
                 }
             }
 
-            // Last worn (readonly)
             OutlinedTextField(
                 value = lastWornText,
                 onValueChange = {},
                 readOnly = true,
                 label = { Text(stringResource(R.string.enter_lastworn)) },
                 modifier = Modifier.fillMaxWidth(),
-                trailingIcon = {
-                    TextButton(onClick = onPickLastWorn) { Text("Pick") }
-                }
+                trailingIcon = { TextButton(onClick = onPickLastWorn) { Text("Pick") } }
             )
 
-            Button(
-                onClick = onChooseImage,
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            Button(onClick = onChooseImage, modifier = Modifier.fillMaxWidth()) {
                 Text(imageButtonLabel)
             }
 
-            // Image preview
             if (imageUri != null) {
                 AsyncImage(
                     model = imageUri,
                     contentDescription = stringResource(R.string.enter_image),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(240.dp),
+                    modifier = Modifier.fillMaxWidth().height(240.dp),
                     contentScale = ContentScale.Crop
                 )
             } else {
-                // optional placeholder
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(120.dp),
+                    modifier = Modifier.fillMaxWidth().height(120.dp),
                     contentAlignment = Alignment.Center
-                ) {
-                    Text("No image selected")
-                }
+                ) { Text("No image selected") }
             }
 
-            Button(
-                onClick = onSave,
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            Button(onClick = onSave, modifier = Modifier.fillMaxWidth()) {
                 Text(saveLabel)
             }
         }

@@ -5,13 +5,10 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import ie.setu.project.models.clothing.ClosetOrganiserModel
+import androidx.compose.runtime.*
+import ie.setu.project.R
 import kotlinx.coroutines.launch
+import ie.setu.project.models.clothing.ClosetOrganiserModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -23,7 +20,8 @@ class MainView : AppCompatActivity() {
     private var descriptionState by mutableStateOf("")
     private var colourState by mutableStateOf("")
     private var sizeState by mutableStateOf("")
-    private var seasonState by mutableStateOf("") // string value
+    private var seasonState by mutableStateOf("")
+    private var categoryState by mutableStateOf("")
     private var lastWornState by mutableStateOf("")
     private var imageUriState by mutableStateOf<Uri?>(null)
 
@@ -33,18 +31,24 @@ class MainView : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         presenter = MainPresenter(this)
-
         isEditState = presenter.edit
 
-        titleState = presenter.closetOrganiser.title ?: ""
-        descriptionState = presenter.closetOrganiser.description ?: ""
-        colourState = presenter.closetOrganiser.colourPattern ?: ""
-        sizeState = presenter.closetOrganiser.size ?: ""
-        seasonState = presenter.closetOrganiser.season ?: ""
+        titleState = presenter.closetOrganiser.title
+        descriptionState = presenter.closetOrganiser.description
+        colourState = presenter.closetOrganiser.colourPattern
+        sizeState = presenter.closetOrganiser.size
+        seasonState = presenter.closetOrganiser.season
+        categoryState = presenter.closetOrganiser.category
+
+        if (categoryState.isBlank()) categoryState = "Tops"
+
+        if (seasonState.isBlank()) {
+            val seasons = resources.getStringArray(R.array.seasons_array)
+            if (seasons.isNotEmpty()) seasonState = seasons.first()
+        }
 
         lastWornState = try {
-            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                .format(presenter.closetOrganiser.lastWorn)
+            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(presenter.closetOrganiser.lastWorn)
         } catch (e: Exception) { "" }
 
         imageUriState = presenter.closetOrganiser.image.takeIf { it != Uri.EMPTY }
@@ -69,6 +73,9 @@ class MainView : AppCompatActivity() {
                 season = seasonState,
                 onSeasonChange = { seasonState = it },
 
+                category = categoryState,
+                onCategoryChange = { categoryState = it },
+
                 lastWornText = lastWornState,
                 onPickLastWorn = { presenter.showDatePicker() },
 
@@ -87,7 +94,8 @@ class MainView : AppCompatActivity() {
                             descriptionState,
                             colourState,
                             sizeState,
-                            seasonState
+                            seasonState,
+                            categoryState
                         )
                     }
                 },
@@ -97,14 +105,14 @@ class MainView : AppCompatActivity() {
         }
     }
 
-
     fun showClosetItem(item: ClosetOrganiserModel) {
         isEditState = true
-        titleState = item.title ?: ""
-        descriptionState = item.description ?: ""
-        colourState = item.colourPattern ?: ""
-        sizeState = item.size ?: ""
-        seasonState = item.season ?: ""
+        titleState = item.title
+        descriptionState = item.description
+        colourState = item.colourPattern
+        sizeState = item.size
+        seasonState = item.season
+        categoryState = item.category
 
         lastWornState = try {
             SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(item.lastWorn)
@@ -113,13 +121,6 @@ class MainView : AppCompatActivity() {
         imageUriState = item.image.takeIf { it != Uri.EMPTY }
     }
 
-
-    fun updateImage(image: Uri) {
-        imageUriState = image
-    }
-
-
-    fun updateLastWornDate(date: String) {
-        lastWornState = date
-    }
+    fun updateImage(image: Uri) { imageUriState = image }
+    fun updateLastWornDate(date: String) { lastWornState = date }
 }

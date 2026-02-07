@@ -33,16 +33,14 @@ fun ClothingScreen(
     onDeleteClick: (ClosetOrganiserModel) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
-    var items by remember { mutableStateOf(itemsProvider()) }
-    fun reload() { items = itemsProvider() }
+    val items = itemsProvider().toList()
 
-    val categories = listOf("All", "Tops", "Bottoms", "Shoes")
+    val categories = listOf("All", "Tops", "Bottoms", "Shoes", "Jackets")
     var selectedCategory by rememberSaveable { mutableStateOf("All") }
 
-    val filteredItems = remember(items, selectedCategory) {
+    val filteredItems =
         if (selectedCategory == "All") items
-        else items.filter { it.category.equals(selectedCategory, ignoreCase = true) }
-    }
+        else items.filter { it.category.trim().equals(selectedCategory, ignoreCase = true) }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -77,23 +75,12 @@ fun ClothingScreen(
                     },
                     navigationIcon = {
                         IconButton(onClick = onBackToHome) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBack,
-                                contentDescription = "Back",
-                                tint = Color.White
-                            )
+                            Icon(Icons.Default.ArrowBack, "Back", tint = Color.White)
                         }
                     },
                     actions = {
-                        IconButton(
-                            onClick = onAddClick,
-                            modifier = Modifier.size(48.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Add",
-                                tint = Color.White
-                            )
+                        IconButton(onClick = onAddClick, modifier = Modifier.size(48.dp)) {
+                            Icon(Icons.Default.Add, "Add", tint = Color.White)
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -104,42 +91,45 @@ fun ClothingScreen(
                     )
                 )
 
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp, vertical = 10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    categories.forEach { cat ->
-                        FilterChip(
-                            selected = selectedCategory == cat,
-                            onClick = { selectedCategory = cat },
-                            label = { Text(cat) }
-                        )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        categories.forEach { cat ->
+                            FilterChip(
+                                selected = selectedCategory == cat,
+                                onClick = { selectedCategory = cat },
+                                label = { Text(cat) }
+                            )
+                        }
                     }
+
+                    Text(
+                        text = "Selected: $selectedCategory",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color.Gray
+                    )
                 }
             }
         }
     ) { padding ->
-
         if (filteredItems.isEmpty()) {
             Box(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize(),
+                modifier = Modifier.padding(padding).fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    if (items.isEmpty()) "No clothing items yet."
-                    else "No items in $selectedCategory."
-                )
+                Text(if (selectedCategory == "All") "No items." else "No items in $selectedCategory.")
             }
         } else {
             LazyColumn(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize(),
+                modifier = Modifier.padding(padding).fillMaxSize(),
                 contentPadding = PaddingValues(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -147,10 +137,7 @@ fun ClothingScreen(
                     ClothingRow(
                         item = item,
                         onClick = { onItemClick(item) },
-                        onDelete = {
-                            onDeleteClick(item)
-                            reload()
-                        }
+                        onDelete = { onDeleteClick(item) }
                     )
                 }
             }
@@ -165,15 +152,11 @@ private fun ClothingRow(
     onDelete: () -> Unit
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
+        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
+            modifier = Modifier.fillMaxWidth().padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
@@ -185,31 +168,22 @@ private fun ClothingRow(
             Spacer(Modifier.width(12.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = item.title.ifBlank { "No title" },
-                    fontWeight = FontWeight.Bold
-                )
+                Text(item.title.ifBlank { "No title" }, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(2.dp))
                 Text(
-                    text = item.description.ifBlank { "No description" },
+                    item.description.ifBlank { "No description" },
                     style = MaterialTheme.typography.bodySmall
                 )
-                if (item.category.isNotBlank()) {
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        text = item.category,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Color.Gray
-                    )
-                }
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    "Category: ${item.category.ifBlank { "None" }}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.Gray
+                )
             }
 
             IconButton(onClick = onDelete) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete",
-                    tint = Color.Red
-                )
+                Icon(Icons.Default.Delete, "Delete", tint = Color.Red)
             }
         }
     }
