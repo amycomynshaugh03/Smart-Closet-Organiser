@@ -25,8 +25,9 @@ data class ClosetOrganiserModel(
     var title: String = "", // The title or name of the clothing item.
     var description: String = "", // Description of the clothing item.
     var colourPattern: String = "", // Color or pattern of the clothing item.
-    var size: String = "", // Size of the clothing item.
+    var size: String = "", // Size of the clothing item.A
     var season: String = "", // Season associated with the clothing item.
+    var category: String = "",
     var lastWorn: Date = Date(), // The last date the item was worn.
     var image: Uri? = Uri.EMPTY // The URI of the image representing the clothing item.
 ) : Parcelable
