@@ -160,12 +160,15 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
 
-    implementation(libs.kotlinx.coroutines.android)
-
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.client.content.negotiation)
 
     implementation("androidx.compose.material:material-icons-extended")
+
+    implementation("com.github.erenalpaslan:removebg:1.0.4")
+
+
+
 
 
 }

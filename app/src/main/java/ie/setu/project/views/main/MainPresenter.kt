@@ -6,10 +6,15 @@ import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.datepicker.MaterialDatePicker
 import ie.setu.project.closet.main.MainApp
+import ie.setu.project.helpers.removeBackgroundAndSave
 import ie.setu.project.helpers.showImagePicker
 import ie.setu.project.models.clothing.ClosetOrganiserModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber.i
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -90,15 +95,33 @@ class MainPresenter(private val view: MainView) {
             view.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 when (result.resultCode) {
                     AppCompatActivity.RESULT_OK -> {
-                        result.data?.data?.let { image ->
+                        result.data?.data?.let { pickedUri ->
+
+
                             view.contentResolver.takePersistableUriPermission(
-                                image,
+                                pickedUri,
                                 Intent.FLAG_GRANT_READ_URI_PERMISSION
                             )
-                            closetOrganiser.image = image
-                            view.updateImage(image)
+
+
+                            view.lifecycleScope.launch {
+                                val processedUri = withContext(Dispatchers.Default) {
+                                    removeBackgroundAndSave(view, pickedUri)
+                                }
+
+
+                                view.grantUriPermission(
+                                    view.packageName,
+                                    processedUri,
+                                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                )
+
+                                closetOrganiser.image = processedUri
+                                view.updateImage(processedUri)
+                            }
                         }
                     }
+
                     else -> {}
                 }
             }
