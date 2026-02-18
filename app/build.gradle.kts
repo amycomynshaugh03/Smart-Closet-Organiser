@@ -5,16 +5,20 @@
 // 3. Dependencies for core Android libraries, testing, logging, networking, and image loading.
 
 plugins {
-    // Apply the Android application plugin
     alias(libs.plugins.android.application)
-    // Apply the Kotlin Android plugin
     alias(libs.plugins.kotlin.android)
-    // Apply Kotlin Parcelize plugin for Parcelable data classes
-    id("kotlin-parcelize")
-    // Dokka
+
+    id("org.jetbrains.kotlin.plugin.parcelize")
+
     id("org.jetbrains.dokka") version "1.8.20"
     id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
-    kotlin("plugin.serialization") version "1.9.21"
+
+    alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.kotlin.android.ksp)
+    alias(libs.plugins.compose.compiler)
+
+
 
 }
 
@@ -69,14 +73,15 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.15"
+    }
+
     // Kotlin compiler options (use JVM target version 11)
     kotlinOptions {
         jvmTarget = "11"
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
-    }
 
     configurations.all {
         resolutionStrategy {
@@ -89,58 +94,16 @@ android {
 }
 
 dependencies {
-    // AndroidX libraries for core functionality and UI components
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.inappmessaging)
-    implementation(libs.androidx.compose.foundation)
-
-    // Testing dependencies for unit and UI tests
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-
-    // Logging dependencies
-    implementation(libs.slf4j.simple)
-    implementation(libs.kotlin.logging)
-    implementation(libs.timberkt)
-
-    // Networking and HTTP dependencies (Retrofit)
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-    implementation(libs.logging.interceptor)
-
-    // Coroutines for asynchronous programming
-    implementation(libs.kotlinx.coroutines.android.v143)
-
-    // Lifecycle components for ViewModel and LiveData
-    implementation(libs.androidx.lifecycle.viewmodel.ktx.v241)
-    implementation(libs.androidx.lifecycle.livedata.ktx.v241)
-
-    // Image loading library (Picasso)
-    implementation(libs.picasso)
-
-    implementation(libs.gson)
-
-    // Ktor for Open-Meteo
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.cio)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
-
-    // Kotlinx Serialization
-    implementation(libs.kotlinx.serialization.json)
-
-    // DateTime support
-    implementation(libs.kotlinx.datetime)
-
-    // Location services (optional)
-    implementation(libs.play.services.location)
 
     implementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    debugImplementation(platform(libs.androidx.compose.bom))
 
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
@@ -153,22 +116,51 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
 
-    implementation("io.coil-kt:coil-compose:2.5.0")
-
-
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
 
-    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.kotlinx.coroutines.play.services)
+
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation(libs.slf4j.simple)
+    implementation(libs.kotlin.logging)
+    implementation(libs.timberkt)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
+
+    implementation(libs.kotlinx.coroutines.android.v143)
+
+    implementation(libs.androidx.lifecycle.viewmodel.ktx.v241)
+    implementation(libs.androidx.lifecycle.livedata.ktx.v241)
+
+    implementation(libs.picasso)
+    implementation(libs.gson)
+
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
 
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.datetime)
+
+    implementation(libs.play.services.location)
+
+    implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("androidx.compose.material:material-icons-extended")
-
     implementation("com.github.erenalpaslan:removebg:1.0.4")
 
-
-
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
 
 }

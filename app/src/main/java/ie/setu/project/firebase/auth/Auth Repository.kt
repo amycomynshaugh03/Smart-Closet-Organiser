@@ -3,7 +3,6 @@ package ie.setu.project.firebase.auth
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
-import ie.setu.project.firebase.auth.Response
 import ie.setu.project.firebase.services.AuthService
 import ie.setu.project.firebase.services.FirebaseSignInResponse
 import kotlinx.coroutines.tasks.await
