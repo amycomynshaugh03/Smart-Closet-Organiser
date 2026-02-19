@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.EntryPointAccessors
+import ie.setu.project.di.FirebaseEntryPoint
 import ie.setu.project.di.StoreEntryPoint
 import ie.setu.project.helpers.removeBackgroundAndSave
 import ie.setu.project.helpers.showImagePicker
@@ -17,6 +18,7 @@ import ie.setu.project.models.clothing.ClothingStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import timber.log.Timber.i
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -26,12 +28,21 @@ class MainPresenter(private val view: MainView) {
 
     var closetOrganiser = ClosetOrganiserModel()
 
+
     private val clothingStore: ClothingStore by lazy {
         val entryPoint = EntryPointAccessors.fromApplication(
             view.applicationContext,
             StoreEntryPoint::class.java
         )
         entryPoint.clothingStore()
+    }
+
+
+    private val firebase by lazy {
+        EntryPointAccessors.fromApplication(
+            view.applicationContext,
+            FirebaseEntryPoint::class.java
+        )
     }
 
     private lateinit var imageIntentLauncher: ActivityResultLauncher<Intent>
@@ -61,12 +72,28 @@ class MainPresenter(private val view: MainView) {
         closetOrganiser.season = season.trim()
         closetOrganiser.category = category.trim()
 
+
         if (edit) {
             clothingStore.update(closetOrganiser.copy())
             i("Update Button Pressed: ${closetOrganiser.title} (${closetOrganiser.category})")
         } else {
             clothingStore.create(closetOrganiser.copy())
             i("Add Button Pressed: ${closetOrganiser.title} (${closetOrganiser.category})")
+        }
+
+
+        val uid = firebase.authService().currentUserId
+        if (uid.isNotBlank()) {
+            view.lifecycleScope.launch {
+                try {
+                    firebase.clothingFirestoreRepository().upsert(uid, closetOrganiser)
+                } catch (e: Exception) {
+                    Timber.e(e, "Firestore upsert failed")
+                    // Optional: show snackbar/toast here if you want
+                }
+            }
+        } else {
+            Timber.w("Skipping Firestore save: userId blank (not signed in?)")
         }
 
         view.setResult(RESULT_OK)
@@ -125,7 +152,8 @@ class MainPresenter(private val view: MainView) {
                             }
                         }
                     }
-                    else -> { /* no-op */ }
+
+                    else -> { }
                 }
             }
     }

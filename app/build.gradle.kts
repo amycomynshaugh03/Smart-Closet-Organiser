@@ -1,15 +1,9 @@
-// This build.gradle file defines the setup and dependencies for the Android project.
-// The file includes:
-// 1. Plugin configurations for Android application and Kotlin.
-// 2. Android-specific settings, such as the SDK versions and build types.
-// 3. Dependencies for core Android libraries, testing, logging, networking, and image loading.
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
 
     id("org.jetbrains.kotlin.plugin.parcelize")
-
     id("org.jetbrains.dokka") version "1.8.20"
     id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
 
@@ -17,9 +11,6 @@ plugins {
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.android.ksp)
     alias(libs.plugins.compose.compiler)
-
-
-
 }
 
 tasks.dokkaHtml {
@@ -27,49 +18,35 @@ tasks.dokkaHtml {
 }
 
 android {
-    // Namespace for the app (unique identifier)
     namespace = "ie.setu.project"
-    // Target Android SDK version for compiling the app
     compileSdk = 35
 
     buildFeatures {
-        // Enable view binding for easy access to views
         viewBinding = true
         compose = true
     }
 
     defaultConfig {
-        // Application ID (package name) of the app
         applicationId = "ie.setu.project"
-        // Minimum SDK version supported by the app
         minSdk = 30
-        // Target SDK version for the app
         targetSdk = 35
-        // Version code for the app (increased with each release)
         versionCode = 1
-        // Version name for the app (can be any string like 1.0)
         versionName = "1.0"
-        // Test instrumentation runner for running Android tests
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
-        // Configuration for the release build
         release {
-            // Disable minification (Proguard/R8 optimization)
             isMinifyEnabled = false
-            // Specify Proguard files for code optimization and obfuscation
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
     }
-    // Java compatibility settings
+
     compileOptions {
-        // Specify Java 11 compatibility for the source code
         sourceCompatibility = JavaVersion.VERSION_11
-        // Specify Java 11 compatibility for the compiled code
         targetCompatibility = JavaVersion.VERSION_11
     }
 
@@ -77,11 +54,9 @@ android {
         kotlinCompilerExtensionVersion = "1.5.15"
     }
 
-    // Kotlin compiler options (use JVM target version 11)
     kotlinOptions {
         jvmTarget = "11"
     }
-
 
     configurations.all {
         resolutionStrategy {
@@ -89,8 +64,6 @@ android {
             force("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
         }
     }
-
-
 }
 
 dependencies {
@@ -120,8 +93,14 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
 
+
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
+
+
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+
+
     implementation(libs.kotlinx.coroutines.play.services)
 
     testImplementation(libs.junit)
@@ -161,6 +140,4 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
-
-
 }
