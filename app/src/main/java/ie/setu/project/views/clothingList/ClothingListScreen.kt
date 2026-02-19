@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Checkroom
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Style
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -50,7 +51,8 @@ fun ClothingListScreen(
     onDeleteItemClick: (ClosetOrganiserModel) -> Unit,
     showSnackbar: (String, Int) -> Unit,
     updateWeatherUI: (WeatherResponse) -> Unit,
-    showWeatherError: (String) -> Unit
+    showWeatherError: (String) -> Unit,
+    onSignOut: () -> Unit // ✅ added (logout callback)
 ) {
     val carouselItems by presenter.carouselItems.collectAsStateWithLifecycle()
     val weatherData by presenter.weatherData.collectAsStateWithLifecycle()
@@ -100,6 +102,15 @@ fun ClothingListScreen(
                             contentDescription = "Heart icon",
                             tint = Color.White,
                             modifier = Modifier.size(24.dp)
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onSignOut) {
+                        Icon(
+                            imageVector = Icons.Default.Logout,
+                            contentDescription = "Logout",
+                            tint = Color.White
                         )
                     }
                 },

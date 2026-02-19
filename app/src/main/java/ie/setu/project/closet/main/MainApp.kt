@@ -1,6 +1,7 @@
 package ie.setu.project.closet.main
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 import ie.setu.project.models.ClosetSQLStore
 import ie.setu.project.models.OutfitJSONStore
 import ie.setu.project.models.clothing.ClothingStore
@@ -13,6 +14,7 @@ import timber.log.Timber.i
  * This class is responsible for initializing the app and setting up the stores
  * for both clothing items and outfits.
  */
+@HiltAndroidApp
 class MainApp : Application() {
 
     /** Interface for accessing clothing items (currently using SQL implementation). */
