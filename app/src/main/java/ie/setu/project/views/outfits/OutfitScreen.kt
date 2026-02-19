@@ -34,11 +34,8 @@ fun OutfitScreen(
     onDeleteOutfit: (OutfitModel) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
-    var outfits by remember { mutableStateOf(outfitsProvider()) }
 
-    fun reload() {
-        outfits = outfitsProvider()
-    }
+    val outfits = outfitsProvider().toList()
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -70,31 +67,16 @@ fun OutfitScreen(
                         )
                     }
                 },
-
-
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color.White
-                        )
+                        Icon(Icons.Default.ArrowBack, "Back", tint = Color.White)
                     }
                 },
-
                 actions = {
-                    IconButton(
-                        onClick = onAddOutfit,
-                        modifier = Modifier.size(48.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add outfit",
-                            tint = Color.White
-                        )
+                    IconButton(onClick = onAddOutfit, modifier = Modifier.size(48.dp)) {
+                        Icon(Icons.Default.Add, "Add outfit", tint = Color.White)
                     }
                 },
-
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(0xFF6200EE),
                     titleContentColor = Color.White,
@@ -126,10 +108,7 @@ fun OutfitScreen(
                     OutfitRow(
                         outfit = outfit,
                         onClick = { onOutfitClick(outfit) },
-                        onDelete = {
-                            onDeleteOutfit(outfit)
-                            reload()
-                        }
+                        onDelete = { onDeleteOutfit(outfit) }
                     )
                 }
             }
@@ -171,7 +150,6 @@ private fun OutfitRow(
                 }
             }
 
-            // Horizontal image strip
             val scroll = rememberScrollState()
             Row(
                 modifier = Modifier

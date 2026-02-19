@@ -7,10 +7,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.EntryPointAccessors
 import ie.setu.project.activities.SelectClothingActivity
+import ie.setu.project.di.FirebaseEntryPoint
 import ie.setu.project.di.StoreEntryPoint
 import ie.setu.project.models.clothing.ClosetOrganiserModel
 import ie.setu.project.models.outfit.OutfitModel
 import ie.setu.project.models.outfit.OutfitStore
+import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -19,13 +23,19 @@ class AddOutfitPresenter(private val view: AddOutfitView) {
 
     var outfit = OutfitModel()
 
-
     private val outfitStore: OutfitStore by lazy {
         val entryPoint = EntryPointAccessors.fromApplication(
             view.applicationContext,
             StoreEntryPoint::class.java
         )
         entryPoint.outfitStore()
+    }
+
+    private val firebase by lazy {
+        EntryPointAccessors.fromApplication(
+            view.applicationContext,
+            FirebaseEntryPoint::class.java
+        )
     }
 
     private lateinit var clothingSelectionLauncher: ActivityResultLauncher<Intent>
@@ -47,6 +57,17 @@ class AddOutfitPresenter(private val view: AddOutfitView) {
             outfitStore.create(outfit)
         } else {
             outfitStore.update(outfit)
+        }
+
+        val uid = firebase.authService().currentUserId
+        if (uid.isNotBlank()) {
+            view.lifecycleScope.launch {
+                try {
+                    firebase.outfitFirestoreRepository().upsert(uid, outfit)
+                } catch (e: Exception) {
+                    Timber.e(e, "Firestore outfit upsert failed")
+                }
+            }
         }
 
         view.setResult(RESULT_OK)

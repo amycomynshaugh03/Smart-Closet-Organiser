@@ -6,14 +6,16 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import dagger.hilt.android.EntryPointAccessors
 import ie.setu.project.R
+import ie.setu.project.di.FirebaseEntryPoint
 import ie.setu.project.di.StoreEntryPoint
 import ie.setu.project.models.outfit.OutfitModel
 import ie.setu.project.models.outfit.OutfitStore
 import ie.setu.project.views.addOutfit.AddOutfitView
-
+import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
+import timber.log.Timber
 
 class OutfitPresenter(private val view: OutfitView) {
-
 
     private val outfitStore: OutfitStore by lazy {
         val entryPoint = EntryPointAccessors.fromApplication(
@@ -23,16 +25,20 @@ class OutfitPresenter(private val view: OutfitView) {
         entryPoint.outfitStore()
     }
 
-    // Launcher to handle the result of starting AddOutfitView activity
+    private val firebase by lazy {
+        EntryPointAccessors.fromApplication(
+            view.applicationContext,
+            FirebaseEntryPoint::class.java
+        )
+    }
+
     private lateinit var getResult: ActivityResultLauncher<Intent>
 
     init {
         registerActivityResultCallback()
     }
 
-
     fun getOutfits(): List<OutfitModel> = outfitStore.findAll()
-
 
     fun handleMenuSelection(itemId: Int): Boolean {
         return when (itemId) {
@@ -44,7 +50,6 @@ class OutfitPresenter(private val view: OutfitView) {
         }
     }
 
-
     fun onOutfitClick(outfit: OutfitModel) {
         val intent = Intent(view, AddOutfitView::class.java).apply {
             putExtra("outfit_edit", outfit)
@@ -52,11 +57,23 @@ class OutfitPresenter(private val view: OutfitView) {
         getResult.launch(intent)
     }
 
-
     fun onDeleteOutfitClick(outfit: OutfitModel) {
+
         outfitStore.delete(outfit)
         view.showSnackbar("Outfit deleted")
         view.loadOutfits()
+
+
+        val uid = firebase.authService().currentUserId
+        if (uid.isNotBlank()) {
+            view.lifecycleScope.launch {
+                try {
+                    firebase.outfitFirestoreRepository().delete(uid, outfit.id)
+                } catch (e: Exception) {
+                    Timber.e(e, "Firestore outfit delete failed")
+                }
+            }
+        }
     }
 
     private fun launchAddOutfit() {

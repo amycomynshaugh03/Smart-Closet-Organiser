@@ -4,6 +4,7 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import ie.setu.project.firebase.clothing.ClothingFirestoreRepository
+import ie.setu.project.firebase.outfit.OutfitFirestoreRepository
 import ie.setu.project.firebase.services.AuthService
 
 @EntryPoint
@@ -11,4 +12,5 @@ import ie.setu.project.firebase.services.AuthService
 interface FirebaseEntryPoint {
     fun authService(): AuthService
     fun clothingFirestoreRepository(): ClothingFirestoreRepository
+    fun outfitFirestoreRepository(): OutfitFirestoreRepository
 }
