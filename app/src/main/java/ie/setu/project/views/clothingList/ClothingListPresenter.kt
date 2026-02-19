@@ -1,19 +1,25 @@
 package ie.setu.project.viewmodels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ie.setu.project.closet.main.MainApp
+import dagger.hilt.android.lifecycle.HiltViewModel
 import ie.setu.project.models.clothing.ClosetOrganiserModel
+import ie.setu.project.models.clothing.ClothingStore
+import ie.setu.project.models.outfit.OutfitStore
 import ie.setu.project.models.weather.WeatherResponse
 import ie.setu.project.weather.WeatherService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ClothingListPresenter(application: Application) : AndroidViewModel(application) {
-    private val app: MainApp = application as MainApp
+@HiltViewModel
+class ClothingListPresenter @Inject constructor(
+    private val clothingStore: ClothingStore,
+    private val outfitStore: OutfitStore
+) : ViewModel() {
+
     private val weatherService = WeatherService()
 
     private val _carouselItems = MutableStateFlow<List<ClosetOrganiserModel>>(emptyList())
@@ -38,7 +44,7 @@ class ClothingListPresenter(application: Application) : AndroidViewModel(applica
 
     private fun loadCarouselData() {
         viewModelScope.launch {
-            _carouselItems.value = app.clothingItems.findAll()
+            _carouselItems.value = clothingStore.findAll()
                 .takeLast(5)
                 .reversed()
         }
@@ -67,13 +73,15 @@ class ClothingListPresenter(application: Application) : AndroidViewModel(applica
     private fun performSearch(query: String) {
         viewModelScope.launch {
             val results = mutableListOf<Any>()
-            val clothingResults = app.clothingItems.findAll().filter {
+
+            val clothingResults = clothingStore.findAll().filter {
                 it.title.contains(query, ignoreCase = true) ||
                         it.description.contains(query, ignoreCase = true) ||
                         it.colourPattern.contains(query, ignoreCase = true) ||
                         it.season.contains(query, ignoreCase = true)
             }
-            val outfitResults = app.outfitItems.findAll().filter {
+
+            val outfitResults = outfitStore.findAll().filter {
                 it.title.contains(query, ignoreCase = true) ||
                         it.description.contains(query, ignoreCase = true) ||
                         it.season.contains(query, ignoreCase = true) ||
@@ -82,6 +90,7 @@ class ClothingListPresenter(application: Application) : AndroidViewModel(applica
                                     clothing.description.contains(query, ignoreCase = true)
                         }
             }
+
             results.addAll(clothingResults)
             results.addAll(outfitResults)
             _searchResults.value = results

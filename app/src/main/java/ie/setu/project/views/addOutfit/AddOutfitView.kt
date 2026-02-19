@@ -9,16 +9,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import dagger.hilt.android.AndroidEntryPoint
 import ie.setu.project.models.outfit.OutfitModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+@AndroidEntryPoint
 class AddOutfitView : AppCompatActivity() {
 
     private lateinit var presenter: AddOutfitPresenter
 
-    // ✅ Activity-level Compose state so presenter callbacks can update the UI
+
     private var lastWornState by mutableStateOf("")
     private var selectedCountState by mutableStateOf(0) // optional UI feedback
 

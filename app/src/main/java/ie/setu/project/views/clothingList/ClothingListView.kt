@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import ie.setu.project.adapters.ClosetItemListener
@@ -25,18 +26,15 @@ import ie.setu.project.views.outfit.OutfitView
 @AndroidEntryPoint
 class ClothingListView : AppCompatActivity(), ClosetItemListener {
 
-    private lateinit var presenter: ClothingListPresenter
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        presenter = ClothingListPresenter(application)
-        presenter.fetchWeather()
-
         setContent {
-            // Hilt ViewModels (works because Activity is @AndroidEntryPoint)
-            val authStateVm: AuthStateViewModel = androidx.hilt.navigation.compose.hiltViewModel()
-            val authVm: AuthViewModel = androidx.hilt.navigation.compose.hiltViewModel()
+            val presenter: ClothingListPresenter = hiltViewModel()
+            val authStateVm: AuthStateViewModel = hiltViewModel()
+            val authVm: AuthViewModel = hiltViewModel()
+
+            LaunchedEffect(Unit) { presenter.fetchWeather() }
 
             val user by authStateVm.user.collectAsState()
             var showRegister by remember { mutableStateOf(false) }
@@ -45,23 +43,22 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                 if (user == null) showRegister = false
             }
 
-            // --------- AUTH GATE ----------
             if (user == null) {
                 if (showRegister) {
                     RegisterScreen(
                         onGoToLogin = { showRegister = false },
-                        onRegistered = { /* auth state will change automatically */ }
+                        onRegistered = {  }
                     )
                 } else {
                     LoginScreen(
                         onGoToRegister = { showRegister = true },
-                        onSignedIn = { /* auth state will change automatically */ }
+                        onSignedIn = {  }
                     )
                 }
                 return@setContent
             }
 
-            // --------- LOGGED IN = SHOW HOME ----------
+
             val context = LocalContext.current
 
             ClothingListScreen(
@@ -86,14 +83,13 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                 showSnackbar = { message, duration -> showSnackbar(message, duration) },
                 updateWeatherUI = { weather -> updateWeatherUI(weather) },
                 showWeatherError = { message -> showWeatherError(message) },
-                onSignOut = { authVm.signOut() } // ✅ logout
+                onSignOut = { authVm.signOut() }
             )
         }
     }
 
     override fun onResume() {
         super.onResume()
-        presenter.refreshCarousel()
     }
 
     override fun onClosetItemClick(item: ClosetOrganiserModel) {
@@ -104,7 +100,6 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
 
     override fun onDeleteItemClick(item: ClosetOrganiserModel) {
         showSnackbar("Deleted ${item.title}", Snackbar.LENGTH_SHORT)
-        presenter.refreshCarousel()
     }
 
     fun showSnackbar(message: String, duration: Int) {

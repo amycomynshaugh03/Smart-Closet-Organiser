@@ -8,10 +8,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.datepicker.MaterialDatePicker
-import ie.setu.project.closet.main.MainApp
+import dagger.hilt.android.EntryPointAccessors
+import ie.setu.project.di.StoreEntryPoint
 import ie.setu.project.helpers.removeBackgroundAndSave
 import ie.setu.project.helpers.showImagePicker
 import ie.setu.project.models.clothing.ClosetOrganiserModel
+import ie.setu.project.models.clothing.ClothingStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -23,7 +25,14 @@ import java.util.Locale
 class MainPresenter(private val view: MainView) {
 
     var closetOrganiser = ClosetOrganiserModel()
-    var app: MainApp = view.application as MainApp
+
+    private val clothingStore: ClothingStore by lazy {
+        val entryPoint = EntryPointAccessors.fromApplication(
+            view.applicationContext,
+            StoreEntryPoint::class.java
+        )
+        entryPoint.clothingStore()
+    }
 
     private lateinit var imageIntentLauncher: ActivityResultLauncher<Intent>
     var edit = false
@@ -44,7 +53,6 @@ class MainPresenter(private val view: MainView) {
         size: String,
         season: String,
         category: String
-
     ) {
         closetOrganiser.title = title.trim()
         closetOrganiser.description = description.trim()
@@ -53,12 +61,11 @@ class MainPresenter(private val view: MainView) {
         closetOrganiser.season = season.trim()
         closetOrganiser.category = category.trim()
 
-
         if (edit) {
-            app.clothingItems.update(closetOrganiser.copy())
+            clothingStore.update(closetOrganiser.copy())
             i("Update Button Pressed: ${closetOrganiser.title} (${closetOrganiser.category})")
         } else {
-            app.clothingItems.create(closetOrganiser.copy())
+            clothingStore.create(closetOrganiser.copy())
             i("Add Button Pressed: ${closetOrganiser.title} (${closetOrganiser.category})")
         }
 
@@ -97,18 +104,15 @@ class MainPresenter(private val view: MainView) {
                     AppCompatActivity.RESULT_OK -> {
                         result.data?.data?.let { pickedUri ->
 
-
                             view.contentResolver.takePersistableUriPermission(
                                 pickedUri,
                                 Intent.FLAG_GRANT_READ_URI_PERMISSION
                             )
 
-
                             view.lifecycleScope.launch {
                                 val processedUri = withContext(Dispatchers.Default) {
                                     removeBackgroundAndSave(view, pickedUri)
                                 }
-
 
                                 view.grantUriPermission(
                                     view.packageName,
@@ -121,8 +125,7 @@ class MainPresenter(private val view: MainView) {
                             }
                         }
                     }
-
-                    else -> {}
+                    else -> { /* no-op */ }
                 }
             }
     }

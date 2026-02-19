@@ -5,20 +5,29 @@ import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.snackbar.Snackbar
-import ie.setu.project.closet.main.MainApp
+import dagger.hilt.android.EntryPointAccessors
+import ie.setu.project.di.StoreEntryPoint
 import ie.setu.project.models.clothing.ClosetOrganiserModel
+import ie.setu.project.models.clothing.ClothingStore
 import ie.setu.project.views.main.MainView
 
 class ClothingPresenter(private val view: ClothingView) {
 
-    private val app: MainApp = view.application as MainApp
+    private val clothingStore: ClothingStore by lazy {
+        val entryPoint = EntryPointAccessors.fromApplication(
+            view.applicationContext,
+            StoreEntryPoint::class.java
+        )
+        entryPoint.clothingStore()
+    }
+
     private lateinit var getResult: ActivityResultLauncher<Intent>
 
     init {
         registerActivityResultCallback()
     }
 
-    fun getClosetItems(): List<ClosetOrganiserModel> = app.clothingItems.findAll()
+    fun getClosetItems(): List<ClosetOrganiserModel> = clothingStore.findAll()
 
     fun launchAddItem() {
         getResult.launch(Intent(view, MainView::class.java))
@@ -32,7 +41,7 @@ class ClothingPresenter(private val view: ClothingView) {
     }
 
     fun onDeleteItemClick(item: ClosetOrganiserModel) {
-        app.clothingItems.delete(item)
+        clothingStore.delete(item)
         view.showSnackbar("Item deleted", Snackbar.LENGTH_SHORT)
         view.updateAdapter()
     }
@@ -43,7 +52,8 @@ class ClothingPresenter(private val view: ClothingView) {
         ) { result ->
             when (result.resultCode) {
                 Activity.RESULT_OK -> view.notifyAdapterChanged()
-                Activity.RESULT_CANCELED -> view.showSnackbar("Operation cancelled", Snackbar.LENGTH_SHORT)
+                Activity.RESULT_CANCELED ->
+                    view.showSnackbar("Operation cancelled", Snackbar.LENGTH_SHORT)
             }
         }
     }
