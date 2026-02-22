@@ -4,30 +4,58 @@ import android.app.Activity
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import com.google.android.material.snackbar.Snackbar
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.EntryPointAccessors
-import ie.setu.project.di.StoreEntryPoint
+import ie.setu.project.di.FirebaseEntryPoint
 import ie.setu.project.models.clothing.ClosetOrganiserModel
-import ie.setu.project.models.clothing.ClothingStore
 import ie.setu.project.views.main.MainView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class ClothingPresenter(private val view: ClothingView) {
 
-    private val clothingStore: ClothingStore by lazy {
-        val entryPoint = EntryPointAccessors.fromApplication(
+    private lateinit var getResult: ActivityResultLauncher<Intent>
+
+    private val firebase by lazy {
+        EntryPointAccessors.fromApplication(
             view.applicationContext,
-            StoreEntryPoint::class.java
+            FirebaseEntryPoint::class.java
         )
-        entryPoint.clothingStore()
     }
 
-    private lateinit var getResult: ActivityResultLauncher<Intent>
+    private var cachedItems: List<ClosetOrganiserModel> = emptyList()
 
     init {
         registerActivityResultCallback()
+        refreshFromFirestore()
     }
 
-    fun getClosetItems(): List<ClosetOrganiserModel> = clothingStore.findAll()
+    fun getClosetItems(): List<ClosetOrganiserModel> = cachedItems
+
+    fun refreshFromFirestore() {
+        val uid = firebase.authService().currentUserId
+        if (uid.isBlank()) {
+            Timber.w("ClothingPresenter.refreshFromFirestore: uid blank (not signed in)")
+            cachedItems = emptyList()
+            view.notifyAdapterChanged()
+            return
+        }
+
+        view.lifecycleScope.launch {
+            try {
+                val items = withContext(Dispatchers.IO) {
+                    firebase.clothingFirestoreRepository().getAll(uid)
+                }
+                cachedItems = items
+                Timber.i("Loaded ${cachedItems.size} items")
+                view.notifyAdapterChanged()
+            } catch (e: Exception) {
+                Timber.e(e, "Firestore clothing read failed")
+            }
+        }
+    }
 
     fun launchAddItem() {
         getResult.launch(Intent(view, MainView::class.java))
@@ -41,9 +69,22 @@ class ClothingPresenter(private val view: ClothingView) {
     }
 
     fun onDeleteItemClick(item: ClosetOrganiserModel) {
-        clothingStore.delete(item)
-        view.showSnackbar("Item deleted", Snackbar.LENGTH_SHORT)
-        view.updateAdapter()
+        val uid = firebase.authService().currentUserId
+        if (uid.isBlank()) {
+            Timber.w("Delete blocked: uid blank (not signed in)")
+            return
+        }
+
+        view.lifecycleScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    firebase.clothingFirestoreRepository().delete(uid, item.id)
+                }
+                refreshFromFirestore()
+            } catch (e: Exception) {
+                Timber.e(e, "Delete failed id=${item.id}")
+            }
+        }
     }
 
     private fun registerActivityResultCallback() {
@@ -51,9 +92,8 @@ class ClothingPresenter(private val view: ClothingView) {
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             when (result.resultCode) {
-                Activity.RESULT_OK -> view.notifyAdapterChanged()
-                Activity.RESULT_CANCELED ->
-                    view.showSnackbar("Operation cancelled", Snackbar.LENGTH_SHORT)
+                Activity.RESULT_OK -> refreshFromFirestore()
+                Activity.RESULT_CANCELED -> Timber.i("Add/Edit cancelled")
             }
         }
     }

@@ -3,6 +3,7 @@ package ie.setu.project.views.main
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.net.Uri
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -28,7 +29,6 @@ class MainPresenter(private val view: MainView) {
 
     var closetOrganiser = ClosetOrganiserModel()
 
-
     private val clothingStore: ClothingStore by lazy {
         val entryPoint = EntryPointAccessors.fromApplication(
             view.applicationContext,
@@ -36,7 +36,6 @@ class MainPresenter(private val view: MainView) {
         )
         entryPoint.clothingStore()
     }
-
 
     private val firebase by lazy {
         EntryPointAccessors.fromApplication(
@@ -72,32 +71,38 @@ class MainPresenter(private val view: MainView) {
         closetOrganiser.season = season.trim()
         closetOrganiser.category = category.trim()
 
-
-        if (edit) {
-            clothingStore.update(closetOrganiser.copy())
-            i("Update Button Pressed: ${closetOrganiser.title} (${closetOrganiser.category})")
-        } else {
-            clothingStore.create(closetOrganiser.copy())
-            i("Add Button Pressed: ${closetOrganiser.title} (${closetOrganiser.category})")
-        }
-
-
         val uid = firebase.authService().currentUserId
-        if (uid.isNotBlank()) {
-            view.lifecycleScope.launch {
-                try {
-                    firebase.clothingFirestoreRepository().upsert(uid, closetOrganiser)
-                } catch (e: Exception) {
-                    Timber.e(e, "Firestore upsert failed")
-                    // Optional: show snackbar/toast here if you want
+
+        view.lifecycleScope.launch {
+
+            val saved: ClosetOrganiserModel = withContext(Dispatchers.IO) {
+                if (edit) {
+                    val updated = closetOrganiser.copy()
+                    clothingStore.update(updated)
+                    Timber.i("Update Button Pressed: ${updated.title} (${updated.category})")
+                    updated
+                } else {
+                    val created = closetOrganiser.copy()
+                    clothingStore.create(created)
+                    // if your SQL store sets id on insert, make sure created.id is updated there
+                    Timber.i("Add Button Pressed: ${created.title} (${created.category})")
+                    created
                 }
             }
-        } else {
-            Timber.w("Skipping Firestore save: userId blank (not signed in?)")
-        }
+            closetOrganiser.id = saved.id
 
-        view.setResult(RESULT_OK)
-        view.finish()
+
+            if (uid.isNotBlank()) {
+                try {
+                    firebase.clothingFirestoreRepository().upsert(uid, saved)
+                } catch (e: Exception) {
+                    Timber.e(e, "Firestore upsert failed")
+                }
+            }
+
+            view.setResult(RESULT_OK)
+            view.finish()
+        }
     }
 
     fun doCancel() {
@@ -121,6 +126,7 @@ class MainPresenter(private val view: MainView) {
             val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             view.updateLastWornDate(sdf.format(closetOrganiser.lastWorn))
         }
+
         datePicker.show(view.supportFragmentManager, "DATE_PICKER")
     }
 
@@ -152,8 +158,7 @@ class MainPresenter(private val view: MainView) {
                             }
                         }
                     }
-
-                    else -> { }
+                    else -> {  }
                 }
             }
     }

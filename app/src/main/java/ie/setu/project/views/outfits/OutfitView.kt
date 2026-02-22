@@ -70,9 +70,9 @@ class OutfitView : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        presenter.refreshFromFirestore()
         loadOutfits()
     }
-
     fun loadOutfits() {
         refreshTick++
     }

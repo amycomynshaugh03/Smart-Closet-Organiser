@@ -12,7 +12,6 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import ie.setu.project.adapters.ClosetItemListener
 import ie.setu.project.models.clothing.ClosetOrganiserModel
-import ie.setu.project.models.outfit.OutfitModel
 import ie.setu.project.models.weather.WeatherCondition
 import ie.setu.project.models.weather.WeatherResponse
 import ie.setu.project.ui.auth.AuthStateViewModel
@@ -34,10 +33,20 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
             val authStateVm: AuthStateViewModel = hiltViewModel()
             val authVm: AuthViewModel = hiltViewModel()
 
-            LaunchedEffect(Unit) { presenter.fetchWeather() }
-
             val user by authStateVm.user.collectAsState()
             var showRegister by remember { mutableStateOf(false) }
+
+            val lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
+
+            DisposableEffect(lifecycleOwner) {
+                val obs = androidx.lifecycle.LifecycleEventObserver { _, event ->
+                    if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                        presenter.refreshFromFirestore()
+                    }
+                }
+                lifecycleOwner.lifecycle.addObserver(obs)
+                onDispose { lifecycleOwner.lifecycle.removeObserver(obs) }
+            }
 
             LaunchedEffect(user) {
                 if (user == null) showRegister = false
@@ -47,7 +56,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                 if (showRegister) {
                     RegisterScreen(
                         onGoToLogin = { showRegister = false },
-                        onRegistered = {  }
+                        onRegistered = {}
                     )
                 } else {
                     LoginScreen(
@@ -58,6 +67,11 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                 return@setContent
             }
 
+            LaunchedEffect(user) {
+                presenter.refreshFromFirestore()
+            }
+
+            LaunchedEffect(Unit) { presenter.fetchWeather() }
 
             val context = LocalContext.current
 
@@ -77,8 +91,8 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                     })
                 },
                 onDeleteItemClick = { item ->
+                    presenter.deleteClothing(item)
                     showSnackbar("Deleted ${item.title}", Snackbar.LENGTH_SHORT)
-                    presenter.refreshCarousel()
                 },
                 showSnackbar = { message, duration -> showSnackbar(message, duration) },
                 updateWeatherUI = { weather -> updateWeatherUI(weather) },

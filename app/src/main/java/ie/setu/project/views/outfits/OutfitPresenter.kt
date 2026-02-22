@@ -4,26 +4,15 @@ import android.app.Activity
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.EntryPointAccessors
-import ie.setu.project.R
 import ie.setu.project.di.FirebaseEntryPoint
-import ie.setu.project.di.StoreEntryPoint
 import ie.setu.project.models.outfit.OutfitModel
-import ie.setu.project.models.outfit.OutfitStore
 import ie.setu.project.views.addOutfit.AddOutfitView
 import kotlinx.coroutines.launch
-import androidx.lifecycle.lifecycleScope
 import timber.log.Timber
 
 class OutfitPresenter(private val view: OutfitView) {
-
-    private val outfitStore: OutfitStore by lazy {
-        val entryPoint = EntryPointAccessors.fromApplication(
-            view.applicationContext,
-            StoreEntryPoint::class.java
-        )
-        entryPoint.outfitStore()
-    }
 
     private val firebase by lazy {
         EntryPointAccessors.fromApplication(
@@ -34,19 +23,26 @@ class OutfitPresenter(private val view: OutfitView) {
 
     private lateinit var getResult: ActivityResultLauncher<Intent>
 
+    private var cachedOutfits: List<OutfitModel> = emptyList()
+
     init {
         registerActivityResultCallback()
+        refreshFromFirestore()
     }
 
-    fun getOutfits(): List<OutfitModel> = outfitStore.findAll()
+    fun getOutfits(): List<OutfitModel> = cachedOutfits
 
-    fun handleMenuSelection(itemId: Int): Boolean {
-        return when (itemId) {
-            R.id.item_add -> {
-                launchAddOutfit()
-                true
+    fun refreshFromFirestore() {
+        val uid = firebase.authService().currentUserId
+        if (uid.isBlank()) return
+
+        view.lifecycleScope.launch {
+            try {
+                cachedOutfits = firebase.outfitFirestoreRepository().getAll(uid)
+                view.loadOutfits()
+            } catch (e: Exception) {
+                Timber.e(e, "Firestore outfit read failed")
             }
-            else -> false
         }
     }
 
@@ -58,26 +54,17 @@ class OutfitPresenter(private val view: OutfitView) {
     }
 
     fun onDeleteOutfitClick(outfit: OutfitModel) {
-
-        outfitStore.delete(outfit)
-        view.showSnackbar("Outfit deleted")
-        view.loadOutfits()
-
-
         val uid = firebase.authService().currentUserId
-        if (uid.isNotBlank()) {
-            view.lifecycleScope.launch {
-                try {
-                    firebase.outfitFirestoreRepository().delete(uid, outfit.id)
-                } catch (e: Exception) {
-                    Timber.e(e, "Firestore outfit delete failed")
-                }
+        if (uid.isBlank()) return
+
+        view.lifecycleScope.launch {
+            try {
+                firebase.outfitFirestoreRepository().delete(uid, outfit.id)
+                refreshFromFirestore()
+            } catch (e: Exception) {
+                Timber.e(e, "Firestore outfit delete failed")
             }
         }
-    }
-
-    private fun launchAddOutfit() {
-        getResult.launch(Intent(view, AddOutfitView::class.java))
     }
 
     private fun registerActivityResultCallback() {
@@ -85,7 +72,7 @@ class OutfitPresenter(private val view: OutfitView) {
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             when (result.resultCode) {
-                Activity.RESULT_OK -> view.loadOutfits()
+                Activity.RESULT_OK -> refreshFromFirestore()
                 Activity.RESULT_CANCELED -> view.showSnackbar("Operation cancelled")
             }
         }

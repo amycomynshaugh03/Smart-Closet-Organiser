@@ -52,7 +52,7 @@ fun ClothingListScreen(
     showSnackbar: (String, Int) -> Unit,
     updateWeatherUI: (WeatherResponse) -> Unit,
     showWeatherError: (String) -> Unit,
-    onSignOut: () -> Unit // ✅ added (logout callback)
+    onSignOut: () -> Unit
 ) {
     val carouselItems by presenter.carouselItems.collectAsStateWithLifecycle()
     val weatherData by presenter.weatherData.collectAsStateWithLifecycle()
@@ -61,6 +61,14 @@ fun ClothingListScreen(
 
     var searchQuery by remember { mutableStateOf("") }
     var currentCarouselPage by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(carouselItems.size) {
+        if (carouselItems.isEmpty()) {
+            currentCarouselPage = 0
+        } else if (currentCarouselPage > carouselItems.lastIndex) {
+            currentCarouselPage = carouselItems.lastIndex
+        }
+    }
 
     var lastWeatherKey by remember { mutableStateOf<String?>(null) }
     LaunchedEffect(weatherData) {
@@ -231,10 +239,18 @@ fun ClothingListScreen(
                                         .fillMaxSize()
                                         .clickable { onClothingItemClick(item) }
                                 ) {
-                                    val uri = item.image
-                                    if (uri != null && uri != Uri.EMPTY && uri.toString().isNotBlank()) {
+
+                                    val imageModel: Any? =
+                                        item.imageUrl.takeIf { it.isNotBlank() } ?: item.image
+
+                                    val ok =
+                                        imageModel != null &&
+                                                imageModel != Uri.EMPTY &&
+                                                imageModel.toString().isNotBlank()
+
+                                    if (ok) {
                                         AsyncImage(
-                                            model = uri,
+                                            model = imageModel,
                                             contentDescription = "Carousel item",
                                             modifier = Modifier.fillMaxSize(),
                                             contentScale = ContentScale.Crop
@@ -399,13 +415,18 @@ fun SearchResultItem(
     onClothingClick: (ClosetOrganiserModel) -> Unit,
     onOutfitClick: (OutfitModel) -> Unit
 ) {
-    val thumbUri: Uri? = when (item) {
-        is ClosetOrganiserModel -> item.image
-        is OutfitModel -> item.clothingItems.firstOrNull()?.image
+
+    val thumbModel: Any? = when (item) {
+        is ClosetOrganiserModel -> item.imageUrl.takeIf { it.isNotBlank() } ?: item.image
+        is OutfitModel -> {
+            val first = item.clothingItems.firstOrNull()
+            first?.imageUrl?.takeIf { it.isNotBlank() } ?: first?.image
+        }
         else -> null
     }
 
-    val isValidThumb = thumbUri != null && thumbUri != Uri.EMPTY && thumbUri.toString().isNotBlank()
+    val isValidThumb =
+        thumbModel != null && thumbModel != Uri.EMPTY && thumbModel.toString().isNotBlank()
 
     val title = when (item) {
         is ClosetOrganiserModel -> item.title.ifBlank { "No title" }
@@ -453,7 +474,7 @@ fun SearchResultItem(
             ) {
                 if (isValidThumb) {
                     AsyncImage(
-                        model = thumbUri,
+                        model = thumbModel,
                         contentDescription = "Result image",
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
@@ -487,8 +508,12 @@ fun SearchResultItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     item.clothingItems.take(4).forEach { clothing ->
-                        val u = clothing.image
-                        val ok = u != null && u != Uri.EMPTY && u.toString().isNotBlank()
+                        val miniModel: Any? =
+                            clothing.imageUrl.takeIf { it.isNotBlank() } ?: clothing.image
+
+                        val ok =
+                            miniModel != null && miniModel != Uri.EMPTY && miniModel.toString().isNotBlank()
+
                         Box(
                             modifier = Modifier
                                 .size(42.dp)
@@ -498,7 +523,7 @@ fun SearchResultItem(
                         ) {
                             if (ok) {
                                 AsyncImage(
-                                    model = u,
+                                    model = miniModel,
                                     contentDescription = "Mini image",
                                     modifier = Modifier.fillMaxSize(),
                                     contentScale = ContentScale.Crop

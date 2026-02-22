@@ -103,7 +103,7 @@ fun AddOutfitScreen(
                 minLines = 3
             )
 
-            // Season dropdown (replaces Spinner)
+
             ExposedDropdownMenuBox(
                 expanded = seasonExpanded,
                 onExpandedChange = { seasonExpanded = !seasonExpanded }
@@ -134,7 +134,6 @@ fun AddOutfitScreen(
                 }
             }
 
-            // Last worn (non-editable field)
             OutlinedTextField(
                 value = lastWornText,
                 onValueChange = {},

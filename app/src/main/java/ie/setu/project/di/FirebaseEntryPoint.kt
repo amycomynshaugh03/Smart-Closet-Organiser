@@ -6,6 +6,7 @@ import dagger.hilt.components.SingletonComponent
 import ie.setu.project.firebase.clothing.ClothingFirestoreRepository
 import ie.setu.project.firebase.outfit.OutfitFirestoreRepository
 import ie.setu.project.firebase.services.AuthService
+import ie.setu.project.firebase.storage.ImageStorageRepository
 
 @EntryPoint
 @InstallIn(SingletonComponent::class)
@@ -13,4 +14,5 @@ interface FirebaseEntryPoint {
     fun authService(): AuthService
     fun clothingFirestoreRepository(): ClothingFirestoreRepository
     fun outfitFirestoreRepository(): OutfitFirestoreRepository
+    fun imageStorageRepository(): ImageStorageRepository
 }

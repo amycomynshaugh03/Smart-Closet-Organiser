@@ -9,7 +9,7 @@ class ClothingMemStore : ClothingStore {
 
     private fun nextId(): Long = ++lastId
 
-    override fun findAll(): List<ClosetOrganiserModel> {
+    override suspend fun findAll(): List<ClosetOrganiserModel> {
         val used = HashSet<Long>()
         for (item in clothingItems) {
             if (item.id <= 0L || used.contains(item.id)) {
@@ -21,7 +21,7 @@ class ClothingMemStore : ClothingStore {
         return clothingItems.toList()
     }
 
-    override fun create(clothingItem: ClosetOrganiserModel) {
+    override suspend fun create(clothingItem: ClosetOrganiserModel) {
         if (clothingItem.id <= 0L) {
             clothingItem.id = nextId()
         } else if (clothingItems.any { it.id == clothingItem.id }) {
@@ -29,10 +29,9 @@ class ClothingMemStore : ClothingStore {
         }
         clothingItems.add(clothingItem)
         logAll()
-
     }
 
-    override fun update(closetItem: ClosetOrganiserModel) {
+    override suspend fun update(closetItem: ClosetOrganiserModel) {
         val found = clothingItems.find { it.id == closetItem.id }
         if (found != null) {
             found.title = closetItem.title
@@ -47,12 +46,12 @@ class ClothingMemStore : ClothingStore {
         logAll()
     }
 
-    override fun delete(clothingItem: ClosetOrganiserModel) {
+    override suspend fun delete(clothingItem: ClosetOrganiserModel) {
         clothingItems.removeIf { it.id == clothingItem.id }
         logAll()
     }
 
-    override fun findById(id: Long): ClosetOrganiserModel? {
+    override suspend fun findById(id: Long): ClosetOrganiserModel? {
         return clothingItems.find { it.id == id }?.also {
             Timber.i("Found item by ID $id: $it")
         }

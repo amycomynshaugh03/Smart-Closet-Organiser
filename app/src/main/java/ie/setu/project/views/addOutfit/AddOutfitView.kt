@@ -29,7 +29,7 @@ class AddOutfitView : AppCompatActivity() {
 
         presenter = AddOutfitPresenter(this)
 
-        // initial values
+
         lastWornState = try {
             SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(presenter.outfit.lastWorn)
         } catch (e: Exception) {
@@ -60,8 +60,6 @@ class AddOutfitView : AppCompatActivity() {
         }
     }
 
-    // Presenter calls this when editing. We don’t need to “fill fields” like XML anymore,
-    // but we DO update any Activity state we display (date + count).
     fun showOutfit(outfit: OutfitModel) {
         lastWornState = try {
             SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(outfit.lastWorn)
