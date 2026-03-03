@@ -68,6 +68,7 @@ class ClothingPresenter(private val view: ClothingView) {
         getResult.launch(intent)
     }
 
+
     fun onDeleteItemClick(item: ClosetOrganiserModel) {
         val uid = firebase.authService().currentUserId
         if (uid.isBlank()) {
@@ -78,7 +79,11 @@ class ClothingPresenter(private val view: ClothingView) {
         view.lifecycleScope.launch {
             try {
                 withContext(Dispatchers.IO) {
-                    firebase.clothingFirestoreRepository().delete(uid, item.id)
+                    val doc = firebase.clothingFirestoreRepository().findDocByItemId(uid, item.id)
+                    val imagePath = doc.getString("imagePath").orEmpty()
+
+                    firebase.imageStorageRepository().deleteByPath(imagePath)
+                    firebase.clothingFirestoreRepository().deleteByDocId(uid, doc.id)
                 }
                 refreshFromFirestore()
             } catch (e: Exception) {

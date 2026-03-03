@@ -1,5 +1,6 @@
 package ie.setu.project.views.outfit
 
+import android.net.Uri
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -159,10 +160,18 @@ private fun OutfitRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 outfit.clothingItems.forEach { clothing ->
-                    val uri = clothing.image
-                    if (uri != null && uri.toString().isNotBlank()) {
+
+                    val imageModel: Any? =
+                        clothing.imageUrl.takeIf { it.isNotBlank() } ?: clothing.image
+
+                    val ok =
+                        imageModel != null &&
+                                imageModel != Uri.EMPTY &&
+                                imageModel.toString().isNotBlank()
+
+                    if (ok) {
                         AsyncImage(
-                            model = uri,
+                            model = imageModel,
                             contentDescription = "Clothing image",
                             modifier = Modifier
                                 .height(90.dp)

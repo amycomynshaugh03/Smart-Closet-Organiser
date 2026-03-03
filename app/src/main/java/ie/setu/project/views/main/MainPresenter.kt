@@ -20,7 +20,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import timber.log.Timber.i
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -84,19 +83,33 @@ class MainPresenter(private val view: MainView) {
                 } else {
                     val created = closetOrganiser.copy()
                     clothingStore.create(created)
-                    // if your SQL store sets id on insert, make sure created.id is updated there
                     Timber.i("Add Button Pressed: ${created.title} (${created.category})")
                     created
                 }
             }
+
             closetOrganiser.id = saved.id
 
 
             if (uid.isNotBlank()) {
                 try {
-                    firebase.clothingFirestoreRepository().upsert(uid, saved)
+                    val localUri = saved.image
+                    if (localUri != null && localUri != Uri.EMPTY) {
+                        val upload = firebase.imageStorageRepository()
+                            .uploadClothingImage(uid, saved.id, localUri)
+
+                        val updatedForCloud = saved.copy(
+                            imageUrl = upload.downloadUrl
+                        )
+
+                        firebase.clothingFirestoreRepository()
+                            .upsert(uid, updatedForCloud, imagePath = upload.storagePath)
+                    } else {
+
+                        firebase.clothingFirestoreRepository().upsert(uid, saved, imagePath = null)
+                    }
                 } catch (e: Exception) {
-                    Timber.e(e, "Firestore upsert failed")
+                    Timber.e(e, "Storage+Firestore upsert failed")
                 }
             }
 
@@ -158,7 +171,7 @@ class MainPresenter(private val view: MainView) {
                             }
                         }
                     }
-                    else -> {  }
+                    else -> { }
                 }
             }
     }

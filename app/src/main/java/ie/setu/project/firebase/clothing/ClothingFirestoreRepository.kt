@@ -1,6 +1,7 @@
 package ie.setu.project.firebase.clothing
 
 import android.net.Uri
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import ie.setu.project.models.clothing.ClosetOrganiserModel
 import kotlinx.coroutines.tasks.await
@@ -15,7 +16,8 @@ class ClothingFirestoreRepository @Inject constructor(
     private fun clothingCollection(uid: String) =
         firestore.collection("users").document(uid).collection("clothing")
 
-    suspend fun upsert(uid: String, item: ClosetOrganiserModel) {
+
+    suspend fun upsert(uid: String, item: ClosetOrganiserModel, imagePath: String? = null) {
         val docId = item.id.toString()
         val data = hashMapOf(
             "id" to item.id,
@@ -27,11 +29,32 @@ class ClothingFirestoreRepository @Inject constructor(
             "category" to item.category,
             "lastWorn" to item.lastWorn.time,
 
+
             "image" to (item.image?.toString() ?: ""),
 
-            "imageUrl" to item.imageUrl
+
+            "imageUrl" to item.imageUrl,
+
+
+            "imagePath" to (imagePath ?: "")
         )
         clothingCollection(uid).document(docId).set(data).await()
+    }
+
+
+    suspend fun findDocByItemId(uid: String, id: Long): DocumentSnapshot {
+        val querySnap = clothingCollection(uid)
+            .whereEqualTo("id", id)
+            .limit(1)
+            .get()
+            .await()
+
+        return querySnap.documents.firstOrNull()
+            ?: throw IllegalStateException("Clothing item not found for id=$id")
+    }
+
+    suspend fun deleteByDocId(uid: String, docId: String) {
+        clothingCollection(uid).document(docId).delete().await()
     }
 
     suspend fun delete(uid: String, id: Long) {

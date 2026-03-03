@@ -6,18 +6,27 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
+data class UploadResult(
+    val downloadUrl: String,
+    val storagePath: String
+)
+
 @Singleton
 class ImageStorageRepository @Inject constructor(
     private val storage: FirebaseStorage
 ) {
-    suspend fun uploadClothingImage(uid: String, clothingId: Long, localUri: Uri): String {
-        val ref = storage.reference
-            .child("users")
-            .child(uid)
-            .child("clothing")
-            .child("$clothingId.jpg")
+    suspend fun uploadClothingImage(uid: String, clothingId: Long, localUri: Uri): UploadResult {
+        val path = "users/$uid/clothing/$clothingId.jpg"
+        val ref = storage.reference.child(path)
 
         ref.putFile(localUri).await()
-        return ref.downloadUrl.await().toString()
+        val url = ref.downloadUrl.await().toString()
+
+        return UploadResult(downloadUrl = url, storagePath = path)
+    }
+
+    suspend fun deleteByPath(path: String) {
+        if (path.isBlank()) return
+        storage.reference.child(path).delete().await()
     }
 }

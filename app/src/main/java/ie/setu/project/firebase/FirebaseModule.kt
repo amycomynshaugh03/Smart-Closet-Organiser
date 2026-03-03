@@ -32,5 +32,6 @@ object FirebaseModule {
         AuthRepository(firebaseAuth = auth)
 
     @Provides
+    @Singleton
     fun provideFirebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance()
 }

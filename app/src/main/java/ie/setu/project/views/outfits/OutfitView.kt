@@ -29,7 +29,7 @@ class OutfitView : AppCompatActivity() {
         ) { result ->
             when (result.resultCode) {
                 Activity.RESULT_OK -> loadOutfits()
-                Activity.RESULT_CANCELED -> { /* no-op */ }
+                Activity.RESULT_CANCELED -> { }
             }
         }
 

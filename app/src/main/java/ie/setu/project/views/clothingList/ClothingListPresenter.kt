@@ -2,11 +2,11 @@ package ie.setu.project.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ie.setu.project.firebase.clothing.ClothingFirestoreRepository
 import ie.setu.project.firebase.outfit.OutfitFirestoreRepository
 import ie.setu.project.firebase.services.AuthService
+import ie.setu.project.firebase.storage.ImageStorageRepository
 import ie.setu.project.models.clothing.ClosetOrganiserModel
 import ie.setu.project.models.outfit.OutfitModel
 import ie.setu.project.models.weather.WeatherResponse
@@ -22,7 +22,8 @@ import javax.inject.Inject
 class ClothingListPresenter @Inject constructor(
     private val authService: AuthService,
     private val clothingRepo: ClothingFirestoreRepository,
-    private val outfitRepo: OutfitFirestoreRepository
+    private val outfitRepo: OutfitFirestoreRepository,
+    private val imageStorageRepo: ImageStorageRepository
 ) : ViewModel() {
 
     private val weatherService = WeatherService()
@@ -63,7 +64,6 @@ class ClothingListPresenter @Inject constructor(
 
         viewModelScope.launch {
             try {
-
                 cachedClothing = clothingRepo.getAll(uid)
                 cachedOutfits = outfitRepo.getAll(uid)
 
@@ -82,8 +82,7 @@ class ClothingListPresenter @Inject constructor(
             try {
                 val weather = weatherService.getWeather(53.3498, -6.2603)
                 _weatherData.value = weather
-            } catch (_: Exception) {
-            }
+            } catch (_: Exception) { }
         }
     }
 
@@ -136,14 +135,19 @@ class ClothingListPresenter @Inject constructor(
 
         viewModelScope.launch {
             try {
-                Timber.i("deleteClothing: deleting id=${item.id} title=${item.title}")
-                clothingRepo.delete(uid, item.id)
+                val doc = clothingRepo.findDocByItemId(uid, item.id)
+                val imagePath = doc.getString("imagePath").orEmpty()
+
+                imageStorageRepo.deleteByPath(imagePath)
+                clothingRepo.deleteByDocId(uid, doc.id)
+
                 refreshFromFirestore()
             } catch (e: Exception) {
-                Timber.e(e, "Firestore delete failed for id=${item.id}")
+                Timber.e(e, "Delete failed for id=${item.id}")
             }
         }
     }
+
     fun hideSearchResults() {
         _showSearchResults.value = false
         _searchQuery.value = ""
