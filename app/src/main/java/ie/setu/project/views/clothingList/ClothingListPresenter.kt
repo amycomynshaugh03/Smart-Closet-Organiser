@@ -1,4 +1,4 @@
-package ie.setu.project.viewmodels
+package ie.setu.project.views.clothingList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -56,6 +56,7 @@ class ClothingListPresenter @Inject constructor(
     private val _syncState = MutableStateFlow(SyncState.SYNCING)
     val syncState: StateFlow<SyncState> = _syncState.asStateFlow()
 
+
     private val _exportJson = MutableStateFlow<String?>(null)
     val exportJson: StateFlow<String?> = _exportJson.asStateFlow()
 
@@ -94,7 +95,6 @@ class ClothingListPresenter @Inject constructor(
 
             } catch (e: Exception) {
                 Timber.e(e, "Firestore read failed — loading from local SQLite backup")
-
 
                 val backupItems = localBackup.getAllLocal()
                 cachedClothing = backupItems
@@ -176,7 +176,6 @@ class ClothingListPresenter @Inject constructor(
             }
         }
     }
-
 
     fun clearExport() {
         _exportJson.value = null
