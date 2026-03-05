@@ -24,6 +24,12 @@ object StoreModule {
 
     @Provides
     @Singleton
+    fun provideClosetSQLStore(@ApplicationContext context: Context): ClosetSQLStore {
+        return ClosetSQLStore(context)
+    }
+
+    @Provides
+    @Singleton
     fun provideOutfitStore(@ApplicationContext context: Context): OutfitStore {
         return OutfitJSONStore(context)
     }
