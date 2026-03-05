@@ -4,69 +4,84 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.datepicker.MaterialDatePicker
+import dagger.hilt.android.EntryPointAccessors
 import ie.setu.project.activities.SelectClothingActivity
-import ie.setu.project.closet.main.MainApp
+import ie.setu.project.di.FirebaseEntryPoint
+import ie.setu.project.di.StoreEntryPoint
 import ie.setu.project.models.clothing.ClosetOrganiserModel
 import ie.setu.project.models.outfit.OutfitModel
+import ie.setu.project.models.outfit.OutfitStore
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-/**
- * Presenter for managing the logic behind adding or editing an outfit.
- * Handles data operations like adding, updating, and launching the clothing selection.
- *
- * @param view The view interface that interacts with the user interface of the add/edit outfit screen.
- */
 class AddOutfitPresenter(private val view: AddOutfitView) {
 
-    // The current outfit being added or edited
     var outfit = OutfitModel()
 
-    // Reference to the main application instance
-    var app: MainApp = view.application as MainApp
+    private val outfitStore: OutfitStore by lazy {
+        val entryPoint = EntryPointAccessors.fromApplication(
+            view.applicationContext,
+            StoreEntryPoint::class.java
+        )
+        entryPoint.outfitStore()
+    }
 
-    // Launcher for handling clothing selection results
+    private val firebase by lazy {
+        EntryPointAccessors.fromApplication(
+            view.applicationContext,
+            FirebaseEntryPoint::class.java
+        )
+    }
+
     private lateinit var clothingSelectionLauncher: ActivityResultLauncher<Intent>
 
     init {
-        // If the view has an outfit for editing, set it to the presenter and show it in the view
         if (view.intent.hasExtra("outfit_edit")) {
             outfit = view.intent.getParcelableExtra("outfit_edit")!!
             view.showOutfit(outfit)
         }
-        // Register the callback for clothing selection
         registerClothingSelectionCallback()
     }
 
-    /**
-     * Adds a new outfit or saves the changes to an existing outfit.
-     *
-     * @param title The title of the outfit.
-     * @param description The description of the outfit.
-     * @param season The season for the outfit.
-     */
     fun doAddOrSave(title: String, description: String, season: String) {
-        outfit.title = title
-        outfit.description = description
-        outfit.season = season
 
-        if (outfit.id == 0L) {
-            // If the outfit is new, create it
-            app.outfitItems.create(outfit)
+        outfit.title = title.trim()
+        outfit.description = description.trim()
+        outfit.season = season.trim()
+
+        val saved: OutfitModel = if (outfit.id == 0L) {
+            val created = outfit.copy()
+            outfitStore.create(created)
+            outfit.id = created.id
+            created
         } else {
-            // If the outfit exists, update it
-            app.outfitItems.update(outfit)
+            val updated = outfit.copy()
+            outfitStore.update(updated)
+            updated
         }
-        // Set the result and finish the view
+
+        val uid = firebase.authService().currentUserId
+        if (uid.isNotBlank()) {
+            view.lifecycleScope.launch {
+                try {
+                    firebase.outfitFirestoreRepository().upsert(uid, saved)
+                } catch (e: Exception) {
+                    Timber.e(e, "Firestore outfit upsert failed")
+                }
+            }
+        } else {
+            Timber.w("Skipping Firestore outfit save: userId blank (not signed in?)")
+        }
+
         view.setResult(RESULT_OK)
         view.finish()
     }
 
-    /**
-     * Launches the clothing selection activity to allow the user to select items for the outfit.
-     */
     fun launchClothingSelection() {
         val intent = Intent(view, SelectClothingActivity::class.java).apply {
             putExtra("selected_clothing", ArrayList(outfit.clothingItems))
@@ -74,9 +89,6 @@ class AddOutfitPresenter(private val view: AddOutfitView) {
         clothingSelectionLauncher.launch(intent)
     }
 
-    /**
-     * Displays a date picker to select the "last worn" date for the outfit.
-     */
     fun showDatePicker() {
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setSelection(outfit.lastWorn.time)
@@ -85,20 +97,14 @@ class AddOutfitPresenter(private val view: AddOutfitView) {
         datePicker.addOnPositiveButtonClickListener { selection ->
             val calendar = Calendar.getInstance().apply { timeInMillis = selection }
             outfit.lastWorn = calendar.time
-            // Update the last worn date on the view
             view.updateLastWornDate(
-                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                    .format(outfit.lastWorn)
+                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(outfit.lastWorn)
             )
         }
-        // Show the date picker dialog
+
         datePicker.show(view.supportFragmentManager, "DATE_PICKER")
     }
 
-    /**
-     * Registers the result callback for the clothing selection activity.
-     * This callback updates the outfit with the selected clothing items.
-     */
     private fun registerClothingSelectionCallback() {
         clothingSelectionLauncher = view.registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()

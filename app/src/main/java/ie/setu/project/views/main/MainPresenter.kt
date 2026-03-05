@@ -3,19 +3,23 @@ package ie.setu.project.views.main
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.net.Uri
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.datepicker.MaterialDatePicker
-import ie.setu.project.closet.main.MainApp
+import dagger.hilt.android.EntryPointAccessors
+import ie.setu.project.di.FirebaseEntryPoint
+import ie.setu.project.di.StoreEntryPoint
 import ie.setu.project.helpers.removeBackgroundAndSave
 import ie.setu.project.helpers.showImagePicker
 import ie.setu.project.models.clothing.ClosetOrganiserModel
+import ie.setu.project.models.clothing.ClothingStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber.i
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -23,7 +27,21 @@ import java.util.Locale
 class MainPresenter(private val view: MainView) {
 
     var closetOrganiser = ClosetOrganiserModel()
-    var app: MainApp = view.application as MainApp
+
+    private val clothingStore: ClothingStore by lazy {
+        val entryPoint = EntryPointAccessors.fromApplication(
+            view.applicationContext,
+            StoreEntryPoint::class.java
+        )
+        entryPoint.clothingStore()
+    }
+
+    private val firebase by lazy {
+        EntryPointAccessors.fromApplication(
+            view.applicationContext,
+            FirebaseEntryPoint::class.java
+        )
+    }
 
     private lateinit var imageIntentLauncher: ActivityResultLauncher<Intent>
     var edit = false
@@ -44,7 +62,6 @@ class MainPresenter(private val view: MainView) {
         size: String,
         season: String,
         category: String
-
     ) {
         closetOrganiser.title = title.trim()
         closetOrganiser.description = description.trim()
@@ -53,17 +70,52 @@ class MainPresenter(private val view: MainView) {
         closetOrganiser.season = season.trim()
         closetOrganiser.category = category.trim()
 
+        val uid = firebase.authService().currentUserId
 
-        if (edit) {
-            app.clothingItems.update(closetOrganiser.copy())
-            i("Update Button Pressed: ${closetOrganiser.title} (${closetOrganiser.category})")
-        } else {
-            app.clothingItems.create(closetOrganiser.copy())
-            i("Add Button Pressed: ${closetOrganiser.title} (${closetOrganiser.category})")
+        view.lifecycleScope.launch {
+
+            val saved: ClosetOrganiserModel = withContext(Dispatchers.IO) {
+                if (edit) {
+                    val updated = closetOrganiser.copy()
+                    clothingStore.update(updated)
+                    Timber.i("Update Button Pressed: ${updated.title} (${updated.category})")
+                    updated
+                } else {
+                    val created = closetOrganiser.copy()
+                    clothingStore.create(created)
+                    Timber.i("Add Button Pressed: ${created.title} (${created.category})")
+                    created
+                }
+            }
+
+            closetOrganiser.id = saved.id
+
+
+            if (uid.isNotBlank()) {
+                try {
+                    val localUri = saved.image
+                    if (localUri != null && localUri != Uri.EMPTY) {
+                        val upload = firebase.imageStorageRepository()
+                            .uploadClothingImage(uid, saved.id, localUri)
+
+                        val updatedForCloud = saved.copy(
+                            imageUrl = upload.downloadUrl
+                        )
+
+                        firebase.clothingFirestoreRepository()
+                            .upsert(uid, updatedForCloud, imagePath = upload.storagePath)
+                    } else {
+
+                        firebase.clothingFirestoreRepository().upsert(uid, saved, imagePath = null)
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e, "Storage+Firestore upsert failed")
+                }
+            }
+
+            view.setResult(RESULT_OK)
+            view.finish()
         }
-
-        view.setResult(RESULT_OK)
-        view.finish()
     }
 
     fun doCancel() {
@@ -87,6 +139,7 @@ class MainPresenter(private val view: MainView) {
             val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             view.updateLastWornDate(sdf.format(closetOrganiser.lastWorn))
         }
+
         datePicker.show(view.supportFragmentManager, "DATE_PICKER")
     }
 
@@ -97,18 +150,15 @@ class MainPresenter(private val view: MainView) {
                     AppCompatActivity.RESULT_OK -> {
                         result.data?.data?.let { pickedUri ->
 
-
                             view.contentResolver.takePersistableUriPermission(
                                 pickedUri,
                                 Intent.FLAG_GRANT_READ_URI_PERMISSION
                             )
 
-
                             view.lifecycleScope.launch {
                                 val processedUri = withContext(Dispatchers.Default) {
                                     removeBackgroundAndSave(view, pickedUri)
                                 }
-
 
                                 view.grantUriPermission(
                                     view.packageName,
@@ -121,8 +171,7 @@ class MainPresenter(private val view: MainView) {
                             }
                         }
                     }
-
-                    else -> {}
+                    else -> { }
                 }
             }
     }

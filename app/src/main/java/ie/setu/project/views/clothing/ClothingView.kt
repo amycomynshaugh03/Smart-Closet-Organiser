@@ -24,18 +24,16 @@ class ClothingView : AppCompatActivity() {
             val snackbarHostState = remember { SnackbarHostState() }
             val scope = rememberCoroutineScope()
 
+            val items = remember(refreshTick) { presenter.getClosetItems() }
+
             ClothingScreen(
-                itemsProvider = {
-                    refreshTick
-                    presenter.getClosetItems()
-                },
+                items = items,
                 onAddClick = { presenter.launchAddItem() },
                 onBackToHome = { startActivity(Intent(this, ClothingListView::class.java)) },
                 onItemClick = { presenter.onClosetItemClick(it) },
                 onDeleteClick = { item ->
                     presenter.onDeleteItemClick(item)
                     scope.launch { snackbarHostState.showSnackbar("Deleted ${item.title}") }
-                    refreshTick++
                 },
                 snackbarHostState = snackbarHostState
             )
@@ -44,11 +42,14 @@ class ClothingView : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        presenter.refreshFromFirestore()
+    }
+
+    fun notifyAdapterChanged() {
         refreshTick++
     }
 
-    fun notifyAdapterChanged() { refreshTick++ }
-    fun updateAdapter() { refreshTick++ }
-    fun showSnackbar(message: String, duration: Int) {}
-    fun navigateToMain() { startActivity(Intent(this, ClothingListView::class.java)) }
+    fun navigateToMain() {
+        startActivity(Intent(this, ClothingListView::class.java))
+    }
 }

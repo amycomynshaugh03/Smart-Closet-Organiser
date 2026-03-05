@@ -26,13 +26,9 @@ private const val COLUMN_IMAGE = "image"
 
 class ClosetSQLStore(private val context: Context) : ClothingStore {
 
-    private var database: SQLiteDatabase
+    private val database: SQLiteDatabase = ClosetDbHelper(context).writableDatabase
 
-    init {
-        database = ClosetDbHelper(context).writableDatabase
-    }
-
-    override fun findAll(): List<ClosetOrganiserModel> {
+    override suspend fun findAll(): List<ClosetOrganiserModel> {
         val items = mutableListOf<ClosetOrganiserModel>()
         database.rawQuery("SELECT * FROM $TABLE_NAME ORDER BY $COLUMN_TITLE", null).use { cursor ->
             while (cursor.moveToNext()) {
@@ -42,7 +38,7 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
         return items
     }
 
-    override fun findById(id: Long): ClosetOrganiserModel? {
+    override suspend fun findById(id: Long): ClosetOrganiserModel? {
         return try {
             database.rawQuery(
                 "SELECT * FROM $TABLE_NAME WHERE $COLUMN_ID = ?",
@@ -50,17 +46,17 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
             ).use { cursor ->
                 if (cursor.moveToFirst()) createFromCursor(cursor) else null
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
 
-    override fun create(clothingItem: ClosetOrganiserModel) {
+    override suspend fun create(clothingItem: ClosetOrganiserModel) {
         val values = toContentValues(clothingItem)
         clothingItem.id = database.insert(TABLE_NAME, null, values)
     }
 
-    override fun update(closetItem: ClosetOrganiserModel) {
+    override suspend fun update(closetItem: ClosetOrganiserModel) {
         val values = toContentValues(closetItem)
         database.update(
             TABLE_NAME,
@@ -70,7 +66,7 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
         )
     }
 
-    override fun delete(clothingItem: ClosetOrganiserModel) {
+    override suspend fun delete(clothingItem: ClosetOrganiserModel) {
         database.delete(
             TABLE_NAME,
             "$COLUMN_ID = ?",
@@ -79,6 +75,9 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
     }
 
     private fun createFromCursor(cursor: Cursor): ClosetOrganiserModel {
+        val imageString = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE))
+        val imageUri = imageString?.takeIf { it.isNotBlank() }?.let(Uri::parse)
+
         return ClosetOrganiserModel(
             id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID)),
             title = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
@@ -88,7 +87,7 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
             season = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SEASON)),
             category = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY)) ?: "",
             lastWorn = Date(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_LAST_WORN))),
-            image = Uri.parse(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE)))
+            image = imageUri
         )
     }
 
@@ -122,7 +121,7 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
                     last_worn INTEGER,
                     image TEXT
                 )
-                """
+                """.trimIndent()
             )
 
             db.execSQL(
@@ -134,7 +133,7 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
                     season TEXT,
                     last_worn INTEGER
                 )
-                """
+                """.trimIndent()
             )
 
             db.execSQL(
@@ -146,7 +145,7 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
                     FOREIGN KEY (outfit_id) REFERENCES outfits(id),
                     FOREIGN KEY (clothing_id) REFERENCES clothing_items(id)
                 )
-                """
+                """.trimIndent()
             )
         }
 

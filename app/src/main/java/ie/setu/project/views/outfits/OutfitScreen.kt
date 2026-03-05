@@ -1,5 +1,6 @@
 package ie.setu.project.views.outfit
 
+import android.net.Uri
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -34,11 +35,8 @@ fun OutfitScreen(
     onDeleteOutfit: (OutfitModel) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
-    var outfits by remember { mutableStateOf(outfitsProvider()) }
 
-    fun reload() {
-        outfits = outfitsProvider()
-    }
+    val outfits = outfitsProvider().toList()
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -70,31 +68,16 @@ fun OutfitScreen(
                         )
                     }
                 },
-
-
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color.White
-                        )
+                        Icon(Icons.Default.ArrowBack, "Back", tint = Color.White)
                     }
                 },
-
                 actions = {
-                    IconButton(
-                        onClick = onAddOutfit,
-                        modifier = Modifier.size(48.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add outfit",
-                            tint = Color.White
-                        )
+                    IconButton(onClick = onAddOutfit, modifier = Modifier.size(48.dp)) {
+                        Icon(Icons.Default.Add, "Add outfit", tint = Color.White)
                     }
                 },
-
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(0xFF6200EE),
                     titleContentColor = Color.White,
@@ -126,10 +109,7 @@ fun OutfitScreen(
                     OutfitRow(
                         outfit = outfit,
                         onClick = { onOutfitClick(outfit) },
-                        onDelete = {
-                            onDeleteOutfit(outfit)
-                            reload()
-                        }
+                        onDelete = { onDeleteOutfit(outfit) }
                     )
                 }
             }
@@ -171,7 +151,6 @@ private fun OutfitRow(
                 }
             }
 
-            // Horizontal image strip
             val scroll = rememberScrollState()
             Row(
                 modifier = Modifier
@@ -181,10 +160,18 @@ private fun OutfitRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 outfit.clothingItems.forEach { clothing ->
-                    val uri = clothing.image
-                    if (uri != null && uri.toString().isNotBlank()) {
+
+                    val imageModel: Any? =
+                        clothing.imageUrl.takeIf { it.isNotBlank() } ?: clothing.image
+
+                    val ok =
+                        imageModel != null &&
+                                imageModel != Uri.EMPTY &&
+                                imageModel.toString().isNotBlank()
+
+                    if (ok) {
                         AsyncImage(
-                            model = uri,
+                            model = imageModel,
                             contentDescription = "Clothing image",
                             modifier = Modifier
                                 .height(90.dp)

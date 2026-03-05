@@ -5,26 +5,23 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import ie.setu.project.R
-import ie.setu.project.closet.main.MainApp
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.lifecycle.lifecycleScope
+import dagger.hilt.android.AndroidEntryPoint
 import ie.setu.project.models.clothing.ClosetOrganiserModel
+import ie.setu.project.models.clothing.ClothingStore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SelectClothingActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var clothingStore: ClothingStore
 
     private fun returnSelectedItems(selected: List<ClosetOrganiserModel>) {
         val resultIntent = Intent().apply {
@@ -37,39 +34,76 @@ class SelectClothingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val app = application as MainApp
-
-        // Pre-selected items passed in from AddOutfitPresenter
         val preSelected =
             intent.getParcelableArrayListExtra<ClosetOrganiserModel>("selected_clothing")
-                ?.toMutableList()
-                ?: mutableListOf()
+                ?.toList()
+                ?: emptyList()
 
         setContent {
-            // Local UI state
-            var clothingItems by remember { mutableStateOf(app.clothingItems.findAll()) }
-            var selected by remember { mutableStateOf(preSelected.toList()) }
+            var clothingItems by remember { mutableStateOf<List<ClosetOrganiserModel>>(emptyList()) }
+            var selected by rememberSaveable { mutableStateOf(preSelected) }
+
+            val scope = rememberCoroutineScope()
+
+            suspend fun loadItems() {
+                try {
+                    val items = withContext(Dispatchers.IO) { clothingStore.findAll() }
+                    clothingItems = items
+                } catch (e: Exception) {
+                    Timber.e(e, "SelectClothingActivity: findAll failed")
+                }
+            }
+
+
+            LaunchedEffect(Unit) {
+                loadItems()
+            }
+
+
+            LaunchedEffect(preSelected) {
+                if (selected.isEmpty() && preSelected.isNotEmpty()) {
+                    selected = preSelected
+                }
+            }
 
             SelectClothingScreen(
                 clothingItems = clothingItems,
                 selectedItems = selected,
+
                 onToggle = { item, isSelected ->
                     selected =
                         if (isSelected) (selected + item).distinctBy { it.id }
                         else selected.filterNot { it.id == item.id }
                 },
+
                 onDelete = { item ->
-                    app.clothingItems.delete(item)
-                    clothingItems = app.clothingItems.findAll()
+                    clothingItems = clothingItems.filterNot { it.id == item.id }
                     selected = selected.filterNot { it.id == item.id }
+
+                    scope.launch {
+                        try {
+                            withContext(Dispatchers.IO) { clothingStore.delete(item) }
+                            loadItems()
+                        } catch (e: Exception) {
+                            Timber.e(e, "SelectClothingActivity: delete failed id=${item.id}")
+                            loadItems()
+                        }
+                    }
                 },
-                onSave = {
-                    returnSelectedItems(selected)
-                },
-                onBack = {
-                    returnSelectedItems(selected) // same behavior as your old onSupportNavigateUp()
-                }
+
+                onSave = { returnSelectedItems(selected) },
+                onBack = { returnSelectedItems(selected) }
             )
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        lifecycleScope.launch {
+            try {
+            } catch (_: Exception) {
+            }
         }
     }
 }

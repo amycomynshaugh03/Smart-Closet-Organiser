@@ -1,5 +1,6 @@
 package ie.setu.project.views.clothing
 
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,15 +27,13 @@ import ie.setu.project.models.clothing.ClosetOrganiserModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClothingScreen(
-    itemsProvider: () -> List<ClosetOrganiserModel>,
+    items: List<ClosetOrganiserModel>,
     onAddClick: () -> Unit,
     onBackToHome: () -> Unit,
     onItemClick: (ClosetOrganiserModel) -> Unit,
     onDeleteClick: (ClosetOrganiserModel) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
-    val items = itemsProvider().toList()
-
     val categories = listOf("All", "Tops", "Bottoms", "Shoes", "Jackets")
     var selectedCategory by rememberSaveable { mutableStateOf("All") }
 
@@ -122,14 +121,18 @@ fun ClothingScreen(
     ) { padding ->
         if (filteredItems.isEmpty()) {
             Box(
-                modifier = Modifier.padding(padding).fillMaxSize(),
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(if (selectedCategory == "All") "No items." else "No items in $selectedCategory.")
             }
         } else {
             LazyColumn(
-                modifier = Modifier.padding(padding).fillMaxSize(),
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize(),
                 contentPadding = PaddingValues(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -152,18 +155,40 @@ private fun ClothingRow(
     onDelete: () -> Unit
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AsyncImage(
-                model = item.image,
-                contentDescription = "Clothing image",
-                modifier = Modifier.size(64.dp)
-            )
+
+            val imageModel: Any? =
+                item.imageUrl.takeIf { it.isNotBlank() } ?: item.image
+
+            val ok =
+                imageModel != null &&
+                        imageModel != Uri.EMPTY &&
+                        imageModel.toString().isNotBlank()
+
+            if (ok) {
+                AsyncImage(
+                    model = imageModel,
+                    contentDescription = "Clothing image",
+                    modifier = Modifier.size(64.dp)
+                )
+            } else {
+                Box(
+                    modifier = Modifier.size(64.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("No image", color = Color.Gray)
+                }
+            }
 
             Spacer(Modifier.width(12.dp))
 
