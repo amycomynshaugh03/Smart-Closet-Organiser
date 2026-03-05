@@ -60,6 +60,9 @@ class ClothingListPresenter @Inject constructor(
     private val _exportJson = MutableStateFlow<String?>(null)
     val exportJson: StateFlow<String?> = _exportJson.asStateFlow()
 
+    private val _weatherError = MutableStateFlow<String?>(null)
+    val weatherError: StateFlow<String?> = _weatherError.asStateFlow()
+
     init {
         fetchWeather()
         refreshFromFirestore()
@@ -109,10 +112,13 @@ class ClothingListPresenter @Inject constructor(
             try {
                 val weather = weatherService.getWeather(53.3498, -6.2603)
                 _weatherData.value = weather
-            } catch (_: Exception) { }
+            } catch (e: Exception) {
+                Timber.e(e, "Weather fetch failed")
+                _weatherData.value = null
+                _weatherError.value = "Could not load weather"
+            }
         }
     }
-
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
         val q = query.trim()

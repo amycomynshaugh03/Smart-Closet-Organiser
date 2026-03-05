@@ -38,8 +38,6 @@ import ie.setu.project.models.weather.WeatherCondition
 import ie.setu.project.models.weather.WeatherResponse
 import kotlinx.coroutines.delay
 
-
-
 @Composable
 fun OfflineSyncBanner(syncState: SyncState) {
     var showSyncedConfirm by remember { mutableStateOf(false) }
@@ -52,10 +50,10 @@ fun OfflineSyncBanner(syncState: SyncState) {
     }
 
     val (bgColor, icon, message) = when (syncState) {
-        SyncState.SYNCING       -> Triple(Color(0xFF1565C0), Icons.Default.Sync,     "Syncing with cloud…")
-        SyncState.SYNCED        -> Triple(Color(0xFF2E7D32), Icons.Default.CloudDone,"Up to date")
-        SyncState.OFFLINE_CACHE -> Triple(Color(0xFFE65100), Icons.Default.CloudOff, "Offline — changes will sync when you're back online")
-        SyncState.OFFLINE_BACKUP-> Triple(Color(0xFFC62828), Icons.Default.CloudOff, "Offline — showing local backup (read-only)")
+        SyncState.SYNCING       -> Triple(Color(0xFF1565C0), Icons.Default.Sync,      "Syncing with cloud…")
+        SyncState.SYNCED        -> Triple(Color(0xFF2E7D32), Icons.Default.CloudDone, "Up to date")
+        SyncState.OFFLINE_CACHE -> Triple(Color(0xFFE65100), Icons.Default.CloudOff,  "Offline — changes will sync when you're back online")
+        SyncState.OFFLINE_BACKUP-> Triple(Color(0xFFC62828), Icons.Default.CloudOff,  "Offline — showing local backup (read-only)")
     }
 
     val visible = syncState == SyncState.SYNCING ||
@@ -78,7 +76,6 @@ fun OfflineSyncBanner(syncState: SyncState) {
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClothingListScreen(
@@ -98,6 +95,7 @@ fun ClothingListScreen(
 ) {
     val carouselItems by presenter.carouselItems.collectAsStateWithLifecycle()
     val weatherData by presenter.weatherData.collectAsStateWithLifecycle()
+    val weatherError by presenter.weatherError.collectAsStateWithLifecycle()
     val searchResults by presenter.searchResults.collectAsStateWithLifecycle()
     val showSearchResults by presenter.showSearchResults.collectAsStateWithLifecycle()
 
@@ -141,7 +139,6 @@ fun ClothingListScreen(
     ) { paddingValues ->
         Column(modifier = Modifier.fillMaxSize().padding(paddingValues).verticalScroll(rememberScrollState())) {
 
-
             OfflineSyncBanner(syncState = syncState)
 
             Row(
@@ -153,12 +150,9 @@ fun ClothingListScreen(
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(onClick = onNavigateToClothing, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))) { Text("Clothes") }
                 Spacer(modifier = Modifier.width(8.dp))
-
-
                 Button(onClick = onExportWardrobe, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF37474F))) {
                     Text("Export", fontSize = 12.sp)
                 }
-
                 Row(modifier = Modifier.weight(1f).padding(start = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(painter = painterResource(id = R.drawable.ic_search), contentDescription = "Search", modifier = Modifier.padding(end = 8.dp), tint = Color.Gray)
                     TextField(
@@ -230,23 +224,33 @@ fun ClothingListScreen(
 
             Card(modifier = Modifier.fillMaxWidth().padding(16.dp), shape = RoundedCornerShape(12.dp)) {
                 Box(modifier = Modifier.fillMaxWidth().background(brush = Brush.verticalGradient(colors = listOf(Color(0xFF2196F3), Color(0xFF1976D2)))).padding(16.dp)) {
-                    if (weatherData != null) {
-                        val current = weatherData!!.current_weather
-                        val condition = WeatherCondition.fromCode(current.weathercode, current.is_day)
-                        Column {
-                            Text("Current Weather", style = MaterialTheme.typography.titleLarge, color = Color.White, fontWeight = FontWeight.Bold)
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(painter = painterResource(id = if (current.is_day == 1) condition.dayIcon else condition.nightIcon), contentDescription = null, tint = Color.White, modifier = Modifier.size(48.dp))
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Column {
-                                    Text("${current.temperature}°C", style = MaterialTheme.typography.headlineMedium, color = Color.White, fontWeight = FontWeight.Bold)
-                                    Text(condition.description, color = Color.White)
+                    when {
+                        weatherData != null -> {
+                            val current = weatherData!!.current_weather
+                            val condition = WeatherCondition.fromCode(current.weathercode, current.is_day)
+                            Column {
+                                Text("Current Weather", style = MaterialTheme.typography.titleLarge, color = Color.White, fontWeight = FontWeight.Bold)
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(painter = painterResource(id = if (current.is_day == 1) condition.dayIcon else condition.nightIcon), contentDescription = null, tint = Color.White, modifier = Modifier.size(48.dp))
+                                    Spacer(modifier = Modifier.width(16.dp))
+                                    Column {
+                                        Text("${current.temperature}°C", style = MaterialTheme.typography.headlineMedium, color = Color.White, fontWeight = FontWeight.Bold)
+                                        Text(condition.description, color = Color.White)
+                                    }
                                 }
                             }
                         }
-                    } else {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = Color.White) }
+                        weatherError != null -> {
+                            Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                                Text("Weather unavailable", color = Color.White, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                        else -> {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator(color = Color.White)
+                            }
+                        }
                     }
                 }
             }
