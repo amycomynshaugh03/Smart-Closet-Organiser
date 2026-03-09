@@ -37,6 +37,7 @@ import ie.setu.project.models.outfit.OutfitModel
 import ie.setu.project.models.weather.WeatherCondition
 import ie.setu.project.models.weather.WeatherResponse
 import kotlinx.coroutines.delay
+import ie.setu.project.views.ai.AiStylistScreen
 
 @Composable
 fun OfflineSyncBanner(syncState: SyncState) {
@@ -94,6 +95,7 @@ fun ClothingListScreen(
     onSignOut: () -> Unit
 ) {
     val carouselItems by presenter.carouselItems.collectAsStateWithLifecycle()
+    val clothingItems by presenter.clothingItems.collectAsStateWithLifecycle()
     val weatherData by presenter.weatherData.collectAsStateWithLifecycle()
     val weatherError by presenter.weatherError.collectAsStateWithLifecycle()
     val searchResults by presenter.searchResults.collectAsStateWithLifecycle()
@@ -101,6 +103,7 @@ fun ClothingListScreen(
 
     var searchQuery by remember { mutableStateOf("") }
     var currentCarouselPage by remember { mutableIntStateOf(0) }
+    var selectedTab by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(carouselItems.size) {
         if (carouselItems.isEmpty()) currentCarouselPage = 0
@@ -135,8 +138,48 @@ fun ClothingListScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF6200EE), titleContentColor = Color.White)
             )
+        },
+        bottomBar = {
+            NavigationBar(containerColor = Color(0xFF6200EE), tonalElevation = 0.dp) {
+                NavigationBarItem(
+                    selected = selectedTab == 0,
+                    onClick = { selectedTab = 0 },
+                    icon = { Icon(Icons.Default.Checkroom, contentDescription = "Wardrobe") },
+                    label = { Text("Wardrobe") },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = Color.White,
+                        selectedTextColor = Color.White,
+                        unselectedIconColor = Color.White.copy(0.5f),
+                        unselectedTextColor = Color.White.copy(0.5f),
+                        indicatorColor = Color.White.copy(0.2f)
+                    )
+                )
+                NavigationBarItem(
+                    selected = selectedTab == 1,
+                    onClick = { selectedTab = 1 },
+                    icon = { Icon(Icons.Default.AutoAwesome, contentDescription = "AI Stylist") },
+                    label = { Text("AI Stylist") },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = Color.White,
+                        selectedTextColor = Color.White,
+                        unselectedIconColor = Color.White.copy(0.5f),
+                        unselectedTextColor = Color.White.copy(0.5f),
+                        indicatorColor = Color.White.copy(0.2f)
+                    )
+                )
+            }
         }
     ) { paddingValues ->
+
+        if (selectedTab == 1) {
+            AiStylistScreen(
+                weatherData = weatherData,
+                clothingItems = clothingItems,
+                modifier = Modifier.padding(paddingValues)
+            )
+            return@Scaffold
+        }
+
         Column(modifier = Modifier.fillMaxSize().padding(paddingValues).verticalScroll(rememberScrollState())) {
 
             OfflineSyncBanner(syncState = syncState)

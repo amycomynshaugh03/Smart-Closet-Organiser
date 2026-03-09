@@ -60,6 +60,9 @@ class ClothingListPresenter @Inject constructor(
     private val _exportJson = MutableStateFlow<String?>(null)
     val exportJson: StateFlow<String?> = _exportJson.asStateFlow()
 
+    private val _clothingItems = MutableStateFlow<List<ClosetOrganiserModel>>(emptyList())
+    val clothingItems: StateFlow<List<ClosetOrganiserModel>> = _clothingItems.asStateFlow()
+
     private val _weatherError = MutableStateFlow<String?>(null)
     val weatherError: StateFlow<String?> = _weatherError.asStateFlow()
 
@@ -74,6 +77,7 @@ class ClothingListPresenter @Inject constructor(
             cachedClothing = emptyList()
             cachedOutfits = emptyList()
             _carouselItems.value = emptyList()
+            _clothingItems.value = emptyList()
             _searchResults.value = emptyList()
             _showSearchResults.value = false
             _syncState.value = SyncState.SYNCED
@@ -87,6 +91,7 @@ class ClothingListPresenter @Inject constructor(
                 cachedClothing = clothingRepo.getAll(uid)
                 cachedOutfits = outfitRepo.getAll(uid)
                 _carouselItems.value = cachedClothing.takeLast(5).reversed()
+                _clothingItems.value = cachedClothing
 
                 val q = _searchQuery.value.trim()
                 if (q.isNotBlank()) performSearch(q)
@@ -102,6 +107,7 @@ class ClothingListPresenter @Inject constructor(
                 val backupItems = localBackup.getAllLocal()
                 cachedClothing = backupItems
                 _carouselItems.value = backupItems.takeLast(5).reversed()
+                _clothingItems.value = backupItems
                 _syncState.value = SyncState.OFFLINE_BACKUP
             }
         }
