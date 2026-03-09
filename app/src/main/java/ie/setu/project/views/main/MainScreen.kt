@@ -43,7 +43,9 @@ fun MainScreen(
     isEdit: Boolean,
     onCancel: () -> Unit,
     onSave: () -> Unit,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    removeBg: Boolean,
+    onRemoveBgChange: (Boolean) -> Unit
 ) {
     val seasons = stringArrayResource(id = R.array.seasons_array).toList()
     var seasonExpanded by remember { mutableStateOf(false) }
@@ -114,7 +116,6 @@ fun MainScreen(
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded) },
                     modifier = Modifier.menuAnchor().fillMaxWidth()
                 )
-
                 ExposedDropdownMenu(
                     expanded = categoryExpanded,
                     onDismissRequest = { categoryExpanded = false }
@@ -166,7 +167,6 @@ fun MainScreen(
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = seasonExpanded) },
                     modifier = Modifier.menuAnchor().fillMaxWidth()
                 )
-
                 ExposedDropdownMenu(
                     expanded = seasonExpanded,
                     onDismissRequest = { seasonExpanded = false }
@@ -195,6 +195,31 @@ fun MainScreen(
             Button(onClick = onChooseImage, modifier = Modifier.fillMaxWidth()) {
                 Text(imageButtonLabel)
             }
+
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text("Remove Background", style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        "Works best on plain backgrounds",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Gray
+                    )
+                }
+                Switch(
+                    checked = removeBg,
+                    onCheckedChange = onRemoveBgChange,
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color.White,
+                        checkedTrackColor = Color(0xFF6200EE)
+                    )
+                )
+            }
+
 
             if (imageUri != null) {
                 AsyncImage(
