@@ -4,11 +4,14 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
-import dev.eren.removebg.RemoveBg
-import kotlinx.coroutines.flow.first
+import ie.setu.project.BuildConfig
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
@@ -30,6 +33,7 @@ suspend fun removeBackgroundAndSave(
         }
     }
 
+
     val inputBitmap: Bitmap = context.contentResolver.openInputStream(inputUri).use { stream ->
         requireNotNull(stream) { "Couldn't open input stream for $inputUri" }
         BitmapFactory.decodeStream(stream)
@@ -44,14 +48,41 @@ suspend fun removeBackgroundAndSave(
         inputBitmap
     }
 
-    val outputBitmap: Bitmap = RemoveBg(context)
-        .clearBackground(correctedBitmap)
-        .first()
-        ?: throw IllegalStateException("Background removal failed (output bitmap was null)")
+
+    val imageBytes = java.io.ByteArrayOutputStream().use { baos ->
+        correctedBitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos)
+        baos.toByteArray()
+    }
+
+
+    val client = OkHttpClient()
+    val requestBody = MultipartBody.Builder()
+        .setType(MultipartBody.FORM)
+        .addFormDataPart(
+            "image_file",
+            "image.jpg",
+            imageBytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
+        )
+        .addFormDataPart("size", "auto")
+        .build()
+
+    val request = Request.Builder()
+        .url("https://api.remove.bg/v1.0/removebg")
+        .addHeader("X-Api-Key", BuildConfig.REMOVE_BG_API_KEY)
+        .post(requestBody)
+        .build()
+
+    val responseBytes = client.newCall(request).execute().use { response ->
+        if (!response.isSuccessful) {
+            throw IllegalStateException("remove.bg API failed: ${response.code} ${response.message}")
+        }
+        response.body?.bytes()
+            ?: throw IllegalStateException("remove.bg returned empty response")
+    }
 
     val outFile = File(context.cacheDir, "nobg_${UUID.randomUUID()}.png")
     FileOutputStream(outFile).use { fos ->
-        outputBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+        fos.write(responseBytes)
     }
 
     return FileProvider.getUriForFile(
