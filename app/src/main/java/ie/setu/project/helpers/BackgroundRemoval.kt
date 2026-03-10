@@ -62,7 +62,7 @@ suspend fun removeBackgroundAndSave(
 
     val request = Request.Builder()
         .url("https://api.remove.bg/v1.0/removebg")
-        .addHeader("X-Api-Key", " ")
+        .addHeader("X-Api-Key", "")
         .post(requestBody)
         .build()
 

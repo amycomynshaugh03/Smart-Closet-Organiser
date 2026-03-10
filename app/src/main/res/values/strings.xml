@@ -60,4 +60,6 @@
 
     <!-- Label for Outfits -->
     <string name="add_outfits">Outfits</string>
+
+    <string name = "web_client_id" translatable="false"> 198058099096-mq438egm3gahv0p27le2h4h7krtitbhn.apps.googleusercontent.com</string>
 </resources>
