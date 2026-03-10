@@ -66,9 +66,11 @@ suspend fun removeBackgroundAndSave(
         .addFormDataPart("size", "auto")
         .build()
 
+
+
     val request = Request.Builder()
         .url("https://api.remove.bg/v1.0/removebg")
-        .addHeader("X-Api-Key", BuildConfig.REMOVE_BG_API_KEY)
+        .addHeader("X-Api-Key", "")
         .post(requestBody)
         .build()
 
@@ -90,4 +92,39 @@ suspend fun removeBackgroundAndSave(
         "${context.packageName}.fileprovider",
         outFile
     )
+
+
+}
+
+
+suspend fun correctImageRotation(
+    context: Context,
+    inputUri: android.net.Uri
+): android.net.Uri {
+    val rotation = context.contentResolver.openInputStream(inputUri).use { stream ->
+        requireNotNull(stream)
+        val exif = ExifInterface(stream)
+        when (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> 90f
+            ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+            ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+            else -> 0f
+        }
+    }
+
+    if (rotation == 0f) return inputUri
+
+    val inputBitmap = context.contentResolver.openInputStream(inputUri).use { stream ->
+        BitmapFactory.decodeStream(requireNotNull(stream))
+    } ?: return inputUri
+
+    val matrix = Matrix().apply { postRotate(rotation) }
+    val corrected = Bitmap.createBitmap(inputBitmap, 0, 0, inputBitmap.width, inputBitmap.height, matrix, true)
+
+    val outFile = File(context.cacheDir, "rotated_${UUID.randomUUID()}.jpg")
+    FileOutputStream(outFile).use { fos ->
+        corrected.compress(Bitmap.CompressFormat.JPEG, 95, fos)
+    }
+
+    return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", outFile)
 }

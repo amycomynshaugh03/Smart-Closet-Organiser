@@ -13,4 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+GEMINI_API_KEY=
 
