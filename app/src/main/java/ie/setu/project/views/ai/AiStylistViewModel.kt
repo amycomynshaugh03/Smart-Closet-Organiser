@@ -27,10 +27,7 @@ class AiStylistViewModel @Inject constructor() : ViewModel() {
     private val _aiState = MutableStateFlow<AiState>(AiState.Idle)
     val aiState: StateFlow<AiState> = _aiState.asStateFlow()
 
-    private val model = GenerativeModel(
-        modelName = "gemini-1.5-flash",
-        apiKey = BuildConfig.GEMINI_API_KEY
-    )
+    private val model = GenerativeModel(modelName = "gemini-2.5-flash", apiKey = "")
 
     fun getSuggestion(weather: WeatherResponse?, clothingItems: List<ClosetOrganiserModel>) {
         viewModelScope.launch {
