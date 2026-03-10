@@ -196,7 +196,6 @@ fun MainScreen(
                 Text(imageButtonLabel)
             }
 
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -219,7 +218,6 @@ fun MainScreen(
                     )
                 )
             }
-
 
             if (imageUri != null) {
                 AsyncImage(

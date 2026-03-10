@@ -91,7 +91,6 @@ class MainPresenter(private val view: MainView) {
 
             closetOrganiser.id = saved.id
 
-
             if (uid.isNotBlank()) {
                 try {
                     val localUri = saved.image
@@ -106,7 +105,6 @@ class MainPresenter(private val view: MainView) {
                         firebase.clothingFirestoreRepository()
                             .upsert(uid, updatedForCloud, imagePath = upload.storagePath)
                     } else {
-
                         firebase.clothingFirestoreRepository().upsert(uid, saved, imagePath = null)
                     }
                 } catch (e: Exception) {
@@ -157,7 +155,6 @@ class MainPresenter(private val view: MainView) {
                             )
 
                             view.lifecycleScope.launch {
-
                                 val processedUri = if (view.removeBgState) {
                                     withContext(Dispatchers.Default) {
                                         removeBackgroundAndSave(view, pickedUri)
