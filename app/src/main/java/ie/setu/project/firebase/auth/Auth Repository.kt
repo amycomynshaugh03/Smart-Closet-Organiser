@@ -2,6 +2,7 @@ package ie.setu.project.firebase.auth
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserProfileChangeRequest
 import ie.setu.project.firebase.services.AuthService
 import ie.setu.project.firebase.services.FirebaseSignInResponse
@@ -46,4 +47,14 @@ class AuthRepository
         firebaseAuth.signOut()
     }
 
+    override suspend fun signInWithGoogle(idToken: String): FirebaseSignInResponse {
+        return try {
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            val result = firebaseAuth.signInWithCredential(credential).await()
+            Response.Success(result.user!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Response.Failure(e)
+        }
+    }
 }
