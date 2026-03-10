@@ -92,7 +92,7 @@ fun ClothingListScreen(
     showSnackbar: (String, Int) -> Unit,
     updateWeatherUI: (WeatherResponse) -> Unit,
     showWeatherError: (String) -> Unit,
-    onSignOut: () -> Unit
+    onNavigateToProfile: () -> Unit
 ) {
     val carouselItems by presenter.carouselItems.collectAsStateWithLifecycle()
     val clothingItems by presenter.clothingItems.collectAsStateWithLifecycle()
@@ -122,8 +122,22 @@ fun ClothingListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
+                navigationIcon = {
+                    IconButton(onClick = onNavigateToProfile) {
+                        Icon(
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = "Profile",
+                            tint = Color.White,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                },
                 title = {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         Icon(painter = painterResource(id = R.drawable.ic_heart), contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Text("Closet Organiser", fontSize = 30.sp, fontFamily = androidx.compose.ui.text.font.FontFamily.Cursive, color = Color.White)
@@ -131,12 +145,10 @@ fun ClothingListScreen(
                         Icon(painter = painterResource(id = R.drawable.ic_heart), contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
                     }
                 },
-                actions = {
-                    IconButton(onClick = onSignOut) {
-                        Icon(imageVector = Icons.Default.Logout, contentDescription = "Logout", tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF6200EE), titleContentColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF6200EE),
+                    titleContentColor = Color.White
+                )
             )
         },
         bottomBar = {
@@ -192,10 +204,6 @@ fun ClothingListScreen(
                 Button(onClick = onNavigateToOutfit, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))) { Text("Outfits") }
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(onClick = onNavigateToClothing, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))) { Text("Clothes") }
-                Spacer(modifier = Modifier.width(8.dp))
-                Button(onClick = onExportWardrobe, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF37474F))) {
-                    Text("Export", fontSize = 12.sp)
-                }
                 Row(modifier = Modifier.weight(1f).padding(start = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(painter = painterResource(id = R.drawable.ic_search), contentDescription = "Search", modifier = Modifier.padding(end = 8.dp), tint = Color.Gray)
                     TextField(

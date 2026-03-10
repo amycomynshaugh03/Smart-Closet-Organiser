@@ -20,6 +20,8 @@ import ie.setu.project.ui.auth.AuthStateViewModel
 import ie.setu.project.ui.auth.AuthViewModel
 import ie.setu.project.ui.auth.LoginScreen
 import ie.setu.project.ui.auth.RegisterScreen
+import ie.setu.project.ui.user.UserEditScreen
+import ie.setu.project.ui.user.UserProfileScreen
 import ie.setu.project.views.clothing.ClothingView
 import ie.setu.project.views.outfit.OutfitView
 import java.io.File
@@ -43,7 +45,8 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
             val exportJson by presenter.exportJson.collectAsStateWithLifecycle()
 
             var showRegister by remember { mutableStateOf(false) }
-
+            var showProfile by remember { mutableStateOf(false) }
+            var showEditProfile by remember { mutableStateOf(false) }
 
             LaunchedEffect(exportJson) {
                 exportJson?.let { json ->
@@ -63,7 +66,13 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                 onDispose { lifecycleOwner.lifecycle.removeObserver(obs) }
             }
 
-            LaunchedEffect(user) { if (user == null) showRegister = false }
+            LaunchedEffect(user) {
+                if (user == null) {
+                    showRegister = false
+                    showProfile = false
+                    showEditProfile = false
+                }
+            }
 
             if (user == null) {
                 if (showRegister) {
@@ -78,6 +87,25 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
             LaunchedEffect(Unit) { presenter.fetchWeather() }
 
             val context = LocalContext.current
+
+
+            if (showEditProfile) {
+                UserEditScreen(
+                    onBack = { showEditProfile = false }
+                )
+                return@setContent
+            }
+
+
+            if (showProfile) {
+                UserProfileScreen(
+                    onBack = { showProfile = false },
+                    onExportWardrobe = { presenter.exportWardrobe(); showProfile = false },
+                    onSignOut = { authVm.signOut() },
+                    onEditProfile = { showEditProfile = true }
+                )
+                return@setContent
+            }
 
             ClothingListScreen(
                 presenter = presenter,
@@ -103,7 +131,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                 showSnackbar = { message, duration -> showSnackbar(message, duration) },
                 updateWeatherUI = { weather -> updateWeatherUI(weather) },
                 showWeatherError = { message -> showWeatherError(message) },
-                onSignOut = { authVm.signOut() }
+                onNavigateToProfile = { showProfile = true }
             )
         }
     }

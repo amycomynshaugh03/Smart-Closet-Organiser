@@ -153,4 +153,6 @@ dependencies {
     implementation(libs.generativeai)
 
     implementation(libs.androidx.exifinterface)
+
+    implementation(libs.googleid)
 }
