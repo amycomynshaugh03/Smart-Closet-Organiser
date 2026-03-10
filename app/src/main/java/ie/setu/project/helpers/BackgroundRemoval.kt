@@ -84,6 +84,8 @@ suspend fun removeBackgroundAndSave(
         "${context.packageName}.fileprovider",
         outFile
     )
+
+
 }
 
 suspend fun correctImageRotation(

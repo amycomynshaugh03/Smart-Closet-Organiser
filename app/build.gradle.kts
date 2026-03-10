@@ -151,4 +151,6 @@ dependencies {
     implementation(libs.firebase.storage.ktx)
 
     implementation(libs.generativeai)
+
+    implementation(libs.androidx.exifinterface)
 }
