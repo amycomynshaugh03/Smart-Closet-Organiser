@@ -34,6 +34,11 @@ class AuthViewModel @Inject constructor(
         _authResponse.value = null
     }
 
+    fun signInWithGoogle(idToken: String) = viewModelScope.launch {
+        _authResponse.value = Response.Loading
+        _authResponse.value = authService.signInWithGoogle(idToken)
+    }
+
     fun clearAuthResponse() {
         _authResponse.value = null
     }
