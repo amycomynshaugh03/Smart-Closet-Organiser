@@ -20,6 +20,7 @@ import ie.setu.project.ui.auth.AuthStateViewModel
 import ie.setu.project.ui.auth.AuthViewModel
 import ie.setu.project.ui.auth.LoginScreen
 import ie.setu.project.ui.auth.RegisterScreen
+import ie.setu.project.ui.user.UserEditScreen
 import ie.setu.project.ui.user.UserProfileScreen
 import ie.setu.project.views.clothing.ClothingView
 import ie.setu.project.views.outfit.OutfitView
@@ -45,6 +46,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
 
             var showRegister by remember { mutableStateOf(false) }
             var showProfile by remember { mutableStateOf(false) }
+            var showEditProfile by remember { mutableStateOf(false) }
 
             LaunchedEffect(exportJson) {
                 exportJson?.let { json ->
@@ -68,6 +70,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                 if (user == null) {
                     showRegister = false
                     showProfile = false
+                    showEditProfile = false
                 }
             }
 
@@ -85,12 +88,21 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
 
             val context = LocalContext.current
 
+
+            if (showEditProfile) {
+                UserEditScreen(
+                    onBack = { showEditProfile = false }
+                )
+                return@setContent
+            }
+
+
             if (showProfile) {
                 UserProfileScreen(
-                    user = user,
                     onBack = { showProfile = false },
                     onExportWardrobe = { presenter.exportWardrobe(); showProfile = false },
-                    onSignOut = { authVm.signOut() }
+                    onSignOut = { authVm.signOut() },
+                    onEditProfile = { showEditProfile = true }
                 )
                 return@setContent
             }
