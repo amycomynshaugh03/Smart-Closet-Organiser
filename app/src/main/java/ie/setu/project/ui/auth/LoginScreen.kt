@@ -58,7 +58,7 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            "Welcome Back",
+            "Smart Closet Organiser",
             fontSize = 32.sp,
             fontFamily = FontFamily.Cursive,
             fontWeight = FontWeight.Bold,
