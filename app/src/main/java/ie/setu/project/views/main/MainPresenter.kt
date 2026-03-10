@@ -12,6 +12,7 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.EntryPointAccessors
 import ie.setu.project.di.FirebaseEntryPoint
 import ie.setu.project.di.StoreEntryPoint
+import ie.setu.project.helpers.correctImageRotation
 import ie.setu.project.helpers.removeBackgroundAndSave
 import ie.setu.project.helpers.showImagePicker
 import ie.setu.project.models.clothing.ClosetOrganiserModel
@@ -90,7 +91,6 @@ class MainPresenter(private val view: MainView) {
 
             closetOrganiser.id = saved.id
 
-
             if (uid.isNotBlank()) {
                 try {
                     val localUri = saved.image
@@ -105,7 +105,6 @@ class MainPresenter(private val view: MainView) {
                         firebase.clothingFirestoreRepository()
                             .upsert(uid, updatedForCloud, imagePath = upload.storagePath)
                     } else {
-
                         firebase.clothingFirestoreRepository().upsert(uid, saved, imagePath = null)
                     }
                 } catch (e: Exception) {
@@ -156,8 +155,14 @@ class MainPresenter(private val view: MainView) {
                             )
 
                             view.lifecycleScope.launch {
-                                val processedUri = withContext(Dispatchers.Default) {
-                                    removeBackgroundAndSave(view, pickedUri)
+                                val processedUri = if (view.removeBgState) {
+                                    withContext(Dispatchers.Default) {
+                                        removeBackgroundAndSave(view, pickedUri)
+                                    }
+                                } else {
+                                    withContext(Dispatchers.Default) {
+                                        correctImageRotation(view, pickedUri)
+                                    }
                                 }
 
                                 view.grantUriPermission(

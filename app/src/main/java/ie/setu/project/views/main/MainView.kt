@@ -24,8 +24,8 @@ class MainView : AppCompatActivity() {
     private var categoryState by mutableStateOf("")
     private var lastWornState by mutableStateOf("")
     private var imageUriState by mutableStateOf<Uri?>(null)
-
     private var isEditState by mutableStateOf(false)
+    var removeBgState by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,31 +60,22 @@ class MainView : AppCompatActivity() {
             MainScreen(
                 title = titleState,
                 onTitleChange = { titleState = it },
-
                 description = descriptionState,
                 onDescriptionChange = { descriptionState = it },
-
                 colour = colourState,
                 onColourChange = { colourState = it },
-
                 size = sizeState,
                 onSizeChange = { sizeState = it },
-
                 season = seasonState,
                 onSeasonChange = { seasonState = it },
-
                 category = categoryState,
                 onCategoryChange = { categoryState = it },
-
                 lastWornText = lastWornState,
                 onPickLastWorn = { presenter.showDatePicker() },
-
                 imageUri = imageUriState,
                 onChooseImage = { presenter.doSelectImage() },
-
                 isEdit = isEditState,
                 onCancel = { presenter.doCancel() },
-
                 onSave = {
                     if (titleState.isBlank()) {
                         scope.launch { snackbarHostState.showSnackbar("Please enter missing item") }
@@ -99,8 +90,9 @@ class MainView : AppCompatActivity() {
                         )
                     }
                 },
-
-                snackbarHostState = snackbarHostState
+                snackbarHostState = snackbarHostState,
+                removeBg = removeBgState,
+                onRemoveBgChange = { removeBgState = it }
             )
         }
     }
