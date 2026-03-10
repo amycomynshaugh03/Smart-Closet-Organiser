@@ -15,5 +15,5 @@ interface AuthService {
     suspend fun createUser(name: String, email: String, password: String)
             : FirebaseSignInResponse
     suspend fun signOut()
-
+    suspend fun signInWithGoogle(idToken: String): FirebaseSignInResponse
 }
