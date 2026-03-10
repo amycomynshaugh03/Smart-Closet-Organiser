@@ -24,6 +24,7 @@ android {
     buildFeatures {
         viewBinding = true
         compose = true
+        buildConfig = true
     }
 
     defaultConfig {
@@ -33,6 +34,12 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val geminiKey = project.findProperty("GEMINI_API_KEY")?.toString() ?: ""
+        buildConfigField("String", "GEMINI_API_KEY", "\"$geminiKey\"")
+
+        val removeBgKey = project.findProperty("REMOVE_BG_API_KEY")?.toString() ?: ""
+        buildConfigField("String", "REMOVE_BG_API_KEY", "\"$removeBgKey\"")
     }
 
     buildTypes {
@@ -135,11 +142,15 @@ dependencies {
 
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("androidx.compose.material:material-icons-extended")
-    implementation("com.github.erenalpaslan:removebg:1.0.4")
+
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(libs.firebase.storage.ktx)
+
+    implementation(libs.generativeai)
+
+    implementation(libs.androidx.exifinterface)
 }
