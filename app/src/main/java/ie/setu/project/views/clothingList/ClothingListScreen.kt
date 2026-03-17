@@ -86,6 +86,7 @@ fun ClothingListScreen(
     onExportWardrobe: () -> Unit,
     onNavigateToClothing: () -> Unit,
     onNavigateToOutfit: () -> Unit,
+    onNavigateToCalendar: () -> Unit,
     onClothingItemClick: (ClosetOrganiserModel) -> Unit,
     onOutfitItemClick: (OutfitModel) -> Unit,
     onDeleteItemClick: (ClosetOrganiserModel) -> Unit,
@@ -177,6 +178,20 @@ fun ClothingListScreen(
                         unselectedIconColor = Color.White.copy(0.5f),
                         unselectedTextColor = Color.White.copy(0.5f),
                         indicatorColor = Color.White.copy(0.2f)
+                    )
+                )
+
+                NavigationBarItem(
+                    selected = false,
+                    onClick  = { onNavigateToCalendar() },
+                    icon     = { Icon(Icons.Default.CalendarMonth, contentDescription = "Outfit Planner") },
+                    label    = { Text("Planner") },
+                    colors   = NavigationBarItemDefaults.colors(
+                        selectedIconColor   = Color.White,
+                        selectedTextColor   = Color.White,
+                        unselectedIconColor = Color.White.copy(0.5f),
+                        unselectedTextColor = Color.White.copy(0.5f),
+                        indicatorColor      = Color.White.copy(0.2f)
                     )
                 )
             }
