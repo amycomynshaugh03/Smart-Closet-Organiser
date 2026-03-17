@@ -23,6 +23,7 @@ import ie.setu.project.ui.auth.RegisterScreen
 import ie.setu.project.ui.theme.ClosetOrganiserTheme
 import ie.setu.project.ui.user.UserEditScreen
 import ie.setu.project.ui.user.UserProfileScreen
+import ie.setu.project.views.calendar.CalendarView
 import ie.setu.project.views.clothing.ClothingView
 import ie.setu.project.views.outfit.OutfitView
 import java.io.File
@@ -111,6 +112,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                 onExportWardrobe = { presenter.exportWardrobe() },
                 onNavigateToClothing = { startActivity(Intent(this, ClothingView::class.java)) },
                 onNavigateToOutfit = { startActivity(Intent(this, OutfitView::class.java)) },
+                onNavigateToCalendar = { startActivity(Intent(this, CalendarView::class.java)) }, // ADD
                 onClothingItemClick = { item ->
                     startActivity(Intent(this, ClothingView::class.java).apply {
                         putExtra("closet_item_edit", item)
