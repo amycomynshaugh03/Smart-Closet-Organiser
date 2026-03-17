@@ -1,11 +1,13 @@
 package ie.setu.project.di
 
 import android.content.Context
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import ie.setu.project.firebase.calendar.OutfitCalendarFirestoreRepository
 import ie.setu.project.models.ClosetSQLStore
 import ie.setu.project.models.OutfitJSONStore
 import ie.setu.project.models.clothing.ClothingStore
@@ -33,4 +35,9 @@ object StoreModule {
     fun provideOutfitStore(@ApplicationContext context: Context): OutfitStore {
         return OutfitJSONStore(context)
     }
+
+    @Provides @Singleton
+    fun provideOutfitCalendarFirestoreRepository(
+        firestore: FirebaseFirestore
+    ): OutfitCalendarFirestoreRepository = OutfitCalendarFirestoreRepository(firestore)
 }
