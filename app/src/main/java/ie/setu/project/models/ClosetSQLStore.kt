@@ -11,7 +11,7 @@ import ie.setu.project.models.clothing.ClothingStore
 import java.util.Date
 
 private const val DATABASE_NAME = "closet.db"
-private const val DATABASE_VERSION = 2
+private const val DATABASE_VERSION = 3
 
 private const val TABLE_NAME = "clothing_items"
 private const val COLUMN_ID = "id"
@@ -23,6 +23,7 @@ private const val COLUMN_SEASON = "season"
 private const val COLUMN_CATEGORY = "category"
 private const val COLUMN_LAST_WORN = "last_worn"
 private const val COLUMN_IMAGE = "image"
+private const val COLUMN_IMAGE_URL = "image_url"
 
 class ClosetSQLStore(private val context: Context) : ClothingStore {
 
@@ -78,16 +79,21 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
         val imageString = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE))
         val imageUri = imageString?.takeIf { it.isNotBlank() }?.let(Uri::parse)
 
+
+        val imageUrlIndex = cursor.getColumnIndex(COLUMN_IMAGE_URL)
+        val imageUrl = if (imageUrlIndex >= 0) cursor.getString(imageUrlIndex).orEmpty() else ""
+
         return ClosetOrganiserModel(
-            id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID)),
-            title = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
-            description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION)),
+            id           = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID)),
+            title        = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
+            description  = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION)),
             colourPattern = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_COLOUR_PATTERN)),
-            size = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SIZE)),
-            season = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SEASON)),
-            category = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY)) ?: "",
-            lastWorn = Date(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_LAST_WORN))),
-            image = imageUri
+            size         = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SIZE)),
+            season       = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SEASON)),
+            category     = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY)) ?: "",
+            lastWorn     = Date(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_LAST_WORN))),
+            image        = imageUri,
+            imageUrl     = imageUrl
         )
     }
 
@@ -101,6 +107,7 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
             put(COLUMN_CATEGORY, item.category)
             put(COLUMN_LAST_WORN, item.lastWorn.time)
             put(COLUMN_IMAGE, item.image?.toString())
+            put(COLUMN_IMAGE_URL, item.imageUrl)
         }
     }
 
@@ -119,7 +126,8 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
                     season TEXT,
                     category TEXT,
                     last_worn INTEGER,
-                    image TEXT
+                    image TEXT,
+                    image_url TEXT
                 )
                 """.trimIndent()
             )
@@ -150,10 +158,9 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
         }
 
         override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-            db.execSQL("DROP TABLE IF EXISTS clothing_items")
-            db.execSQL("DROP TABLE IF EXISTS outfits")
-            db.execSQL("DROP TABLE IF EXISTS outfit_clothing")
-            onCreate(db)
+            if (oldVersion < 3) {
+                db.execSQL("ALTER TABLE $TABLE_NAME ADD COLUMN $COLUMN_IMAGE_URL TEXT DEFAULT ''")
+            }
         }
     }
 }

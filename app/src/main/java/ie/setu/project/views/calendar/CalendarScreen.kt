@@ -148,8 +148,6 @@ fun CalendarScreen(
     }
 }
 
-
-
 @Composable
 private fun MonthHeader(
     yearMonth: YearMonth,
@@ -177,8 +175,6 @@ private fun MonthHeader(
     }
 }
 
-
-
 @Composable
 private fun DayOfWeekRow() {
     Row(
@@ -198,8 +194,6 @@ private fun DayOfWeekRow() {
         }
     }
 }
-
-
 
 @Composable
 private fun CalendarGrid(
@@ -295,8 +289,6 @@ private fun DayCell(
     }
 }
 
-
-
 @Composable
 private fun UpcomingOutfitsList(
     calendarEntries: Map<String, OutfitCalendarEntry>,
@@ -343,7 +335,6 @@ private fun UpcomingOutfitsList(
                     .fillMaxWidth()
                     .animateContentSize()
             ) {
-
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -351,7 +342,6 @@ private fun UpcomingOutfitsList(
                         .padding(horizontal = 16.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
                     Box(
                         modifier = Modifier
                             .size(48.dp)
@@ -359,31 +349,14 @@ private fun UpcomingOutfitsList(
                             .background(MaterialTheme.colorScheme.primary.copy(0.12f)),
                         contentAlignment = Alignment.Center
                     ) {
-                        val firstImage = fullOutfit?.clothingItems
-                            ?.firstOrNull()
-                            ?.let { it.imageUrl.takeIf { u -> u.isNotBlank() } ?: it.image }
-                        val validImage = firstImage != null &&
-                                firstImage != Uri.EMPTY &&
-                                firstImage.toString().isNotBlank()
-
-                        if (validImage) {
-                            AsyncImage(
-                                model = firstImage,
-                                contentDescription = null,
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-                        } else {
-                            Icon(
-                                Icons.Default.Checkroom,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
+                        Icon(
+                            Icons.Default.Checkroom,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
 
                     Spacer(Modifier.width(12.dp))
-
 
                     Column(modifier = Modifier.weight(1f)) {
                         Text(entry.outfitTitle, fontWeight = FontWeight.Medium)
@@ -401,7 +374,6 @@ private fun UpcomingOutfitsList(
                         }
                     }
 
-
                     Icon(
                         imageVector = if (expanded) Icons.Default.KeyboardArrowUp
                         else Icons.Default.KeyboardArrowDown,
@@ -409,7 +381,6 @@ private fun UpcomingOutfitsList(
                         tint = MaterialTheme.colorScheme.onSurface.copy(0.5f)
                     )
                 }
-
 
                 if (expanded && fullOutfit != null) {
                     Column(
@@ -426,7 +397,6 @@ private fun UpcomingOutfitsList(
                             )
                         ) {
                             Column(modifier = Modifier.padding(12.dp)) {
-
                                 if (fullOutfit.description.isNotBlank()) {
                                     Text(
                                         fullOutfit.description,
@@ -538,7 +508,6 @@ private fun UpcomingOutfitsList(
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

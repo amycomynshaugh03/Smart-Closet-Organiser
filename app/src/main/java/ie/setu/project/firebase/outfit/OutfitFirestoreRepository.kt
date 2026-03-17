@@ -25,7 +25,8 @@ class OutfitFirestoreRepository @Inject constructor(
         "season" to item.season,
         "category" to item.category,
         "lastWorn" to item.lastWorn.time,
-        "image" to (item.image?.toString() ?: "")
+        "image" to (item.image?.toString() ?: ""),
+        "imageUrl"     to item.imageUrl
     )
 
     suspend fun upsert(uid: String, outfit: OutfitModel) {
@@ -60,6 +61,7 @@ class OutfitFirestoreRepository @Inject constructor(
                 val clothingItems = clothingList.map { m ->
                     val cid = (m["id"] as? Number)?.toLong() ?: 0L
                     val img = (m["image"] as? String).orEmpty()
+                    val imageUrl = (m["imageUrl"] as? String).orEmpty()
                     val lw = (m["lastWorn"] as? Number)?.toLong() ?: 0L
 
                     ClosetOrganiserModel(
@@ -71,7 +73,8 @@ class OutfitFirestoreRepository @Inject constructor(
                         season = (m["season"] as? String).orEmpty(),
                         category = (m["category"] as? String).orEmpty(),
                         lastWorn = Date(lw),
-                        image = if (img.isBlank()) Uri.EMPTY else Uri.parse(img)
+                        image = if (img.isBlank()) Uri.EMPTY else Uri.parse(img),
+                        imageUrl     = imageUrl
                     )
                 }.toMutableList()
 
