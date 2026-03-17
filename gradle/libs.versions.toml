@@ -50,6 +50,7 @@ generativeai = "0.9.0"
 exifinterface = "1.3.7"
 playServicesAuth = "21.3.0"
 googleid = "1.1.0"
+ui = "1.10.5"
 
 
 
@@ -140,6 +141,7 @@ generativeai = { group = "com.google.ai.client.generativeai", name = "generative
 removebg = { group = "com.github.erenalpaslan", name = "removebg", version = "1.0.4" }
 androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
 googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

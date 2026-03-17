@@ -51,10 +51,10 @@ fun OfflineSyncBanner(syncState: SyncState) {
     }
 
     val (bgColor, icon, message) = when (syncState) {
-        SyncState.SYNCING       -> Triple(Color(0xFF1565C0), Icons.Default.Sync,      "Syncing with cloud…")
-        SyncState.SYNCED        -> Triple(Color(0xFF2E7D32), Icons.Default.CloudDone, "Up to date")
-        SyncState.OFFLINE_CACHE -> Triple(Color(0xFFE65100), Icons.Default.CloudOff,  "Offline — changes will sync when you're back online")
-        SyncState.OFFLINE_BACKUP-> Triple(Color(0xFFC62828), Icons.Default.CloudOff,  "Offline — showing local backup (read-only)")
+        SyncState.SYNCING        -> Triple(Color(0xFF1565C0), Icons.Default.Sync,      "Syncing with cloud…")
+        SyncState.SYNCED         -> Triple(Color(0xFF2E7D32), Icons.Default.CloudDone, "Up to date")
+        SyncState.OFFLINE_CACHE  -> Triple(Color(0xFFE65100), Icons.Default.CloudOff,  "Offline — changes will sync when you're back online")
+        SyncState.OFFLINE_BACKUP -> Triple(Color(0xFFC62828), Icons.Default.CloudOff,  "Offline — showing local backup (read-only)")
     }
 
     val visible = syncState == SyncState.SYNCING ||
@@ -86,6 +86,7 @@ fun ClothingListScreen(
     onExportWardrobe: () -> Unit,
     onNavigateToClothing: () -> Unit,
     onNavigateToOutfit: () -> Unit,
+    onNavigateToCalendar: () -> Unit,
     onClothingItemClick: (ClosetOrganiserModel) -> Unit,
     onOutfitItemClick: (OutfitModel) -> Unit,
     onDeleteItemClick: (ClosetOrganiserModel) -> Unit,
@@ -171,6 +172,20 @@ fun ClothingListScreen(
                     onClick = { selectedTab = 1 },
                     icon = { Icon(Icons.Default.AutoAwesome, contentDescription = "AI Stylist") },
                     label = { Text("AI Stylist") },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = Color.White,
+                        selectedTextColor = Color.White,
+                        unselectedIconColor = Color.White.copy(0.5f),
+                        unselectedTextColor = Color.White.copy(0.5f),
+                        indicatorColor = Color.White.copy(0.2f)
+                    )
+                )
+
+                NavigationBarItem(
+                    selected = false,
+                    onClick = { onNavigateToCalendar() },
+                    icon = { Icon(Icons.Default.CalendarMonth, contentDescription = "Outfit Planner") },
+                    label = { Text("Planner") },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = Color.White,
                         selectedTextColor = Color.White,
