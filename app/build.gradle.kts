@@ -82,6 +82,7 @@ dependencies {
     implementation(libs.firebase.inappmessaging)
 
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     debugImplementation(platform(libs.androidx.compose.bom))
 
