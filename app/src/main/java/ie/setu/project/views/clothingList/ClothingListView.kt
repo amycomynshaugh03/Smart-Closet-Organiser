@@ -28,6 +28,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import ie.setu.project.ui.theme.ClosetOrganiserTheme
 
 @AndroidEntryPoint
 class ClothingListView : AppCompatActivity(), ClosetItemListener {

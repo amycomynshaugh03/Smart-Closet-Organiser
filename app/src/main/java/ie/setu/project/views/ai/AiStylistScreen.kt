@@ -33,11 +33,11 @@ import ie.setu.project.models.clothing.ClosetOrganiserModel
 import ie.setu.project.models.weather.WeatherCondition
 import ie.setu.project.models.weather.WeatherResponse
 
-private val Purple = Color(0xFF6200EE)
-private val DarkText = Color(0xFF1A0033)
+private val Purple = Color(0xFF007A90)
+private val DarkText = Color(0xFF004F60)
 private val LightGrey = Color(0xFFF0F0F0)
 
-// Finds clothing items mentioned in the AI suggestion text
+
 fun findMentionedItems(
     suggestion: String,
     clothingItems: List<ClosetOrganiserModel>
@@ -45,7 +45,7 @@ fun findMentionedItems(
     val lowerSuggestion = suggestion.lowercase()
     return clothingItems.filter { item ->
         item.title.isNotBlank() && lowerSuggestion.contains(item.title.lowercase())
-    }.take(4) // max 4 images
+    }.take(4)
 }
 
 @Composable
