@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import ie.setu.project.models.clothing.ClosetOrganiserModel
 import ie.setu.project.models.clothing.ClothingStore
+import ie.setu.project.ui.theme.ClosetOrganiserTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -34,15 +35,11 @@ class SelectClothingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val preSelected =
-            intent.getParcelableArrayListExtra<ClosetOrganiserModel>("selected_clothing")
-                ?.toList()
-                ?: emptyList()
+        val preSelected = intent.getParcelableArrayListExtra<ClosetOrganiserModel>("selected_clothing")?.toList() ?: emptyList()
 
-        setContent {
+        setContent { ClosetOrganiserTheme {
             var clothingItems by remember { mutableStateOf<List<ClosetOrganiserModel>>(emptyList()) }
             var selected by rememberSaveable { mutableStateOf(preSelected) }
-
             val scope = rememberCoroutineScope()
 
             suspend fun loadItems() {
@@ -54,32 +51,22 @@ class SelectClothingActivity : AppCompatActivity() {
                 }
             }
 
-
-            LaunchedEffect(Unit) {
-                loadItems()
-            }
-
+            LaunchedEffect(Unit) { loadItems() }
 
             LaunchedEffect(preSelected) {
-                if (selected.isEmpty() && preSelected.isNotEmpty()) {
-                    selected = preSelected
-                }
+                if (selected.isEmpty() && preSelected.isNotEmpty()) selected = preSelected
             }
 
             SelectClothingScreen(
                 clothingItems = clothingItems,
                 selectedItems = selected,
-
                 onToggle = { item, isSelected ->
-                    selected =
-                        if (isSelected) (selected + item).distinctBy { it.id }
-                        else selected.filterNot { it.id == item.id }
+                    selected = if (isSelected) (selected + item).distinctBy { it.id }
+                    else selected.filterNot { it.id == item.id }
                 },
-
                 onDelete = { item ->
                     clothingItems = clothingItems.filterNot { it.id == item.id }
                     selected = selected.filterNot { it.id == item.id }
-
                     scope.launch {
                         try {
                             withContext(Dispatchers.IO) { clothingStore.delete(item) }
@@ -90,20 +77,16 @@ class SelectClothingActivity : AppCompatActivity() {
                         }
                     }
                 },
-
                 onSave = { returnSelectedItems(selected) },
                 onBack = { returnSelectedItems(selected) }
             )
-        }
+        } }
     }
 
     override fun onResume() {
         super.onResume()
-
         lifecycleScope.launch {
-            try {
-            } catch (_: Exception) {
-            }
+            try { } catch (_: Exception) { }
         }
     }
 }

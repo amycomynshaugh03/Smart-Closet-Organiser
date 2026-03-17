@@ -24,7 +24,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,7 +35,6 @@ fun UserEditScreen(
     onBack: () -> Unit,
     vm: ProfileViewModel = hiltViewModel()
 ) {
-    val teal = Color(0xFF007A90)
     val profile by vm.profile.collectAsState()
     val saveState by vm.saveState.collectAsState()
     val isUploadingPhoto by vm.isUploadingPhoto.collectAsState()
@@ -77,7 +75,10 @@ fun UserEditScreen(
                         Icon(imageVector = Icons.Default.Check, contentDescription = "Save", tint = Color.White)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = teal, titleContentColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = Color.White
+                )
             )
         }
     ) { padding ->
@@ -91,8 +92,8 @@ fun UserEditScreen(
             Box(contentAlignment = Alignment.Center, modifier = Modifier.size(110.dp)) {
                 Box(
                     modifier = Modifier.size(100.dp).clip(CircleShape)
-                        .background(teal.copy(alpha = 0.15f))
-                        .border(2.dp, teal, CircleShape)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f))
+                        .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
                         .clickable { imagePickerLauncher.launch("image/*") },
                     contentAlignment = Alignment.Center
                 ) {
@@ -100,7 +101,7 @@ fun UserEditScreen(
                     if (photoModel != null) {
                         AsyncImage(model = photoModel, contentDescription = "Profile photo", modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
                     } else {
-                        Icon(imageVector = Icons.Default.Person, contentDescription = null, tint = teal, modifier = Modifier.size(56.dp))
+                        Icon(imageVector = Icons.Default.Person, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(56.dp))
                     }
                     if (isUploadingPhoto) {
                         Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5f)), contentAlignment = Alignment.Center) {
@@ -109,8 +110,10 @@ fun UserEditScreen(
                     }
                 }
                 Box(
-                    modifier = Modifier.size(32.dp).clip(CircleShape).background(teal)
-                        .align(Alignment.BottomEnd).clickable { imagePickerLauncher.launch("image/*") },
+                    modifier = Modifier.size(32.dp).clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary)
+                        .align(Alignment.BottomEnd)
+                        .clickable { imagePickerLauncher.launch("image/*") },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(imageVector = Icons.Default.CameraAlt, contentDescription = "Change photo", tint = Color.White, modifier = Modifier.size(18.dp))
@@ -122,9 +125,13 @@ fun UserEditScreen(
 
             OutlinedTextField(
                 value = displayName, onValueChange = { displayName = it }, label = { Text("Display Name") },
-                leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = teal) },
+                leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                 singleLine = true, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp),
-                colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = teal, focusedLabelColor = teal, cursorColor = teal)
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    focusedLabelColor = MaterialTheme.colorScheme.primary,
+                    cursorColor = MaterialTheme.colorScheme.primary
+                )
             )
 
             OutlinedTextField(
@@ -140,7 +147,11 @@ fun UserEditScreen(
                 value = bio, onValueChange = { if (it.length <= 150) bio = it },
                 label = { Text("Bio") }, placeholder = { Text("Tell us a bit about yourself...") },
                 minLines = 3, maxLines = 5, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp),
-                colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = teal, focusedLabelColor = teal, cursorColor = teal),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    focusedLabelColor = MaterialTheme.colorScheme.primary,
+                    cursorColor = MaterialTheme.colorScheme.primary
+                ),
                 supportingText = {
                     Text("${bio.length}/150", modifier = Modifier.fillMaxWidth(),
                         color = if (bio.length >= 140) Color(0xFFD32F2F) else Color.Gray, fontSize = 11.sp)
@@ -153,7 +164,7 @@ fun UserEditScreen(
                 onClick = { vm.saveProfile(displayName, bio) },
                 modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = teal),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 enabled = saveState !is ProfileSaveState.Loading
             ) {
                 if (saveState is ProfileSaveState.Loading) {

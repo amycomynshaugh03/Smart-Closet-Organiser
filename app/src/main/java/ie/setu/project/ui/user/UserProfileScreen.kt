@@ -31,7 +31,6 @@ fun UserProfileScreen(
     onEditProfile: () -> Unit,
     vm: ProfileViewModel = hiltViewModel()
 ) {
-    val teal = Color(0xFF007A90)
     val profile by vm.profile.collectAsState()
 
     LaunchedEffect(Unit) { vm.loadProfile() }
@@ -54,7 +53,10 @@ fun UserProfileScreen(
                         Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Profile", tint = Color.White)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = teal, titleContentColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = Color.White
+                )
             )
         }
     ) { padding ->
@@ -66,14 +68,15 @@ fun UserProfileScreen(
             Spacer(Modifier.height(16.dp))
 
             Box(
-                modifier = Modifier.size(100.dp).clip(CircleShape).background(teal.copy(alpha = 0.15f)),
+                modifier = Modifier.size(100.dp).clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
                 contentAlignment = Alignment.Center
             ) {
                 val photoModel: Any? = profile.photoUrl.takeIf { it.isNotBlank() }
                 if (photoModel != null) {
                     AsyncImage(model = photoModel, contentDescription = "Profile photo", modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
                 } else {
-                    Icon(imageVector = Icons.Default.Person, contentDescription = null, tint = teal, modifier = Modifier.size(56.dp))
+                    Icon(imageVector = Icons.Default.Person, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(56.dp))
                 }
             }
 
@@ -81,22 +84,22 @@ fun UserProfileScreen(
             Text(text = displayName, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A1A1A))
 
             ProfileInfoCard(
-                icon = { Icon(Icons.Default.Email, contentDescription = null, tint = teal, modifier = Modifier.size(22.dp)) },
+                icon = { Icon(Icons.Default.Email, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(22.dp)) },
                 label = "Email",
                 value = profile.email.ifBlank { "Not available" }
             )
 
             if (profile.bio.isNotBlank()) {
                 ProfileInfoCard(
-                    icon = { Icon(Icons.Default.Info, contentDescription = null, tint = teal, modifier = Modifier.size(22.dp)) },
+                    icon = { Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(22.dp)) },
                     label = "Bio",
                     value = profile.bio
                 )
             } else {
                 OutlinedButton(onClick = onEditProfile, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)) {
-                    Icon(Icons.Default.Edit, contentDescription = null, tint = teal, modifier = Modifier.size(16.dp))
+                    Icon(Icons.Default.Edit, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text("Add a bio", color = teal)
+                    Text("Add a bio", color = MaterialTheme.colorScheme.primary)
                 }
             }
 
@@ -105,7 +108,7 @@ fun UserProfileScreen(
             Button(
                 onClick = onEditProfile, modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = teal)
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 Icon(Icons.Default.Edit, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
                 Spacer(Modifier.width(10.dp))
@@ -115,7 +118,7 @@ fun UserProfileScreen(
             Button(
                 onClick = onExportWardrobe, modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF506870))
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
             ) {
                 Icon(Icons.Default.FileDownload, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
                 Spacer(Modifier.width(10.dp))
@@ -139,14 +142,14 @@ fun UserProfileScreen(
 fun ProfileInfoCard(icon: @Composable () -> Unit, label: String, value: String) {
     Card(
         modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFC6EEF4))
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
     ) {
         Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.Top) {
             icon()
             Spacer(Modifier.width(12.dp))
             Column {
                 Text(label, fontSize = 12.sp, color = Color.Gray, fontWeight = FontWeight.Medium)
-                Text(text = value, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
+                Text(text = value, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onPrimaryContainer)
             }
         }
     }

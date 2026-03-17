@@ -35,7 +35,6 @@ fun OutfitScreen(
     onDeleteOutfit: (OutfitModel) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
-
     val outfits = outfitsProvider().toList()
 
     Scaffold(
@@ -43,35 +42,16 @@ fun OutfitScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_heart),
-                            contentDescription = null,
-                            tint = Color.White
-                        )
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                        Icon(painter = painterResource(R.drawable.ic_heart), contentDescription = null, tint = Color.White)
                         Spacer(Modifier.width(8.dp))
-                        Text(
-                            text = "Outfits",
-                            fontSize = 30.sp,
-                            fontFamily = FontFamily.Cursive,
-                            color = Color.White
-                        )
+                        Text(text = "Outfits", fontSize = 30.sp, fontFamily = FontFamily.Cursive, color = Color.White)
                         Spacer(Modifier.width(8.dp))
-                        Icon(
-                            painter = painterResource(R.drawable.ic_heart),
-                            contentDescription = null,
-                            tint = Color.White
-                        )
+                        Icon(painter = painterResource(R.drawable.ic_heart), contentDescription = null, tint = Color.White)
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, "Back", tint = Color.White)
-                    }
+                    IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, "Back", tint = Color.White) }
                 },
                 actions = {
                     IconButton(onClick = onAddOutfit, modifier = Modifier.size(48.dp)) {
@@ -79,7 +59,7 @@ fun OutfitScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF6200EE),
+                    containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = Color.White,
                     actionIconContentColor = Color.White,
                     navigationIconContentColor = Color.White
@@ -87,30 +67,12 @@ fun OutfitScreen(
             )
         }
     ) { padding ->
-
         if (outfits.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("No outfits yet.")
-            }
+            Box(modifier = Modifier.padding(padding).fillMaxSize(), contentAlignment = Alignment.Center) { Text("No outfits yet.") }
         } else {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
+            LazyColumn(modifier = Modifier.padding(padding).fillMaxSize(), contentPadding = PaddingValues(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 items(outfits, key = { it.id }) { outfit ->
-                    OutfitRow(
-                        outfit = outfit,
-                        onClick = { onOutfitClick(outfit) },
-                        onDelete = { onDeleteOutfit(outfit) }
-                    )
+                    OutfitRow(outfit = outfit, onClick = { onOutfitClick(outfit) }, onDelete = { onDeleteOutfit(outfit) })
                 }
             }
         }
@@ -118,66 +80,21 @@ fun OutfitScreen(
 }
 
 @Composable
-private fun OutfitRow(
-    outfit: OutfitModel,
-    onClick: () -> Unit,
-    onDelete: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        onClick = onClick
-    ) {
-        Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = outfit.title.ifBlank { "No title" },
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1f)
-                )
-
+private fun OutfitRow(outfit: OutfitModel, onClick: () -> Unit, onDelete: () -> Unit) {
+    Card(modifier = Modifier.fillMaxWidth(), elevation = CardDefaults.cardElevation(defaultElevation = 6.dp), onClick = onClick) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Text(text = outfit.title.ifBlank { "No title" }, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
                 IconButton(onClick = onDelete) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete outfit",
-                        tint = Color.Red
-                    )
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete outfit", tint = Color.Red)
                 }
             }
-
-            val scroll = rememberScrollState()
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(90.dp)
-                    .horizontalScroll(scroll),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+            Row(modifier = Modifier.fillMaxWidth().height(90.dp).horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 outfit.clothingItems.forEach { clothing ->
-
-                    val imageModel: Any? =
-                        clothing.imageUrl.takeIf { it.isNotBlank() } ?: clothing.image
-
-                    val ok =
-                        imageModel != null &&
-                                imageModel != Uri.EMPTY &&
-                                imageModel.toString().isNotBlank()
-
+                    val imageModel: Any? = clothing.imageUrl.takeIf { it.isNotBlank() } ?: clothing.image
+                    val ok = imageModel != null && imageModel != Uri.EMPTY && imageModel.toString().isNotBlank()
                     if (ok) {
-                        AsyncImage(
-                            model = imageModel,
-                            contentDescription = "Clothing image",
-                            modifier = Modifier
-                                .height(90.dp)
-                                .width(90.dp),
-                            contentScale = ContentScale.Crop
-                        )
+                        AsyncImage(model = imageModel, contentDescription = "Clothing image", modifier = Modifier.height(90.dp).width(90.dp), contentScale = ContentScale.Crop)
                     }
                 }
             }

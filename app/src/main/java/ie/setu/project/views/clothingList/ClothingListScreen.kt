@@ -39,9 +39,6 @@ import ie.setu.project.models.weather.WeatherResponse
 import kotlinx.coroutines.delay
 import ie.setu.project.views.ai.AiStylistScreen
 
-private val Teal = Color(0xFF007A90)
-private val TealDark = Color(0xFF004F60)
-
 @Composable
 fun OfflineSyncBanner(syncState: SyncState) {
     var showSyncedConfirm by remember { mutableStateOf(false) }
@@ -149,13 +146,13 @@ fun ClothingListScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Teal,
+                    containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = Color.White
                 )
             )
         },
         bottomBar = {
-            NavigationBar(containerColor = Teal, tonalElevation = 0.dp) {
+            NavigationBar(containerColor = MaterialTheme.colorScheme.primary, tonalElevation = 0.dp) {
                 NavigationBarItem(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
@@ -204,9 +201,9 @@ fun ClothingListScreen(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Button(onClick = onNavigateToOutfit, colors = ButtonDefaults.buttonColors(containerColor = Teal)) { Text("Outfits") }
+                Button(onClick = onNavigateToOutfit, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) { Text("Outfits") }
                 Spacer(modifier = Modifier.width(8.dp))
-                Button(onClick = onNavigateToClothing, colors = ButtonDefaults.buttonColors(containerColor = Teal)) { Text("Clothes") }
+                Button(onClick = onNavigateToClothing, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) { Text("Clothes") }
                 Row(modifier = Modifier.weight(1f).padding(start = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(painter = painterResource(id = R.drawable.ic_search), contentDescription = "Search", modifier = Modifier.padding(end = 8.dp), tint = Color.Gray)
                     TextField(
@@ -233,7 +230,13 @@ fun ClothingListScreen(
                 }
             }
 
-            Text("Recently Added", style = MaterialTheme.typography.headlineSmall, color = Teal, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 16.dp, top = 16.dp))
+            Text(
+                "Recently Added",
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+            )
 
             Card(modifier = Modifier.fillMaxWidth().height(250.dp).padding(horizontal = 16.dp, vertical = 8.dp), shape = RoundedCornerShape(12.dp)) {
                 Column {
@@ -269,7 +272,8 @@ fun ClothingListScreen(
                     if (carouselItems.size > 1) {
                         Row(modifier = Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement = Arrangement.Center) {
                             repeat(carouselItems.size) { index ->
-                                Box(modifier = Modifier.padding(4.dp).size(8.dp).clip(CircleShape).background(if (index == currentCarouselPage) Teal else Color.Gray))
+                                Box(modifier = Modifier.padding(4.dp).size(8.dp).clip(CircleShape)
+                                    .background(if (index == currentCarouselPage) MaterialTheme.colorScheme.primary else Color.Gray))
                             }
                         }
                     }
@@ -277,7 +281,11 @@ fun ClothingListScreen(
             }
 
             Card(modifier = Modifier.fillMaxWidth().padding(16.dp), shape = RoundedCornerShape(12.dp)) {
-                Box(modifier = Modifier.fillMaxWidth().background(brush = Brush.verticalGradient(colors = listOf(Teal, TealDark))).padding(16.dp)) {
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                        .background(brush = Brush.verticalGradient(colors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.onPrimaryContainer)))
+                        .padding(16.dp)
+                ) {
                     when {
                         weatherData != null -> {
                             val current = weatherData!!.current_weather

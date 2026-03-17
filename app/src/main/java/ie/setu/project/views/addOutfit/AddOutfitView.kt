@@ -4,13 +4,10 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import dagger.hilt.android.AndroidEntryPoint
 import ie.setu.project.models.outfit.OutfitModel
+import ie.setu.project.ui.theme.ClosetOrganiserTheme
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -19,25 +16,19 @@ import java.util.Locale
 class AddOutfitView : AppCompatActivity() {
 
     private lateinit var presenter: AddOutfitPresenter
-
-
     private var lastWornState by mutableStateOf("")
-    private var selectedCountState by mutableStateOf(0) // optional UI feedback
+    private var selectedCountState by mutableStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         presenter = AddOutfitPresenter(this)
-
 
         lastWornState = try {
             SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(presenter.outfit.lastWorn)
-        } catch (e: Exception) {
-            ""
-        }
+        } catch (e: Exception) { "" }
         selectedCountState = presenter.outfit.clothingItems.size
 
-        setContent {
+        setContent { ClosetOrganiserTheme {
             val snackbarHostState = remember { SnackbarHostState() }
             val scope = rememberCoroutineScope()
 
@@ -50,26 +41,18 @@ class AddOutfitView : AppCompatActivity() {
                 snackbarHostState = snackbarHostState,
                 onPickLastWorn = { presenter.showDatePicker() },
                 onChooseClothing = { presenter.launchClothingSelection() },
-                onSave = { title, desc, season ->
-                    presenter.doAddOrSave(title, desc, season)
-                },
-                showError = { msg ->
-                    scope.launch { snackbarHostState.showSnackbar(msg) }
-                }
+                onSave = { title, desc, season -> presenter.doAddOrSave(title, desc, season) },
+                showError = { msg -> scope.launch { snackbarHostState.showSnackbar(msg) } }
             )
-        }
+        } }
     }
 
     fun showOutfit(outfit: OutfitModel) {
         lastWornState = try {
             SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(outfit.lastWorn)
-        } catch (e: Exception) {
-            ""
-        }
+        } catch (e: Exception) { "" }
         selectedCountState = outfit.clothingItems.size
     }
 
-    fun updateLastWornDate(date: String) {
-        lastWornState = date
-    }
+    fun updateLastWornDate(date: String) { lastWornState = date }
 }

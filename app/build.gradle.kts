@@ -141,8 +141,9 @@ dependencies {
     implementation(libs.play.services.location)
 
     implementation("io.coil-kt:coil-compose:2.5.0")
-    implementation("androidx.compose.material:material-icons-extended")
-
+    implementation("androidx.compose.material:material-icons-extended") {
+        exclude(group = "androidx.compose.material", module = "material")
+    }
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

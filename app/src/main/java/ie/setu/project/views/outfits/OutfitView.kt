@@ -9,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
+import ie.setu.project.ui.theme.ClosetOrganiserTheme
 import ie.setu.project.views.addOutfit.AddOutfitView
 import kotlinx.coroutines.launch
 
@@ -16,12 +17,10 @@ class OutfitView : AppCompatActivity() {
 
     private lateinit var presenter: OutfitPresenter
     private lateinit var getResult: ActivityResultLauncher<Intent>
-
     private var refreshTick by mutableIntStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         presenter = OutfitPresenter(this)
 
         getResult = registerForActivityResult(
@@ -33,7 +32,7 @@ class OutfitView : AppCompatActivity() {
             }
         }
 
-        setContent {
+        setContent { ClosetOrganiserTheme {
             val snackbarHostState = remember { SnackbarHostState() }
             val scope = rememberCoroutineScope()
 
@@ -42,30 +41,24 @@ class OutfitView : AppCompatActivity() {
                     refreshTick
                     presenter.getOutfits()
                 },
-
                 onBack = { finish() },
-
                 onAddOutfit = {
                     getResult.launch(Intent(this, AddOutfitView::class.java))
                 },
-
                 onOutfitClick = { outfit ->
-
                     val intent = Intent(this, AddOutfitView::class.java).apply {
                         putExtra("outfit_edit", outfit)
                     }
                     getResult.launch(intent)
                 },
-
                 onDeleteOutfit = { outfit ->
                     presenter.onDeleteOutfitClick(outfit)
                     loadOutfits()
                     scope.launch { snackbarHostState.showSnackbar("Outfit deleted") }
                 },
-
                 snackbarHostState = snackbarHostState
             )
-        }
+        } }
     }
 
     override fun onResume() {
@@ -73,9 +66,8 @@ class OutfitView : AppCompatActivity() {
         presenter.refreshFromFirestore()
         loadOutfits()
     }
-    fun loadOutfits() {
-        refreshTick++
-    }
 
-    fun showSnackbar(message: String) { /* optional */ }
+    fun loadOutfits() { refreshTick++ }
+
+    fun showSnackbar(message: String) { }
 }

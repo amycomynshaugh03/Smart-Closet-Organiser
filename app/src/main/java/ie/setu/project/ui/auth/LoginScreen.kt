@@ -41,7 +41,6 @@ fun LoginScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val webClientId = stringResource(R.string.default_web_client_id)
-    val teal = Color(0xFF007A90)
 
     LaunchedEffect(state) {
         if (state is Response.Success) {
@@ -55,20 +54,26 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("Smart Closet Organiser", fontSize = 32.sp, fontFamily = FontFamily.Cursive, fontWeight = FontWeight.Bold, color = teal)
+        Text(
+            "Smart Closet Organiser",
+            fontSize = 32.sp,
+            fontFamily = FontFamily.Cursive,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary
+        )
         Text("Sign in to your closet", fontSize = 14.sp, color = Color.Gray)
 
         Spacer(Modifier.height(32.dp))
 
         OutlinedTextField(
             value = email, onValueChange = { email = it }, label = { Text("Email") },
-            leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = teal) },
+            leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
             singleLine = true, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)
         )
         Spacer(Modifier.height(12.dp))
         OutlinedTextField(
             value = password, onValueChange = { password = it }, label = { Text("Password") },
-            leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = teal) },
+            leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
             visualTransformation = PasswordVisualTransformation(),
             singleLine = true, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)
         )
@@ -78,7 +83,7 @@ fun LoginScreen(
             onClick = { vm.signIn(email.trim(), password) },
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = teal)
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) { Text("Sign In", fontSize = 16.sp) }
 
         Spacer(Modifier.height(12.dp))
@@ -120,13 +125,13 @@ fun LoginScreen(
         Spacer(Modifier.height(16.dp))
 
         TextButton(onClick = onGoToRegister) {
-            Text("Don't have an account? Create one", color = teal)
+            Text("Don't have an account? Create one", color = MaterialTheme.colorScheme.primary)
         }
 
         Spacer(Modifier.height(12.dp))
 
         when (val s = state) {
-            is Response.Loading -> CircularProgressIndicator(color = teal)
+            is Response.Loading -> CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             is Response.Failure -> Text("Error: ${s.e.message ?: "Unknown error"}", color = Color.Red, fontSize = 13.sp)
             else -> {}
         }
