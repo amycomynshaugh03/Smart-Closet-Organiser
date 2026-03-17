@@ -48,8 +48,7 @@
 
         <activity
             android:name=".views.addOutfit.AddOutfitView"
-            android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+            android:exported="false" />
 
         <activity
             android:name=".activities.SelectClothingActivity"

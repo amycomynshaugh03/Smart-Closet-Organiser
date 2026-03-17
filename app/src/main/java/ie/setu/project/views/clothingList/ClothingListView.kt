@@ -20,6 +20,7 @@ import ie.setu.project.ui.auth.AuthStateViewModel
 import ie.setu.project.ui.auth.AuthViewModel
 import ie.setu.project.ui.auth.LoginScreen
 import ie.setu.project.ui.auth.RegisterScreen
+import ie.setu.project.ui.theme.ClosetOrganiserTheme
 import ie.setu.project.ui.user.UserEditScreen
 import ie.setu.project.ui.user.UserProfileScreen
 import ie.setu.project.views.clothing.ClothingView
@@ -35,7 +36,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent {
+        setContent { ClosetOrganiserTheme {
             val presenter: ClothingListPresenter = hiltViewModel()
             val authStateVm: AuthStateViewModel = hiltViewModel()
             val authVm: AuthViewModel = hiltViewModel()
@@ -80,7 +81,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                 } else {
                     LoginScreen(onGoToRegister = { showRegister = true }, onSignedIn = { })
                 }
-                return@setContent
+                return@ClosetOrganiserTheme
             }
 
             LaunchedEffect(user) { presenter.refreshFromFirestore() }
@@ -88,14 +89,10 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
 
             val context = LocalContext.current
 
-
             if (showEditProfile) {
-                UserEditScreen(
-                    onBack = { showEditProfile = false }
-                )
-                return@setContent
+                UserEditScreen(onBack = { showEditProfile = false })
+                return@ClosetOrganiserTheme
             }
-
 
             if (showProfile) {
                 UserProfileScreen(
@@ -104,7 +101,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                     onSignOut = { authVm.signOut() },
                     onEditProfile = { showEditProfile = true }
                 )
-                return@setContent
+                return@ClosetOrganiserTheme
             }
 
             ClothingListScreen(
@@ -133,7 +130,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                 showWeatherError = { message -> showWeatherError(message) },
                 onNavigateToProfile = { showProfile = true }
             )
-        }
+        } }
     }
 
     private fun writeAndShareExport(json: String) {

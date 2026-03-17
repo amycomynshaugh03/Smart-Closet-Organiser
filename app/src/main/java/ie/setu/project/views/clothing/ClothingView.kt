@@ -6,24 +6,22 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
+import ie.setu.project.ui.theme.ClosetOrganiserTheme
 import ie.setu.project.views.clothingList.ClothingListView
 import kotlinx.coroutines.launch
 
 class ClothingView : AppCompatActivity() {
 
     private lateinit var presenter: ClothingPresenter
-
     private var refreshTick by mutableIntStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         presenter = ClothingPresenter(this)
 
-        setContent {
+        setContent { ClosetOrganiserTheme {
             val snackbarHostState = remember { SnackbarHostState() }
             val scope = rememberCoroutineScope()
-
             val items = remember(refreshTick) { presenter.getClosetItems() }
 
             ClothingScreen(
@@ -37,7 +35,7 @@ class ClothingView : AppCompatActivity() {
                 },
                 snackbarHostState = snackbarHostState
             )
-        }
+        } }
     }
 
     override fun onResume() {
@@ -45,9 +43,7 @@ class ClothingView : AppCompatActivity() {
         presenter.refreshFromFirestore()
     }
 
-    fun notifyAdapterChanged() {
-        refreshTick++
-    }
+    fun notifyAdapterChanged() { refreshTick++ }
 
     fun navigateToMain() {
         startActivity(Intent(this, ClothingListView::class.java))

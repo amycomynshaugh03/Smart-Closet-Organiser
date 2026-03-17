@@ -35,49 +35,23 @@ fun SelectClothingScreen(
             TopAppBar(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color.White
-                        )
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
                     }
                 },
                 title = {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_heart),
-                                contentDescription = null,
-                                tint = Color.White
-                            )
+                    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(painter = painterResource(R.drawable.ic_heart), contentDescription = null, tint = Color.White)
                             Spacer(Modifier.width(8.dp))
-                            Text(
-                                text = "Select Clothing",
-                                fontSize = 28.sp,
-                                fontFamily = FontFamily.Cursive,
-                                color = Color.White
-                            )
+                            Text(text = "Select Clothing", fontSize = 28.sp, fontFamily = FontFamily.Cursive, color = Color.White)
                             Spacer(Modifier.width(8.dp))
-                            Icon(
-                                painter = painterResource(R.drawable.ic_heart),
-                                contentDescription = null,
-                                tint = Color.White
-                            )
+                            Icon(painter = painterResource(R.drawable.ic_heart), contentDescription = null, tint = Color.White)
                         }
-                        Text(
-                            text = "$selectedCount selected",
-                            fontSize = 12.sp,
-                            color = Color.White
-                        )
+                        Text(text = "$selectedCount selected", fontSize = 12.sp, color = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF6200EE),
+                    containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = Color.White,
                     navigationIconContentColor = Color.White
                 )
@@ -85,77 +59,33 @@ fun SelectClothingScreen(
         },
         bottomBar = {
             Surface(tonalElevation = 6.dp) {
-                Button(
-                    onClick = onSave,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
+                Button(onClick = onSave, modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                     Text("Save Selection")
                 }
             }
         }
     ) { padding ->
-
-        LazyColumn(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize(),
-            contentPadding = PaddingValues(12.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
+        LazyColumn(modifier = Modifier.padding(padding).fillMaxSize(), contentPadding = PaddingValues(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             items(clothingItems, key = { it.id }) { item ->
                 val isChecked = selectedItems.any { it.id == item.id }
-
-                SelectClothingRow(
-                    item = item,
-                    checked = isChecked,
-                    onCheckedChange = { checked -> onToggle(item, checked) },
-                    onDelete = { onDelete(item) }
-                )
+                SelectClothingRow(item = item, checked = isChecked, onCheckedChange = { checked -> onToggle(item, checked) }, onDelete = { onDelete(item) })
             }
         }
     }
 }
 
 @Composable
-private fun SelectClothingRow(
-    item: ClosetOrganiserModel,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    onDelete: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Checkbox(
-                checked = checked,
-                onCheckedChange = onCheckedChange
-            )
-
+private fun SelectClothingRow(item: ClosetOrganiserModel, checked: Boolean, onCheckedChange: (Boolean) -> Unit, onDelete: () -> Unit) {
+    Card(modifier = Modifier.fillMaxWidth(), elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)) {
+        Row(modifier = Modifier.fillMaxWidth().padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(checked = checked, onCheckedChange = onCheckedChange)
             Spacer(Modifier.width(8.dp))
-
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = item.title.ifBlank { "No title" })
-                Text(
-                    text = item.description.ifBlank { "No description" },
-                    style = MaterialTheme.typography.bodySmall
-                )
+                Text(text = item.description.ifBlank { "No description" }, style = MaterialTheme.typography.bodySmall)
             }
-
             IconButton(onClick = onDelete) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete",
-                    tint = Color.Red
-                )
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red)
             }
         }
     }

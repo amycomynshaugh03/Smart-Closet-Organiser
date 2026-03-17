@@ -7,8 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import ie.setu.project.R
-import kotlinx.coroutines.launch
 import ie.setu.project.models.clothing.ClosetOrganiserModel
+import ie.setu.project.ui.theme.ClosetOrganiserTheme
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -29,7 +30,6 @@ class MainView : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         presenter = MainPresenter(this)
         isEditState = presenter.edit
 
@@ -53,7 +53,7 @@ class MainView : AppCompatActivity() {
 
         imageUriState = presenter.closetOrganiser.image.takeIf { it != Uri.EMPTY }
 
-        setContent {
+        setContent { ClosetOrganiserTheme {
             val snackbarHostState = remember { SnackbarHostState() }
             val scope = rememberCoroutineScope()
 
@@ -80,21 +80,14 @@ class MainView : AppCompatActivity() {
                     if (titleState.isBlank()) {
                         scope.launch { snackbarHostState.showSnackbar("Please enter missing item") }
                     } else {
-                        presenter.doAddOrSave(
-                            titleState,
-                            descriptionState,
-                            colourState,
-                            sizeState,
-                            seasonState,
-                            categoryState
-                        )
+                        presenter.doAddOrSave(titleState, descriptionState, colourState, sizeState, seasonState, categoryState)
                     }
                 },
                 snackbarHostState = snackbarHostState,
                 removeBg = removeBgState,
                 onRemoveBgChange = { removeBgState = it }
             )
-        }
+        } }
     }
 
     fun showClosetItem(item: ClosetOrganiserModel) {
@@ -105,11 +98,9 @@ class MainView : AppCompatActivity() {
         sizeState = item.size
         seasonState = item.season
         categoryState = item.category
-
         lastWornState = try {
             SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(item.lastWorn)
         } catch (e: Exception) { "" }
-
         imageUriState = item.image.takeIf { it != Uri.EMPTY }
     }
 

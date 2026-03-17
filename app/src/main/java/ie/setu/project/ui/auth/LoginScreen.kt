@@ -41,7 +41,6 @@ fun LoginScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val webClientId = stringResource(R.string.default_web_client_id)
-    val purple = Color(0xFF6200EE)
 
     LaunchedEffect(state) {
         if (state is Response.Success) {
@@ -51,9 +50,7 @@ fun LoginScreen(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
+        modifier = Modifier.fillMaxSize().padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -62,35 +59,23 @@ fun LoginScreen(
             fontSize = 32.sp,
             fontFamily = FontFamily.Cursive,
             fontWeight = FontWeight.Bold,
-            color = purple
+            color = MaterialTheme.colorScheme.primary
         )
-        Text(
-            "Sign in to your closet",
-            fontSize = 14.sp,
-            color = Color.Gray
-        )
+        Text("Sign in to your closet", fontSize = 14.sp, color = Color.Gray)
 
         Spacer(Modifier.height(32.dp))
 
         OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
-            leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = purple) },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp)
+            value = email, onValueChange = { email = it }, label = { Text("Email") },
+            leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+            singleLine = true, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)
         )
         Spacer(Modifier.height(12.dp))
         OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = purple) },
+            value = password, onValueChange = { password = it }, label = { Text("Password") },
+            leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
             visualTransformation = PasswordVisualTransformation(),
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp)
+            singleLine = true, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)
         )
         Spacer(Modifier.height(20.dp))
 
@@ -98,17 +83,12 @@ fun LoginScreen(
             onClick = { vm.signIn(email.trim(), password) },
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = purple)
-        ) {
-            Text("Sign In", fontSize = 16.sp)
-        }
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+        ) { Text("Sign In", fontSize = 16.sp) }
 
         Spacer(Modifier.height(12.dp))
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             HorizontalDivider(modifier = Modifier.weight(1f))
             Text("  or  ", color = Color.Gray, fontSize = 13.sp)
             HorizontalDivider(modifier = Modifier.weight(1f))
@@ -121,27 +101,16 @@ fun LoginScreen(
                 scope.launch {
                     try {
                         val credentialManager = CredentialManager.create(context)
-
                         val googleIdOption = GetGoogleIdOption.Builder()
                             .setFilterByAuthorizedAccounts(false)
                             .setServerClientId(webClientId)
                             .build()
-
                         val request = GetCredentialRequest.Builder()
-                            .addCredentialOption(googleIdOption)
-                            .build()
-
-                        val result = credentialManager.getCredential(
-                            request = request,
-                            context = context
-                        )
-
+                            .addCredentialOption(googleIdOption).build()
+                        val result = credentialManager.getCredential(request = request, context = context)
                         val credential = result.credential
                         val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-                        val idToken = googleIdTokenCredential.idToken
-
-                        vm.signInWithGoogle(idToken)
-
+                        vm.signInWithGoogle(googleIdTokenCredential.idToken)
                     } catch (e: GetCredentialException) {
                         Log.e("GoogleSignIn", "Credential error: ${e.message}")
                     } catch (e: Exception) {
@@ -151,25 +120,19 @@ fun LoginScreen(
             },
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(12.dp)
-        ) {
-            Text("Continue with Google", fontSize = 16.sp, color = Color(0xFF4285F4))
-        }
+        ) { Text("Continue with Google", fontSize = 16.sp, color = Color(0xFF4285F4)) }
 
         Spacer(Modifier.height(16.dp))
 
         TextButton(onClick = onGoToRegister) {
-            Text("Don't have an account? Create one", color = purple)
+            Text("Don't have an account? Create one", color = MaterialTheme.colorScheme.primary)
         }
 
         Spacer(Modifier.height(12.dp))
 
         when (val s = state) {
-            is Response.Loading -> CircularProgressIndicator(color = purple)
-            is Response.Failure -> Text(
-                "Error: ${s.e.message ?: "Unknown error"}",
-                color = Color.Red,
-                fontSize = 13.sp
-            )
+            is Response.Loading -> CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+            is Response.Failure -> Text("Error: ${s.e.message ?: "Unknown error"}", color = Color.Red, fontSize = 13.sp)
             else -> {}
         }
     }
