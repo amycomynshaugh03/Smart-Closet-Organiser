@@ -54,6 +54,10 @@
             android:name=".activities.SelectClothingActivity"
             android:exported="true" />
 
+        <activity
+            android:name=".views.calendar.CalendarView"
+            android:exported="false" />
+
     </application>
 
 </manifest>
