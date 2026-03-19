@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Closet Organiser – Amy Comyns Haugh</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+
+  <nav class="navbar">
+    <div class="navbar__logo">Smart Closet Organiser</div>
+    <ul class="navbar__links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#screenshots">Screenshots</a></li>
+      <li><a href="#tech">Tech Stack</a></li>
+      <li><a href="#links">Links</a></li>
+    </ul>
+  </nav>
+
+ 
+  <header class="hero">
+    <div class="hero__inner">
+      <h1 class="hero__title">Smart Closet Organiser</h1>
+      <p class="hero__subtitle">
+        An AI-powered Android app that manages your wardrobe, plans your outfits, and suggests what to wear, based on your style and live weather conditions.
+      </p>
+      <div class="hero__buttons">
+        <a href="https://www.youtube.com/watch?v=JAg0MgnUVd8" target="_blank" class="btn btn--primary">▶ Watch Demo</a>
+        <a href="https://github.com/amycomynshaugh03/Smart-Closet-Organiser" target="_blank" class="btn btn--outline">GitHub ↗</a>
+      </div>
+    </div>
+  </header>
+
+
+  <main>
+
+    <section class="section" id="about">
+      <div class="container">
+        <h2 class="section__title">About Me &amp; This Project</h2>
+        <div class="about__grid">
+
+          <div class="about__text">
+            <p>My name is Amy Comyns Haugh and I'm a final year BSc Software Systems Development Student. For my final year project I built a Smart Closet Organiser, which is an Android app that uses AI to help people manage their wardrobes and plan outfits.</p>
+            <p>The idea came from a pretty relatable problem. Research shows the average person only wears about <strong>20% of their wardrobe 80% of the time</strong>. We all have clothes we forget about, can't find, or just never wear. I wanted to build something that actually fixes that, not just another organisation app, but one that uses AI and weather data to suggest what to wear and nudge you towards using what you already own.</p>
+            <p>It's built natively for Android using Kotlin and Jetpack Compose, with Firebase for the backend and OpenWeatherMap for live weather data.</p>
+
+            <div class="stats">
+              <div class="stats__card">
+                <span class="stats__number">80%</span>
+                <span class="stats__label">of the time, only 20% of a wardrobe gets worn</span>
+              </div>
+              <div class="stats__card">
+                <span class="stats__number">64%</span>
+                <span class="stats__label">of Gen Z already use digital wardrobe tools</span>
+              </div>
+              <div class="stats__card">
+                <span class="stats__number">73%</span>
+                <span class="stats__label">global Android market share in 2025</span>
+              </div>
+              <div class="stats__card">
+                <span class="stats__number">60%</span>
+                <span class="stats__label">of consumers now prioritise sustainable fashion</span>
+              </div>
+            </div>
+          </div>
+
+          <aside class="about__sidebar">
+            <div class="profile-card">
+              <div class="profile-card__img">
+                <img src="headshot.png" alt="Amy Comyns Haugh" /> 
+              </div>
+              <p class="profile-card__name">Amy Comyns Haugh</p>
+              <p class="profile-card__sub">BSc Software Systems Development · 20103780</p>
+              <div class="profile-card__links">
+                <a href="https://www.linkedin.com/in/amy-comyns-haugh" target="https://www.linkedin.com/in/amy-comyns-haugh/" class="profile-card__btn profile-card__btn--linkedin">LinkedIn</a>
+                <a href="https://github.com/amycomynshaugh03" target="_blank" class="profile-card__btn profile-card__btn--github">GitHub</a>
+              </div>
+            </div>
+
+            <div class="graphic-placeholder">
+            <img src="Icon.png" alt="App Graphic" class="graphic-img" />
+            </div>
+          </aside>
+
+        </div>
+      </div>
+    </section>
+
+   
+    <section class="section section--alt" id="features">
+      <div class="container">
+        <h2 class="section__title">Key Features</h2>
+        <p class="section__intro">The app has six main features, each one solving a real problem with wardrobe management</p>
+
+        <ul class="features__list">
+          <li class="feature">
+            <div class="feature__body">
+              <h3>AI Outfit Recommendations</h3>
+              <p>The app analyses your wardrobe, your style preferences, and the live weather to suggest a full outfit for the day</p>
+            </div>
+          </li>
+          <li class="feature">
+            <div class="feature__body">
+              <h3>Wardrobe Management</h3>
+              <p>Add and categorise your clothing by type, colour, size and season. Everything is searchable so you can actually find things quickly</p>
+            </div>
+          </li>
+          <li class="feature">
+            <div class="feature__body">
+              <h3>Outfit Creation &amp; Preview</h3>
+              <p>Mix and match items to build outfit combinations, save the ones you like, and get a visual preview before you wear them.</p>
+            </div>
+          </li>
+          <li class="feature">
+            <div class="feature__body">
+              <h3>Calendar Integration</h3>
+              <p>Assign outfits to specific days so you can plan ahead for events, work, or just the week in general.</p>
+            </div>
+          </li>
+          <li class="feature">
+            <div class="feature__body">
+              <h3>Smart Donation Tracker</h3>
+              <p>Tracks how often each item gets worn using metadata like "last worn" dates. If something hasn't been used in a while, the app suggests donating it, supporting sustainable fashion habits.</p>
+            </div>
+          </li>
+          <li class="feature">
+            <div class="feature__body">
+              <h3>Weather-Aware Suggestions</h3>
+              <p>Pulls in real-time weather data via the OpenWeatherMap API so outfit suggestions are always practical for the day ahead.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+  
+    <section class="section" id="screenshots">
+      <div class="container">
+        <h2 class="section__title">App Screenshots</h2>
+        
+        <div class="screenshots__row">
+          <figure class="screenshot">
+            <div class="screenshot__phone">
+              <div class="screenshot__screen">
+                <img src="Screenshot%202026-03-18%20211858.png" alt="Home Screen" />
+              </div>
+            </div>
+            <figcaption>Home</figcaption>
+          </figure>
+
+          <figure class="screenshot">
+            <div class="screenshot__phone">
+              <div class="screenshot__screen">
+              <img src="Screenshot%202026-03-18%20212010.png" alt="Wardrobe Screen" /> 
+              </div>
+            </div>
+            <figcaption>Wardrobe</figcaption>
+          </figure>
+
+          <figure class="screenshot">
+            <div class="screenshot__phone">
+              <div class="screenshot__screen">
+               <img src="Screenshot%202026-03-17%20181449.png" alt="AI Styling Screen" />
+              </div>
+            </div>
+            <figcaption>AI Styling</figcaption>
+          </figure>
+
+          <figure class="screenshot">
+            <div class="screenshot__phone">
+              <div class="screenshot__screen">
+              <img src="Screenshot%202026-03-18%20212507.png" alt="Calendar Screen" /> 
+              </div>
+            </div>
+            <figcaption>Calendar</figcaption>
+          </figure>
+
+          <figure class="screenshot">
+            <div class="screenshot__phone">
+              <div class="screenshot__screen">
+             <img src="Screenshot%202026-03-18%20212446.png" alt="Outfit Screen" />
+              </div>
+            </div>
+            <figcaption>Outfits</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+  
+    <section class="section section--alt" id="tech">
+      <div class="container">
+        <h2 class="section__title">Technology Stack</h2>
+        <p class="section__intro">Built natively for Android using the following technologies:</p>
+
+        <div class="tech__grid">
+          <div class="tech-card">
+            <span class="tech-card__icon">🟣</span>
+            <p class="tech-card__name">Kotlin</p>
+            <p class="tech-card__role">Language</p>
+          </div>
+          <div class="tech-card">
+            <span class="tech-card__icon">🎨</span>
+            <p class="tech-card__name">Jetpack Compose</p>
+            <p class="tech-card__role">UI Framework</p>
+          </div>
+          <div class="tech-card">
+            <span class="tech-card__icon">🛠</span>
+            <p class="tech-card__name">Android Studio</p>
+            <p class="tech-card__role">IDE</p>
+          </div>
+          <div class="tech-card">
+            <span class="tech-card__icon">🔐</span>
+            <p class="tech-card__name">Firebase Auth</p>
+            <p class="tech-card__role">Authentication</p>
+          </div>
+          <div class="tech-card">
+            <span class="tech-card__icon">🗄</span>
+            <p class="tech-card__name">Cloud Firestore</p>
+            <p class="tech-card__role">Database</p>
+          </div>
+          <div class="tech-card">
+            <span class="tech-card__icon">☁️</span>
+            <p class="tech-card__name">Firebase Storage</p>
+            <p class="tech-card__role">Image Storage</p>
+          </div>
+          <div class="tech-card">
+            <span class="tech-card__icon">🌤</span>
+            <p class="tech-card__name">OpenWeatherMap</p>
+            <p class="tech-card__role">Weather API</p>
+          </div>
+          <div class="tech-card">
+            <span class="tech-card__icon">📊</span>
+            <p class="tech-card__name">Google Analytics</p>
+            <p class="tech-card__role">Usage Insights</p>
+          </div>
+        </div>
+
+        <h3 class="subsection__title">Architecture: MVVM Pattern</h3>
+        <div class="arch">
+          <div class="arch__block">
+            <p class="arch__tag">Presentation</p>
+            <p class="arch__name">UI Layer</p>
+            <p class="arch__sub">Jetpack Compose</p>
+          </div>
+          <div class="arch__block">
+            <p class="arch__tag">ViewModel</p>
+            <p class="arch__name">Logic Layer</p>
+            <p class="arch__sub">Business Logic · State</p>
+          </div>
+          <div class="arch__block">
+            <p class="arch__tag">Data</p>
+            <p class="arch__name">Data Layer</p>
+            <p class="arch__sub">Firebase + Local Cache</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="links">
+      <div class="container">
+        <h2 class="section__title">Project Details &amp; Links</h2>
+
+        <table class="details-table">
+          <tbody>
+            <tr><th>Name</th><td>Amy Comyns Haugh</td></tr>
+            <tr><th>Student Number</th><td>20103780</td></tr>
+            <tr><th>Academic Title</th><td>Smart Closet Organiser</td></tr>
+            <tr><th>Course</th><td>BSc Software Systems Development</td></tr>
+          </tbody>
+        </table>
+
+        <ul class="project-links">
+          <li>
+            <a href="https://www.youtube.com/watch?v=JAg0MgnUVd8" target="_blank" class="project-link">
+              <span class="project-link__icon">▶️</span>
+              <div>
+                <span class="project-link__name">Prototype Demo Video</span>
+                <span class="project-link__url">youtube.com/watch?v=JAg0MgnUVd8</span>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/amycomynshaugh03/Smart-Closet-Organiser" target="_blank" class="project-link">
+              <span class="project-link__icon">💻</span>
+              <div>
+                <span class="project-link__name">GitHub Repository</span>
+                <span class="project-link__url">github.com/amycomynshaugh03/Smart-Closet-Organiser</span>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="https://amycomynshaugh03.github.io/Smart-Closet-Organiser" target="_blank" class="project-link">
+              <span class="project-link__icon">🌐</span>
+              <div>
+                <span class="project-link__name">Project Landing Page</span>
+                <span class="project-link__url">amycomynshaugh03.github.io/Smart-Closet-Organiser</span>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.linkedin.com/in/amy-comyns-haugh" target="_blank" class="project-link">
+              <span class="project-link__icon">💼</span>
+              <div>
+                <span class="project-link__name">LinkedIn</span>
+                <span class="project-link__url">linkedin.com/in/amy-comyns-haugh</span>
+              </div>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+ 
+  <footer class="footer">
+    <p><strong>Smart Closet Organiser</strong> &nbsp;·&nbsp; Amy Comyns Haugh &nbsp;·&nbsp; Student No. 20103780 &nbsp;·&nbsp; BSc Software Systems Development</p>
+  </footer>
+
+  <script src="main.js"></script>
+
+</body>
+</html>
