@@ -58,6 +58,10 @@
             android:name=".views.calendar.CalendarView"
             android:exported="false" />
 
+        <activity
+            android:name=".views.tryOn.TryOnView"
+            android:exported="false" />
+
     </application>
 
 </manifest>
