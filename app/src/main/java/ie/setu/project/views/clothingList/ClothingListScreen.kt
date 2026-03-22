@@ -87,6 +87,7 @@ fun ClothingListScreen(
     onNavigateToClothing: () -> Unit,
     onNavigateToOutfit: () -> Unit,
     onNavigateToCalendar: () -> Unit,
+    onNavigateToTryOn: () -> Unit,
     onClothingItemClick: (ClosetOrganiserModel) -> Unit,
     onOutfitItemClick: (OutfitModel) -> Unit,
     onDeleteItemClick: (ClosetOrganiserModel) -> Unit,
@@ -192,6 +193,20 @@ fun ClothingListScreen(
                         unselectedIconColor = Color.White.copy(0.5f),
                         unselectedTextColor = Color.White.copy(0.5f),
                         indicatorColor = Color.White.copy(0.2f)
+                    )
+                )
+
+                NavigationBarItem(
+                    selected = false,
+                    onClick  = { onNavigateToTryOn() },
+                    icon     = { Icon(Icons.Default.Person, contentDescription = "Virtual Try-On") },
+                    label    = { Text("Try-On") },
+                    colors   = NavigationBarItemDefaults.colors(
+                        selectedIconColor   = Color.White,
+                        selectedTextColor   = Color.White,
+                        unselectedIconColor = Color.White.copy(0.5f),
+                        unselectedTextColor = Color.White.copy(0.5f),
+                        indicatorColor      = Color.White.copy(0.2f)
                     )
                 )
             }
