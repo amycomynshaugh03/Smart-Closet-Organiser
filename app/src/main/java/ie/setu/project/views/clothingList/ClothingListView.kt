@@ -30,6 +30,8 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import ie.setu.project.views.tryOn.TryOnView
+
 
 @AndroidEntryPoint
 class ClothingListView : AppCompatActivity(), ClosetItemListener {
@@ -130,7 +132,8 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                 showSnackbar = { message, duration -> showSnackbar(message, duration) },
                 updateWeatherUI = { weather -> updateWeatherUI(weather) },
                 showWeatherError = { message -> showWeatherError(message) },
-                onNavigateToProfile = { showProfile = true }
+                onNavigateToProfile = { showProfile = true },
+                onNavigateToTryOn = { startActivity(Intent(this, TryOnView::class.java)) },
             )
         } }
     }

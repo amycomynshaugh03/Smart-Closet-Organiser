@@ -309,7 +309,7 @@ private fun UpcomingOutfitsList(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                "No outfits planned yet.\nTap any date above to assign one!",
+                "No outfits planned yet. Tap any date above to assign one!",
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurface.copy(0.5f)
             )
