@@ -294,7 +294,7 @@ fun ClothingListScreen(
                                     val imageModel: Any? = item.imageUrl.takeIf { it.isNotBlank() } ?: item.image
                                     val ok = imageModel != null && imageModel != Uri.EMPTY && imageModel.toString().isNotBlank()
                                     if (ok) {
-                                        AsyncImage(model = imageModel, contentDescription = "Carousel item", modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                                        AsyncImage(model = imageModel, contentDescription = "Carousel item", modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Fit)
                                     } else {
                                         Box(modifier = Modifier.fillMaxSize().background(Color.LightGray), contentAlignment = Alignment.Center) { Text("No image") }
                                     }
