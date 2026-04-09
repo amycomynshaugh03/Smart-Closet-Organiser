@@ -588,7 +588,7 @@ fun PreviewItemCard(item: ClosetOrganiserModel, height: Dp) {
         Box(modifier = Modifier.fillMaxSize()) {
             if (valid) {
                 AsyncImage(model = imageModel, contentDescription = item.title,
-                    modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                    modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Fit)
             } else {
                 Box(
                     modifier = Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(
@@ -719,7 +719,7 @@ fun MiniSlotCard(
             if (hasItem && imageModel != null &&
                 imageModel.toString().isNotBlank() && imageModel != Uri.EMPTY) {
                 AsyncImage(model = imageModel, contentDescription = item!!.title,
-                    modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                    modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Fit)
             } else if (hasItem) {
                 Box(modifier = Modifier.fillMaxSize()
                     .background(MaterialTheme.colorScheme.primary.copy(0.15f)),
@@ -882,7 +882,7 @@ fun ClothingSliderCard(
         Box(modifier = Modifier.fillMaxSize()) {
             if (valid) {
                 AsyncImage(model = imageModel, contentDescription = item.title,
-                    modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                    modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Fit)
             } else {
                 Box(modifier = Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(
                     MaterialTheme.colorScheme.primary.copy(0.15f),
@@ -954,7 +954,7 @@ fun ThumbnailItem(
     ) {
         if (valid) {
             AsyncImage(model = imageModel, contentDescription = item.title,
-                modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Fit)
         } else {
             Box(modifier = Modifier.fillMaxSize()
                 .background(MaterialTheme.colorScheme.primary.copy(0.12f)),
@@ -1031,7 +1031,7 @@ fun SavedOutfitCard(outfit: OutfitModel, onClick: () -> Unit) {
                     Box(modifier = Modifier.size(52.dp).clip(RoundedCornerShape(8.dp))
                         .background(Color.LightGray), contentAlignment = Alignment.Center) {
                         if (valid) AsyncImage(model = imageModel, contentDescription = item.title,
-                            modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                            modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Fit)
                         else Text(item.title.take(1), fontWeight = FontWeight.Bold)
                     }
                 }
