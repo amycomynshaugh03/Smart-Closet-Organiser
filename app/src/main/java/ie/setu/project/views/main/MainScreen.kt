@@ -38,7 +38,7 @@ fun MainScreen(
 ) {
     val seasons = stringArrayResource(id = R.array.seasons_array).toList()
     var seasonExpanded by remember { mutableStateOf(false) }
-    val categories = listOf("All", "Tops", "Bottoms", "Shoes", "Jackets")
+    val categories = listOf("All", "Tops", "Bottoms", "Dresses", "Shoes", "Jackets")
     var categoryExpanded by remember { mutableStateOf(false) }
 
     val saveLabel = if (isEdit) stringResource(R.string.save_clothing_item) else stringResource(R.string.add_clothing)
