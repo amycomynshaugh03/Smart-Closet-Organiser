@@ -285,7 +285,7 @@ fun ClothingListScreen(
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp)
             )
 
-            Card(modifier = Modifier.fillMaxWidth().height(250.dp).padding(horizontal = 16.dp, vertical = 8.dp), shape = RoundedCornerShape(12.dp)) {
+            Card(modifier = Modifier.fillMaxWidth().height(350.dp).padding(horizontal = 16.dp, vertical = 8.dp), shape = RoundedCornerShape(12.dp)) {
                 Column {
                     Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
                         if (carouselItems.isNotEmpty()) {
