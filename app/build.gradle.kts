@@ -157,4 +157,6 @@ dependencies {
     implementation(libs.androidx.exifinterface)
 
     implementation(libs.googleid)
+
+    implementation(libs.androidx.datastore.preferences)
 }

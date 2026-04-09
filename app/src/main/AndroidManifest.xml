@@ -62,6 +62,10 @@
             android:name=".views.tryOn.TryOnView"
             android:exported="false" />
 
+        <activity
+            android:name=".views.donation.DonationView"
+            android:exported="false" />
+
     </application>
 
 </manifest>

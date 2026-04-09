@@ -39,6 +39,7 @@ import ie.setu.project.models.weather.WeatherResponse
 import kotlinx.coroutines.delay
 import ie.setu.project.views.ai.AiStylistScreen
 
+
 @Composable
 fun OfflineSyncBanner(syncState: SyncState) {
     var showSyncedConfirm by remember { mutableStateOf(false) }
@@ -88,6 +89,8 @@ fun ClothingListScreen(
     onNavigateToOutfit: () -> Unit,
     onNavigateToCalendar: () -> Unit,
     onNavigateToTryOn: () -> Unit,
+    onNavigateToDonation: () -> Unit,
+    donationBadgeCount: Int = 0,
     onClothingItemClick: (ClosetOrganiserModel) -> Unit,
     onOutfitItemClick: (OutfitModel) -> Unit,
     onDeleteItemClick: (ClosetOrganiserModel) -> Unit,
@@ -201,6 +204,20 @@ fun ClothingListScreen(
                     onClick  = { onNavigateToTryOn() },
                     icon     = { Icon(Icons.Default.Person, contentDescription = "Virtual Try-On") },
                     label    = { Text("Try-On") },
+                    colors   = NavigationBarItemDefaults.colors(
+                        selectedIconColor   = Color.White,
+                        selectedTextColor   = Color.White,
+                        unselectedIconColor = Color.White.copy(0.5f),
+                        unselectedTextColor = Color.White.copy(0.5f),
+                        indicatorColor      = Color.White.copy(0.2f)
+                    )
+                )
+
+                NavigationBarItem(
+                    selected = false,
+                    onClick  = { onNavigateToDonation() },
+                    icon     = { Icon(Icons.Default.Recycling, contentDescription = "Donation Tracker") },
+                    label    = { Text("Donate") },
                     colors   = NavigationBarItemDefaults.colors(
                         selectedIconColor   = Color.White,
                         selectedTextColor   = Color.White,
