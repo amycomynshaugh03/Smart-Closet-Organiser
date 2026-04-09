@@ -34,7 +34,7 @@ fun ClothingScreen(
     onDeleteClick: (ClosetOrganiserModel) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
-    val categories = listOf("All", "Tops", "Bottoms", "Shoes", "Jackets")
+    val categories = listOf("All", "Tops", "Bottoms", "Dress", "Shoes", "Jackets")
     var selectedCategory by rememberSaveable { mutableStateOf("All") }
 
     val filteredItems =
