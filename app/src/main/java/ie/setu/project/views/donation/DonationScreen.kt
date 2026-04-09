@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import ie.setu.project.R
 import ie.setu.project.models.clothing.ClosetOrganiserModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -57,9 +58,11 @@ fun DonationScreen(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Icon(Icons.Default.Recycling, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
-                        Spacer(Modifier.width(8.dp))
-                        Text("Donation Tracker", fontSize = 24.sp, fontFamily = FontFamily.Cursive, color = Color.White)
+                        Icon(painter = painterResource(id = R.drawable.ic_heart), contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Donation Tracker", fontSize = 30.sp, fontFamily = androidx.compose.ui.text.font.FontFamily.Cursive, color = Color.White)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Icon(painter = painterResource(id = R.drawable.ic_heart), contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
                     }
                 },
                 actions = {
