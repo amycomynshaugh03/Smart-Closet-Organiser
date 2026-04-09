@@ -285,7 +285,7 @@ fun ClothingListScreen(
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp)
             )
 
-            Card(modifier = Modifier.fillMaxWidth().height(250.dp).padding(horizontal = 16.dp, vertical = 8.dp), shape = RoundedCornerShape(12.dp)) {
+            Card(modifier = Modifier.fillMaxWidth().height(350.dp).padding(horizontal = 16.dp, vertical = 8.dp), shape = RoundedCornerShape(12.dp)) {
                 Column {
                     Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
                         if (carouselItems.isNotEmpty()) {
@@ -294,7 +294,7 @@ fun ClothingListScreen(
                                     val imageModel: Any? = item.imageUrl.takeIf { it.isNotBlank() } ?: item.image
                                     val ok = imageModel != null && imageModel != Uri.EMPTY && imageModel.toString().isNotBlank()
                                     if (ok) {
-                                        AsyncImage(model = imageModel, contentDescription = "Carousel item", modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                                        AsyncImage(model = imageModel, contentDescription = "Carousel item", modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Fit)
                                     } else {
                                         Box(modifier = Modifier.fillMaxSize().background(Color.LightGray), contentAlignment = Alignment.Center) { Text("No image") }
                                     }
