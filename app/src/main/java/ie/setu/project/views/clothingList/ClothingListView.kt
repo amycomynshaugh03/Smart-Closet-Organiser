@@ -25,12 +25,14 @@ import ie.setu.project.ui.user.UserEditScreen
 import ie.setu.project.ui.user.UserProfileScreen
 import ie.setu.project.views.calendar.CalendarView
 import ie.setu.project.views.clothing.ClothingView
+import ie.setu.project.views.donation.DonationView
 import ie.setu.project.views.outfit.OutfitView
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import ie.setu.project.views.tryOn.TryOnView
+import ie.setu.project.views.donation.DonationViewModel
 
 
 @AndroidEntryPoint
@@ -43,10 +45,13 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
             val presenter: ClothingListPresenter = hiltViewModel()
             val authStateVm: AuthStateViewModel = hiltViewModel()
             val authVm: AuthViewModel = hiltViewModel()
+            val donationVm: DonationViewModel = hiltViewModel()
 
             val user by authStateVm.user.collectAsState()
             val syncState by presenter.syncState.collectAsStateWithLifecycle()
             val exportJson by presenter.exportJson.collectAsStateWithLifecycle()
+
+
 
             var showRegister by remember { mutableStateOf(false) }
             var showProfile by remember { mutableStateOf(false) }
@@ -134,6 +139,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                 showWeatherError = { message -> showWeatherError(message) },
                 onNavigateToProfile = { showProfile = true },
                 onNavigateToTryOn = { startActivity(Intent(this, TryOnView::class.java)) },
+                onNavigateToDonation = { startActivity(Intent(this, DonationView::class.java)) },
             )
         } }
     }
