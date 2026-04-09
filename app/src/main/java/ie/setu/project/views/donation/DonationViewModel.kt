@@ -102,7 +102,17 @@ class DonationViewModel @Inject constructor(
     }
 
     fun markForDonation(item: ClosetOrganiserModel) {
+        val uid = authService.currentUserId
+        if (uid.isBlank()) return
+
         viewModelScope.launch {
+            try {
+                val doc = clothingRepo.findDocByItemId(uid, item.id)
+                clothingRepo.deleteByDocId(uid, doc.id)
+            } catch (e: Exception) {
+                timber.log.Timber.e(e, "Donation delete failed for id=${item.id}")
+            }
+
             context.donationDataStore.edit { prefs ->
                 val current = prefs[PREF_DONATED_IDS] ?: emptySet()
                 prefs[PREF_DONATED_IDS] = current + item.id.toString()
