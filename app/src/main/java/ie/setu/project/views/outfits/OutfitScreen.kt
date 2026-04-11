@@ -1,4 +1,4 @@
-package ie.setu.project.views.outfits
+package ie.setu.project.views.outfit
 
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke

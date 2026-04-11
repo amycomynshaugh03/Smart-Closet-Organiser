@@ -1,7 +1,9 @@
 package ie.setu.project.views.donation
 
 import android.net.Uri
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -199,20 +201,31 @@ private fun DonationItemCard(
     Card(
         modifier  = Modifier.fillMaxWidth(),
         shape     = RoundedCornerShape(14.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        colors    = CardDefaults.cardColors(containerColor = Color.Transparent),
+        border    = BorderStroke(1.5.dp, Color(0xFF007A90).copy(alpha = 0.4f))
     ) {
         Row(modifier = Modifier.fillMaxWidth().padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
 
             Box(
-                modifier = Modifier.size(72.dp).clip(RoundedCornerShape(10.dp)).background(Color.LightGray),
+                modifier = Modifier
+                    .size(72.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color(0xFFF5F5F5))
+                    .border(2.dp, Color(0xFF007A90).copy(alpha = 0.3f), RoundedCornerShape(10.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 val imageModel: Any? = item.imageUrl.takeIf { it.isNotBlank() } ?: item.image
                 val hasImage = imageModel != null && imageModel != Uri.EMPTY && imageModel.toString().isNotBlank()
                 if (hasImage) {
-                    AsyncImage(model = imageModel, contentDescription = item.title, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                    AsyncImage(
+                        model = imageModel,
+                        contentDescription = item.title,
+                        modifier = Modifier.fillMaxSize().padding(6.dp),
+                        contentScale = ContentScale.Fit
+                    )
                 } else {
-                    Icon(Icons.Default.Checkroom, contentDescription = null, tint = Color.White, modifier = Modifier.size(32.dp))
+                    Icon(Icons.Default.Checkroom, contentDescription = null, tint = Color.LightGray, modifier = Modifier.size(32.dp))
                 }
             }
 
