@@ -5,7 +5,9 @@ import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -381,11 +383,29 @@ fun SearchResultItem(item: Any, onClothingClick: (ClosetOrganiserModel) -> Unit,
     val subtitle = when (item) { is ClosetOrganiserModel -> item.description.ifBlank { "No description" }; is OutfitModel -> item.description.ifBlank { "No description" }; else -> "" }
     val icon = when (item) { is OutfitModel -> Icons.Default.Style; else -> Icons.Default.Checkroom }
 
-    Card(modifier = Modifier.fillMaxWidth().clickable { when (item) { is ClosetOrganiserModel -> onClothingClick(item); is OutfitModel -> onOutfitClick(item) } }, shape = RoundedCornerShape(12.dp)) {
+    Card(
+        modifier = Modifier.fillMaxWidth().clickable { when (item) { is ClosetOrganiserModel -> onClothingClick(item); is OutfitModel -> onOutfitClick(item) } },
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        border = BorderStroke(1.5.dp, Color(0xFF007A90).copy(alpha = 0.4f))
+    ) {
         Row(modifier = Modifier.fillMaxWidth().padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            Box(modifier = Modifier.size(52.dp).clip(RoundedCornerShape(10.dp)).background(Color.LightGray), contentAlignment = Alignment.Center) {
-                if (isValidThumb) AsyncImage(model = thumbModel, contentDescription = null, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-                else Icon(imageVector = icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(26.dp))
+            Box(
+                modifier = Modifier
+                    .size(52.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color(0xFFF5F5F5))
+                    .border(2.dp, Color(0xFF007A90).copy(alpha = 0.3f), RoundedCornerShape(10.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                if (isValidThumb) AsyncImage(
+                    model = thumbModel,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize().padding(4.dp),
+                    contentScale = ContentScale.Fit
+                )
+                else Icon(imageVector = icon, contentDescription = null, tint = Color.LightGray, modifier = Modifier.size(26.dp))
             }
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
@@ -393,13 +413,29 @@ fun SearchResultItem(item: Any, onClothingClick: (ClosetOrganiserModel) -> Unit,
                 Text(subtitle, fontSize = 12.sp, maxLines = 2)
             }
             if (item is OutfitModel) {
-                Row(modifier = Modifier.padding(start = 8.dp).height(42.dp).widthIn(max = 150.dp).horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.padding(start = 8.dp).height(42.dp).widthIn(max = 150.dp).horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     item.clothingItems.take(4).forEach { clothing ->
                         val miniModel: Any? = clothing.imageUrl.takeIf { it.isNotBlank() } ?: clothing.image
                         val ok = miniModel != null && miniModel != Uri.EMPTY && miniModel.toString().isNotBlank()
-                        Box(modifier = Modifier.size(42.dp).clip(RoundedCornerShape(10.dp)).background(Color.LightGray), contentAlignment = Alignment.Center) {
-                            if (ok) AsyncImage(model = miniModel, contentDescription = null, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-                            else Icon(imageVector = Icons.Default.Checkroom, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
+                        Box(
+                            modifier = Modifier
+                                .size(42.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color(0xFFF5F5F5))
+                                .border(1.dp, Color(0xFF007A90).copy(alpha = 0.3f), RoundedCornerShape(10.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (ok) AsyncImage(
+                                model = miniModel,
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize().padding(4.dp),
+                                contentScale = ContentScale.Fit
+                            )
+                            else Icon(imageVector = Icons.Default.Checkroom, contentDescription = null, tint = Color.LightGray, modifier = Modifier.size(18.dp))
                         }
                     }
                 }
