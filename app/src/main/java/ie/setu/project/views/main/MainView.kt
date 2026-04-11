@@ -27,6 +27,7 @@ class MainView : AppCompatActivity() {
     private var imageUriState by mutableStateOf<Uri?>(null)
     private var isEditState by mutableStateOf(false)
     var removeBgState by mutableStateOf(false)
+    var isScanningState by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,7 +86,9 @@ class MainView : AppCompatActivity() {
                 },
                 snackbarHostState = snackbarHostState,
                 removeBg = removeBgState,
-                onRemoveBgChange = { removeBgState = it }
+                onRemoveBgChange = { removeBgState = it },
+                isScanning = isScanningState,
+                onScanImage = { presenter.doScanImage() }
             )
         } }
     }
@@ -106,4 +109,13 @@ class MainView : AppCompatActivity() {
 
     fun updateImage(image: Uri) { imageUriState = image }
     fun updateLastWornDate(date: String) { lastWornState = date }
+
+    fun updateFromAnalysis(title: String, description: String, colour: String, category: String) {
+        if (title.isNotBlank())       titleState       = title
+        if (description.isNotBlank()) descriptionState = description
+        if (colour.isNotBlank())      colourState      = colour
+        if (category.isNotBlank())    categoryState    = category
+    }
+
+    fun setScanning(scanning: Boolean) { isScanningState = scanning }
 }

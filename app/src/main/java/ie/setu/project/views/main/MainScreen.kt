@@ -3,9 +3,11 @@ package ie.setu.project.views.main
 import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -34,15 +36,31 @@ fun MainScreen(
     imageUri: Uri?, onChooseImage: () -> Unit,
     isEdit: Boolean, onCancel: () -> Unit, onSave: () -> Unit,
     snackbarHostState: SnackbarHostState,
-    removeBg: Boolean, onRemoveBgChange: (Boolean) -> Unit
+    removeBg: Boolean, onRemoveBgChange: (Boolean) -> Unit,
+    isScanning: Boolean = false,
+    onScanImage: () -> Unit = {}
 ) {
     val seasons = stringArrayResource(id = R.array.seasons_array).toList()
     var seasonExpanded by remember { mutableStateOf(false) }
     val categories = listOf("All", "Tops", "Bottoms", "Dress", "Shoes", "Jackets")
     var categoryExpanded by remember { mutableStateOf(false) }
+    var showInfoDialog by remember { mutableStateOf(false) }
 
     val saveLabel = if (isEdit) stringResource(R.string.save_clothing_item) else stringResource(R.string.add_clothing)
     val imageButtonLabel = if (imageUri != null) stringResource(R.string.change_clothing_image) else stringResource(R.string.button_addImage)
+
+    if (showInfoDialog) {
+        AlertDialog(
+            onDismissRequest = { showInfoDialog = false },
+            title = { Text("AI Image Scanning") },
+            text = { Text("Add an image of your clothing item first, then tap \"Scan Image with AI\" to automatically fill in the title, description, colour and category. You will still need to enter the size, season and last worn date yourself.") },
+            confirmButton = {
+                TextButton(onClick = { showInfoDialog = false }) {
+                    Text("Got it")
+                }
+            }
+        )
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -58,6 +76,9 @@ fun MainScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = { showInfoDialog = true }) {
+                        Icon(imageVector = Icons.Default.Info, contentDescription = "Info", tint = Color.White)
+                    }
                     IconButton(onClick = onCancel, modifier = Modifier.size(48.dp)) {
                         Icon(imageVector = Icons.Default.Close, contentDescription = "Cancel")
                     }
@@ -117,9 +138,59 @@ fun MainScreen(
             }
 
             if (imageUri != null) {
-                AsyncImage(model = imageUri, contentDescription = stringResource(R.string.enter_image), modifier = Modifier.fillMaxWidth().height(240.dp), contentScale = ContentScale.Crop)
+                AsyncImage(
+                    model = imageUri,
+                    contentDescription = stringResource(R.string.enter_image),
+                    modifier = Modifier.fillMaxWidth().height(240.dp),
+                    contentScale = ContentScale.Crop
+                )
+
+                if (isScanning) {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Column {
+                                Text(
+                                    "Scanning image…",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Text(
+                                    "Detecting title, description & colour",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    OutlinedButton(
+                        onClick = onScanImage,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Scan Image with AI")
+                    }
+                }
             } else {
-                Box(modifier = Modifier.fillMaxWidth().height(120.dp), contentAlignment = Alignment.Center) { Text("No image selected") }
+                Box(modifier = Modifier.fillMaxWidth().height(120.dp), contentAlignment = Alignment.Center) {
+                    Text("No image selected")
+                }
             }
 
             Button(onClick = onSave, modifier = Modifier.fillMaxWidth()) { Text(saveLabel) }

@@ -12,6 +12,7 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.EntryPointAccessors
 import ie.setu.project.di.FirebaseEntryPoint
 import ie.setu.project.di.StoreEntryPoint
+import ie.setu.project.helpers.analyseClothingImage
 import ie.setu.project.helpers.correctImageRotation
 import ie.setu.project.helpers.removeBackgroundAndSave
 import ie.setu.project.helpers.showImagePicker
@@ -124,6 +125,31 @@ class MainPresenter(private val view: MainView) {
 
     fun doSelectImage() {
         showImagePicker(imageIntentLauncher)
+    }
+
+    fun doScanImage() {
+        val uri = closetOrganiser.image
+        if (uri == null || uri == android.net.Uri.EMPTY) return
+        view.lifecycleScope.launch {
+            scanImageWithGemini(uri)
+        }
+    }
+
+    private suspend fun scanImageWithGemini(uri: android.net.Uri) {
+        view.setScanning(true)
+        val result = analyseClothingImage(view, uri)
+        view.setScanning(false)
+        result.onSuccess { analysis ->
+            Timber.i("Gemini analysis: title=${analysis.title} colour=${analysis.colour} category=${analysis.category}")
+            view.updateFromAnalysis(
+                title       = analysis.title,
+                description = analysis.description,
+                colour      = analysis.colour,
+                category    = analysis.category
+            )
+        }.onFailure { e ->
+            Timber.e(e, "Image scan failed,user can fill in manually")
+        }
     }
 
     fun showDatePicker() {
