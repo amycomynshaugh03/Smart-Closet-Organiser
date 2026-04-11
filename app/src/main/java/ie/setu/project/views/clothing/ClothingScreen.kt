@@ -1,6 +1,7 @@
 package ie.setu.project.views.clothing
 
 import android.net.Uri
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -25,6 +26,13 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import ie.setu.project.R
 import ie.setu.project.models.clothing.ClosetOrganiserModel
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.Checkroom
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -136,27 +144,82 @@ fun ClothingScreen(
 
 @Composable
 private fun ClothingRow(item: ClosetOrganiserModel, onClick: () -> Unit, onDelete: () -> Unit) {
-    Card(modifier = Modifier.fillMaxWidth().clickable(onClick = onClick), elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)) {
-        Row(modifier = Modifier.fillMaxWidth().padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+    var menuExpanded by remember { mutableStateOf(false) }
+
+    Card(
+        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        border = BorderStroke(1.5.dp, Color(0xFF007A90).copy(alpha = 0.4f))
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             val imageModel: Any? = item.imageUrl.takeIf { it.isNotBlank() } ?: item.image
             val ok = imageModel != null && imageModel != Uri.EMPTY && imageModel.toString().isNotBlank()
-            if (ok) {
-                AsyncImage(model = imageModel, contentDescription = "Clothing image", modifier = Modifier.size(64.dp))
-            } else {
-                Box(modifier = Modifier.size(64.dp), contentAlignment = Alignment.Center) {
-                    Text("No image", color = Color.Gray)
+
+            Box(
+                modifier = Modifier
+                    .size(72.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color(0xFFF5F5F5))
+                    .border(2.dp, Color(0xFF007A90).copy(alpha = 0.3f), RoundedCornerShape(10.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                if (ok) {
+                    AsyncImage(
+                        model = imageModel,
+                        contentDescription = "Clothing image",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(6.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Checkroom,
+                        contentDescription = "No image",
+                        tint = Color.LightGray,
+                        modifier = Modifier.size(32.dp)
+                    )
                 }
             }
+
             Spacer(Modifier.width(12.dp))
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(item.title.ifBlank { "No title" }, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(2.dp))
                 Text(item.description.ifBlank { "No description" }, style = MaterialTheme.typography.bodySmall)
                 Spacer(Modifier.height(4.dp))
-                Text("Category: ${item.category.ifBlank { "None" }}", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+                Text(
+                    "Category: ${item.category.ifBlank { "None" }}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.Gray
+                )
             }
-            IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, "Delete", tint = Color.Red)
+
+            Box {
+                IconButton(onClick = { menuExpanded = true }) {
+                    Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                }
+                DropdownMenu(
+                    expanded = menuExpanded,
+                    onDismissRequest = { menuExpanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Delete", color = Color.Red) },
+                        leadingIcon = {
+                            Icon(Icons.Default.Delete, contentDescription = null, tint = Color.Red)
+                        },
+                        onClick = {
+                            menuExpanded = false
+                            onDelete()
+                        }
+                    )
+                }
             }
         }
     }
