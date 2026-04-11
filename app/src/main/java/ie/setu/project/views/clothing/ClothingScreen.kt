@@ -36,12 +36,20 @@ fun ClothingScreen(
     onDeleteClick: (ClosetOrganiserModel) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
-    val categories = listOf("All", "Tops", "Bottoms", "Dress", "Shoes", "Jackets")
+    val categories = listOf("All", "Tops", "Bottoms", "Dresses", "Shoes", "Jackets")
     var selectedCategory by rememberSaveable { mutableStateOf("All") }
+    var selectedTopSubType by rememberSaveable { mutableStateOf<String?>(null) }
+    val topSubTypes = listOf("Hoodie","Jumper", "Long Sleeve", "T-Shirt", "Blouse", "Tank Top")
 
-    val filteredItems =
-        if (selectedCategory == "All") items
-        else items.filter { it.category.trim().equals(selectedCategory, ignoreCase = true) }
+    val filteredItems = when {
+        selectedCategory == "All" -> items
+        selectedCategory == "Tops" && selectedTopSubType != null ->
+            items.filter {
+                it.category.trim().equals("Tops", ignoreCase = true) &&
+                        it.description.contains(selectedTopSubType!!, ignoreCase = true)
+            }
+        else -> items.filter { it.category.trim().equals(selectedCategory, ignoreCase = true) }
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -74,17 +82,40 @@ fun ClothingScreen(
                         navigationIconContentColor = Color.White
                     )
                 )
-                Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Row(
                         modifier = Modifier.horizontalScroll(rememberScrollState()),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         categories.forEach { cat ->
-                            FilterChip(selected = selectedCategory == cat, onClick = { selectedCategory = cat }, label = { Text(cat) })
+                            FilterChip(
+                                selected = selectedCategory == cat,
+                                onClick = {
+                                    selectedCategory = cat
+                                    if (cat != "Tops") selectedTopSubType = null
+                                },
+                                label = { Text(cat) }
+                            )
                         }
                     }
-                    Text(text = "Selected: $selectedCategory", style = MaterialTheme.typography.labelMedium, color = Color.Gray)
+                    if (selectedCategory == "Tops") {
+                        Row(
+                            modifier = Modifier.horizontalScroll(rememberScrollState()),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            topSubTypes.forEach { sub ->
+                                FilterChip(
+                                    selected = selectedTopSubType == sub,
+                                    onClick = {
+                                        selectedTopSubType = if (selectedTopSubType == sub) null else sub
+                                    },
+                                    label = { Text(sub, style = MaterialTheme.typography.labelSmall) }
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
