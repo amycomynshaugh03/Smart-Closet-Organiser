@@ -18,7 +18,7 @@ data class ClothingAnalysisResult(
     val category: String = ""
 )
 
-suspend fun analyzeClothingImage(
+suspend fun analyseClothingImage(
     context: Context,
     imageUri: Uri
 ): Result<ClothingAnalysisResult> = withContext(Dispatchers.IO) {

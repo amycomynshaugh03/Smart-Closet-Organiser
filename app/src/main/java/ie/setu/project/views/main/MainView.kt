@@ -86,7 +86,9 @@ class MainView : AppCompatActivity() {
                 },
                 snackbarHostState = snackbarHostState,
                 removeBg = removeBgState,
-                onRemoveBgChange = { removeBgState = it }
+                onRemoveBgChange = { removeBgState = it },
+                isScanning = isScanningState,
+                onScanImage = { presenter.doScanImage() }
             )
         } }
     }
