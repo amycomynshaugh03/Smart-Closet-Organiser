@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -43,9 +44,23 @@ fun MainScreen(
     var seasonExpanded by remember { mutableStateOf(false) }
     val categories = listOf("All", "Tops", "Bottoms", "Dress", "Shoes", "Jackets")
     var categoryExpanded by remember { mutableStateOf(false) }
+    var showInfoDialog by remember { mutableStateOf(false) }
 
     val saveLabel = if (isEdit) stringResource(R.string.save_clothing_item) else stringResource(R.string.add_clothing)
     val imageButtonLabel = if (imageUri != null) stringResource(R.string.change_clothing_image) else stringResource(R.string.button_addImage)
+
+    if (showInfoDialog) {
+        AlertDialog(
+            onDismissRequest = { showInfoDialog = false },
+            title = { Text("AI Image Scanning") },
+            text = { Text("Add an image of your clothing item first, then tap \"Scan Image with AI\" to automatically fill in the title, description, colour and category. You will still need to enter the size, season and last worn date yourself.") },
+            confirmButton = {
+                TextButton(onClick = { showInfoDialog = false }) {
+                    Text("Got it")
+                }
+            }
+        )
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -61,6 +76,9 @@ fun MainScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = { showInfoDialog = true }) {
+                        Icon(imageVector = Icons.Default.Info, contentDescription = "Info", tint = Color.White)
+                    }
                     IconButton(onClick = onCancel, modifier = Modifier.size(48.dp)) {
                         Icon(imageVector = Icons.Default.Close, contentDescription = "Cancel")
                     }
