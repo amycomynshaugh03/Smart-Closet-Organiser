@@ -3,6 +3,7 @@ package ie.setu.project.views.main
 import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -34,7 +35,9 @@ fun MainScreen(
     imageUri: Uri?, onChooseImage: () -> Unit,
     isEdit: Boolean, onCancel: () -> Unit, onSave: () -> Unit,
     snackbarHostState: SnackbarHostState,
-    removeBg: Boolean, onRemoveBgChange: (Boolean) -> Unit
+    removeBg: Boolean, onRemoveBgChange: (Boolean) -> Unit,
+    isScanning: Boolean = false,
+    onScanImage: () -> Unit = {}
 ) {
     val seasons = stringArrayResource(id = R.array.seasons_array).toList()
     var seasonExpanded by remember { mutableStateOf(false) }
@@ -117,9 +120,59 @@ fun MainScreen(
             }
 
             if (imageUri != null) {
-                AsyncImage(model = imageUri, contentDescription = stringResource(R.string.enter_image), modifier = Modifier.fillMaxWidth().height(240.dp), contentScale = ContentScale.Crop)
+                AsyncImage(
+                    model = imageUri,
+                    contentDescription = stringResource(R.string.enter_image),
+                    modifier = Modifier.fillMaxWidth().height(240.dp),
+                    contentScale = ContentScale.Crop
+                )
+
+                if (isScanning) {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Column {
+                                Text(
+                                    "Scanning image…",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Text(
+                                    "Detecting title, description & colour",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    OutlinedButton(
+                        onClick = onScanImage,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Scan Image with AI")
+                    }
+                }
             } else {
-                Box(modifier = Modifier.fillMaxWidth().height(120.dp), contentAlignment = Alignment.Center) { Text("No image selected") }
+                Box(modifier = Modifier.fillMaxWidth().height(120.dp), contentAlignment = Alignment.Center) {
+                    Text("No image selected")
+                }
             }
 
             Button(onClick = onSave, modifier = Modifier.fillMaxWidth()) { Text(saveLabel) }
