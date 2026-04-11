@@ -2,9 +2,6 @@ package ie.setu.project.views.clothingList
 
 import android.content.Context
 import android.net.Uri
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -38,47 +35,9 @@ import ie.setu.project.models.clothing.ClosetOrganiserModel
 import ie.setu.project.models.outfit.OutfitModel
 import ie.setu.project.models.weather.WeatherCondition
 import ie.setu.project.models.weather.WeatherResponse
-import kotlinx.coroutines.delay
 import ie.setu.project.views.ai.AiStylistScreen
 
 
-@Composable
-fun OfflineSyncBanner(syncState: SyncState) {
-    var showSyncedConfirm by remember { mutableStateOf(false) }
-    LaunchedEffect(syncState) {
-        if (syncState == SyncState.SYNCED) {
-            showSyncedConfirm = true
-            delay(3_000)
-            showSyncedConfirm = false
-        }
-    }
-
-    val (bgColor, icon, message) = when (syncState) {
-        SyncState.SYNCING        -> Triple(Color(0xFF1565C0), Icons.Default.Sync,      "Syncing with cloud…")
-        SyncState.SYNCED         -> Triple(Color(0xFF2E7D32), Icons.Default.CloudDone, "Up to date")
-        SyncState.OFFLINE_CACHE  -> Triple(Color(0xFFE65100), Icons.Default.CloudOff,  "Offline — changes will sync when you're back online")
-        SyncState.OFFLINE_BACKUP -> Triple(Color(0xFFC62828), Icons.Default.CloudOff,  "Offline — showing local backup (read-only)")
-    }
-
-    val visible = syncState == SyncState.SYNCING ||
-            syncState == SyncState.OFFLINE_CACHE ||
-            syncState == SyncState.OFFLINE_BACKUP ||
-            showSyncedConfirm
-
-    AnimatedVisibility(visible = visible, enter = fadeIn(), exit = fadeOut()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(bgColor)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(imageVector = icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = message, color = Color.White, fontSize = 13.sp)
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -243,7 +202,6 @@ fun ClothingListScreen(
 
         Column(modifier = Modifier.fillMaxSize().padding(paddingValues).verticalScroll(rememberScrollState())) {
 
-            OfflineSyncBanner(syncState = syncState)
 
             Row(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),

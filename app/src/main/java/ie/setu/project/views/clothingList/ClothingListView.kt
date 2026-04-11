@@ -26,14 +26,14 @@ import ie.setu.project.ui.user.UserProfileScreen
 import ie.setu.project.views.calendar.CalendarView
 import ie.setu.project.views.clothing.ClothingView
 import ie.setu.project.views.donation.DonationView
+import ie.setu.project.views.donation.DonationViewModel
 import ie.setu.project.views.outfit.OutfitView
+import ie.setu.project.views.settings.SettingsScreen
+import ie.setu.project.views.tryOn.TryOnView
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import ie.setu.project.views.tryOn.TryOnView
-import ie.setu.project.views.donation.DonationViewModel
-
 
 @AndroidEntryPoint
 class ClothingListView : AppCompatActivity(), ClosetItemListener {
@@ -51,11 +51,10 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
             val syncState by presenter.syncState.collectAsStateWithLifecycle()
             val exportJson by presenter.exportJson.collectAsStateWithLifecycle()
 
-
-
             var showRegister by remember { mutableStateOf(false) }
             var showProfile by remember { mutableStateOf(false) }
             var showEditProfile by remember { mutableStateOf(false) }
+            var showSettings by remember { mutableStateOf(false) }
 
             LaunchedEffect(exportJson) {
                 exportJson?.let { json ->
@@ -80,6 +79,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                     showRegister = false
                     showProfile = false
                     showEditProfile = false
+                    showSettings = false
                 }
             }
 
@@ -102,12 +102,21 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                 return@ClosetOrganiserTheme
             }
 
+            if (showSettings) {
+                SettingsScreen(
+                    syncState = syncState,
+                    onExportWardrobe = { presenter.exportWardrobe(); showSettings = false },
+                    onSignOut = { authVm.signOut(); showSettings = false },
+                    onBack = { showSettings = false }
+                )
+                return@ClosetOrganiserTheme
+            }
+
             if (showProfile) {
                 UserProfileScreen(
                     onBack = { showProfile = false },
-                    onExportWardrobe = { presenter.exportWardrobe(); showProfile = false },
-                    onSignOut = { authVm.signOut() },
-                    onEditProfile = { showEditProfile = true }
+                    onEditProfile = { showEditProfile = true },
+                    onNavigateToSettings = { showSettings = true }
                 )
                 return@ClosetOrganiserTheme
             }
@@ -119,7 +128,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                 onExportWardrobe = { presenter.exportWardrobe() },
                 onNavigateToClothing = { startActivity(Intent(this, ClothingView::class.java)) },
                 onNavigateToOutfit = { startActivity(Intent(this, OutfitView::class.java)) },
-                onNavigateToCalendar = { startActivity(Intent(this, CalendarView::class.java)) }, // ADD
+                onNavigateToCalendar = { startActivity(Intent(this, CalendarView::class.java)) },
                 onClothingItemClick = { item ->
                     startActivity(Intent(this, ClothingView::class.java).apply {
                         putExtra("closet_item_edit", item)
