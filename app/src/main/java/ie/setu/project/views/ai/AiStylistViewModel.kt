@@ -29,6 +29,11 @@ class AiStylistViewModel @Inject constructor() : ViewModel() {
 
     private val model = GenerativeModel(modelName = "gemini-2.5-flash", apiKey = BuildConfig.GEMINI_API_KEY)
 
+    private val _userVibe = MutableStateFlow("")
+    val userVibe: StateFlow<String> = _userVibe.asStateFlow()
+
+    fun setUserVibe(vibe: String) { _userVibe.value = vibe }
+
     fun getSuggestion(weather: WeatherResponse?, clothingItems: List<ClosetOrganiserModel>) {
         viewModelScope.launch {
             _aiState.value = AiState.Loading
@@ -108,5 +113,8 @@ class AiStylistViewModel @Inject constructor() : ViewModel() {
         else -> "Cloudy"
     }
 
-    fun reset() { _aiState.value = AiState.Idle }
+    fun reset() {
+        _aiState.value = AiState.Idle
+        _userVibe.value = ""
+    }
 }
