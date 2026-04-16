@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.support.media.ExifInterface
 import androidx.core.content.FileProvider
+import ie.setu.project.BuildConfig
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -62,7 +63,7 @@ suspend fun removeBackgroundAndSave(
 
     val request = Request.Builder()
         .url("https://api.remove.bg/v1.0/removebg")
-        .addHeader("X-Api-Key", "")
+        .addHeader("X-Api-Key", BuildConfig.REMOVE_BG_API_KEY)
         .post(requestBody)
         .build()
 
