@@ -1,6 +1,10 @@
 package ie.setu.project.views.ai
 
+import android.content.Intent
 import android.net.Uri
+import android.speech.RecognizerIntent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
@@ -12,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Checkroom
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -21,9 +26,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -70,6 +78,28 @@ fun OutfitItemImage(item: ClosetOrganiserModel) {
 }
 
 @Composable
+fun BoldMarkdownText(
+    text: String,
+    fontSize: androidx.compose.ui.unit.TextUnit = 15.sp,
+    lineHeight: androidx.compose.ui.unit.TextUnit = 24.sp,
+    color: Color = Color.Unspecified
+) {
+    val annotated = buildAnnotatedString {
+        val pattern = Regex("""\*\*(.+?)\*\*""")
+        var last = 0
+        pattern.findAll(text).forEach { match ->
+            append(text.substring(last, match.range.first))
+            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                append(match.groupValues[1])
+            }
+            last = match.range.last + 1
+        }
+        append(text.substring(last))
+    }
+    Text(text = annotated, fontSize = fontSize, lineHeight = lineHeight, color = color)
+}
+
+@Composable
 fun AiStylistScreen(
     weatherData: WeatherResponse?,
     clothingItems: List<ClosetOrganiserModel>,
@@ -77,8 +107,18 @@ fun AiStylistScreen(
     viewModel: AiStylistViewModel = hiltViewModel()
 ) {
     val aiState by viewModel.aiState.collectAsStateWithLifecycle()
+    val userVibe by viewModel.userVibe.collectAsStateWithLifecycle()
     val current = weatherData?.current_weather
     val condition = current?.let { WeatherCondition.fromCode(it.weathercode, it.is_day) }
+
+    val speechLauncher = rememberLauncherForActivityResult(
+        StartActivityForResult()
+    ) { result ->
+        val matches = result.data
+            ?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+        val text = matches?.firstOrNull()
+        if (!text.isNullOrBlank()) viewModel.setUserVibe(text)
+    }
 
     Column(
         modifier = modifier.fillMaxSize().background(Color.White).verticalScroll(rememberScrollState()).padding(horizontal = 24.dp, vertical = 32.dp),
@@ -116,6 +156,61 @@ fun AiStylistScreen(
 
         Surface(shape = RoundedCornerShape(50), color = LightGrey) {
             Text("${clothingItems.size} items in your wardrobe", modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp), color = MaterialTheme.colorScheme.onPrimaryContainer, fontSize = 13.sp)
+        }
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = LightGrey)
+        ) {
+            Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Icon(Icons.Default.Mic, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                    Text("Tell me your vibe", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                }
+                Text("Describe how you're feeling or what you want to wear today.", fontSize = 12.sp, color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f))
+                Button(
+                    onClick = {
+                        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                            putExtra(RecognizerIntent.EXTRA_LANGUAGE, java.util.Locale.getDefault().toLanguageTag())
+                            putExtra(RecognizerIntent.EXTRA_PROMPT, "Tell me your vibe...")
+                        }
+                        speechLauncher.launch(intent)
+                    },
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier.fillMaxWidth().height(46.dp)
+                ) {
+                    Icon(Icons.Default.Mic, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text("Tap to speak")
+                }
+                if (userVibe.isNotBlank()) {
+                    Text(
+                        "Captured from voice, edit if needed",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+                OutlinedTextField(
+                    value = userVibe,
+                    onValueChange = { viewModel.setUserVibe(it) },
+                    placeholder = {
+                        Text(
+                            if (userVibe.isNotBlank()) "Captured from voice, you can edit it here"
+                            else "e.g. warm out but feeling a hoodie and shorts today…",
+                            fontSize = 13.sp
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    minLines = 2, maxLines = 4
+                )
+            }
         }
 
         Button(
@@ -162,7 +257,12 @@ fun AiStylistScreen(
                                 HorizontalDivider(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
                                 Spacer(Modifier.height(16.dp))
                             }
-                            Text(text = state.suggestion, fontSize = 15.sp, lineHeight = 24.sp, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                            BoldMarkdownText(
+                                text = state.suggestion,
+                                fontSize = 15.sp,
+                                lineHeight = 24.sp,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
                             Spacer(Modifier.height(16.dp))
                             OutlinedButton(
                                 onClick = { viewModel.reset() }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(50),

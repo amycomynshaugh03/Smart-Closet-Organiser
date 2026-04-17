@@ -27,7 +27,12 @@ class AiStylistViewModel @Inject constructor() : ViewModel() {
     private val _aiState = MutableStateFlow<AiState>(AiState.Idle)
     val aiState: StateFlow<AiState> = _aiState.asStateFlow()
 
-    private val model = GenerativeModel(modelName = "gemini-2.5-flash", apiKey = "")
+    private val model = GenerativeModel(modelName = "gemini-2.5-flash", apiKey = BuildConfig.GEMINI_API_KEY)
+
+    private val _userVibe = MutableStateFlow("")
+    val userVibe: StateFlow<String> = _userVibe.asStateFlow()
+
+    fun setUserVibe(vibe: String) { _userVibe.value = vibe }
 
     fun getSuggestion(weather: WeatherResponse?, clothingItems: List<ClosetOrganiserModel>) {
         viewModelScope.launch {
@@ -59,6 +64,10 @@ class AiStylistViewModel @Inject constructor() : ViewModel() {
 
                 val fashionRules = FashionRules.buildRulesPrompt(weatherCode, tempC)
 
+                val vibeSection = if (userVibe.value.isNotBlank()) {
+                    "User's Mood Request\nThe user said: \"${userVibe.value.trim()}\"\nTry to honour this while still being practical for the weather."
+                } else ""
+
                 val prompt = """
                     You are a friendly personal stylist AI inside a wardrobe app called Smart Closet Organiser.
                     
@@ -72,6 +81,9 @@ class AiStylistViewModel @Inject constructor() : ViewModel() {
                     
                     ## Fashion Rules You MUST Follow
                     $fashionRules
+                    
+                    ## User Input
+                    $vibeSection
                     
                     ## Your Task
                     Suggest a complete outfit using items from the wardrobe above.
@@ -108,5 +120,8 @@ class AiStylistViewModel @Inject constructor() : ViewModel() {
         else -> "Cloudy"
     }
 
-    fun reset() { _aiState.value = AiState.Idle }
+    fun reset() {
+        _aiState.value = AiState.Idle
+        _userVibe.value = ""
+    }
 }

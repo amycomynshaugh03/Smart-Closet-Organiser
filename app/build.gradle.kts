@@ -1,3 +1,4 @@
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -29,16 +30,22 @@ android {
 
     defaultConfig {
         applicationId = "ie.setu.project"
-        minSdk = 30
+        minSdk = 29
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        val geminiKey = project.findProperty("GEMINI_API_KEY")?.toString() ?: ""
+        val localProperties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localPropertiesFile.inputStream().use { stream -> localProperties.load(stream) }
+        }
+
+        val geminiKey = localProperties.getProperty("GEMINI_API_KEY") ?: ""
         buildConfigField("String", "GEMINI_API_KEY", "\"$geminiKey\"")
 
-        val removeBgKey = project.findProperty("REMOVE_BG_API_KEY")?.toString() ?: ""
+        val removeBgKey = localProperties.getProperty("REMOVE_BG_API_KEY") ?: ""
         buildConfigField("String", "REMOVE_BG_API_KEY", "\"$removeBgKey\"")
     }
 

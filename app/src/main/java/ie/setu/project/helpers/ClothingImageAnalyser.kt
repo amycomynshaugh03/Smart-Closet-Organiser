@@ -28,7 +28,7 @@ suspend fun analyseClothingImage(
 
         val model = GenerativeModel(
             modelName = "gemini-2.5-flash",
-            apiKey = " "
+            apiKey = BuildConfig.GEMINI_API_KEY
         )
 
         val prompt = """
