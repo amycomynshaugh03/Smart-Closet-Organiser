@@ -5,7 +5,11 @@ import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import ie.setu.project.BuildConfig
@@ -21,7 +25,6 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
-import com.google.firebase.Timestamp
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -147,7 +150,8 @@ class DonationViewModel @Inject constructor(
                 locationLng     = location.latLng.longitude,
                 scheduledDate   = Timestamp(scheduledDate)
             )
-            donationPlanRepo.save(uid, plan)
+            val savedPlan = donationPlanRepo.save(uid, plan)
+            scheduleNotification(savedPlan)
             _flaggedItems.value = _flaggedItems.value.filter { it.id != item.id }
             refreshPendingPlans()
             clearSelectedItem()
@@ -177,6 +181,7 @@ class DonationViewModel @Inject constructor(
     fun cancelPlan(plan: DonationPlan) = viewModelScope.launch {
         val uid = authService.currentUserId
         if (uid.isBlank()) return@launch
+        cancelNotification(plan)
         donationPlanRepo.delete(uid, plan.id)
         refreshPendingPlans()
         refreshFlaggedItems()
@@ -189,7 +194,6 @@ class DonationViewModel @Inject constructor(
                 val visitCounts = parseVisits(
                     context.donationDataStore.data.first()[PREF_LOCATION_VISITS] ?: ""
                 )
-
                 val apiKey = BuildConfig.MAPS_API_KEY
                 val url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json" +
                         "?location=${userLocation.latitude},${userLocation.longitude}" +
@@ -251,6 +255,29 @@ class DonationViewModel @Inject constructor(
         val uid = authService.currentUserId
         if (uid.isBlank()) return@launch
         try { _pendingPlans.value = donationPlanRepo.getPending(uid) } catch (_: Exception) { }
+    }
+
+    private fun scheduleNotification(plan: DonationPlan) {
+        val scheduledDate = plan.scheduledDate.toDate()
+        val delay = scheduledDate.time - System.currentTimeMillis()
+        if (delay <= 0) return
+
+        val data = Data.Builder()
+            .putString("item_title", plan.clothingTitle)
+            .putString("location_name", plan.locationName)
+            .build()
+
+        val request = OneTimeWorkRequestBuilder<DonationReminderWorker>()
+            .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+            .setInputData(data)
+            .addTag("donation_${plan.id}")
+            .build()
+
+        WorkManager.getInstance(context).enqueue(request)
+    }
+
+    private fun cancelNotification(plan: DonationPlan) {
+        WorkManager.getInstance(context).cancelAllWorkByTag("donation_${plan.id}")
     }
 
     private fun parseVisits(raw: String): MutableMap<String, Int> {
