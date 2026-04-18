@@ -190,7 +190,7 @@ private fun DonationSettingsPanel(
 }
 
 @Composable
-private fun DonationItemCard(
+fun DonationItemCard(
     item: ClosetOrganiserModel,
     onDonate: () -> Unit,
     onKeep: () -> Unit
@@ -286,7 +286,7 @@ private fun DonationItemCard(
 }
 
 @Composable
-private fun EmptyDonationState() {
+fun EmptyDonationState() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color(0xFF2E7D32), modifier = Modifier.size(72.dp))
