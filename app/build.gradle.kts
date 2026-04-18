@@ -48,7 +48,7 @@ android {
         val removeBgKey = localProperties.getProperty("REMOVE_BG_API_KEY") ?: ""
         buildConfigField("String", "REMOVE_BG_API_KEY", "\"$removeBgKey\"")
 
-        val mapsKey = project.findProperty("MAPS_API_KEY")?.toString() ?: ""
+        val mapsKey = localProperties.getProperty("MAPS_API_KEY") ?: ""
         buildConfigField("String", "MAPS_API_KEY", "\"$mapsKey\"")
         manifestPlaceholders["MAPS_API_KEY"] = mapsKey
     }
