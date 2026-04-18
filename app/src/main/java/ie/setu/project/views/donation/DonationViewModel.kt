@@ -203,6 +203,8 @@ class DonationViewModel @Inject constructor(
                     client.newCall(request).execute().body?.string() ?: ""
                 }
 
+                android.util.Log.d("DonationVM", "Places response: $responseBody")
+
                 val json    = JSONObject(responseBody)
                 val results = json.getJSONArray("results")
 
@@ -225,7 +227,7 @@ class DonationViewModel @Inject constructor(
                 _nearbyLocations.value = locations.sortedByDescending { it.visitCount }
 
             } catch (e: Exception) {
-                timber.log.Timber.e(e, "Places search failed")
+                android.util.Log.e("DonationVM", "Places search failed: ${e.message}", e)
             } finally {
                 _isSearchingMap.value = false
             }
