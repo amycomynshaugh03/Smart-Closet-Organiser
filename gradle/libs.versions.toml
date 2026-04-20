@@ -53,6 +53,11 @@ googleid = "1.1.0"
 ui = "1.10.5"
 datastorePreferences = "1.1.1"
 foundation = "1.10.6"
+mapsCompose = "4.3.3"
+playServicesMaps = "18.2.0"
+places = "3.4.0"
+workRuntimeKtx = "2.9.0"
+hiltWork = "1.2.0"
 
 
 
@@ -147,6 +152,13 @@ androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
 androidx-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+
+maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
+play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
+places = { module = "com.google.android.libraries.places:places", version.ref = "places" }
+work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }
+androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltWork" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

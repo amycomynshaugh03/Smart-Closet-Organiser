@@ -47,6 +47,10 @@ android {
 
         val removeBgKey = localProperties.getProperty("REMOVE_BG_API_KEY") ?: ""
         buildConfigField("String", "REMOVE_BG_API_KEY", "\"$removeBgKey\"")
+
+        val mapsKey = localProperties.getProperty("MAPS_API_KEY") ?: ""
+        buildConfigField("String", "MAPS_API_KEY", "\"$mapsKey\"")
+        manifestPlaceholders["MAPS_API_KEY"] = mapsKey
     }
 
     buildTypes {
@@ -167,4 +171,11 @@ dependencies {
     implementation(libs.googleid)
 
     implementation(libs.androidx.datastore.preferences)
+
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps)
+    implementation(libs.places)
+    implementation(libs.work.runtime.ktx)
+    implementation(libs.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
 }
