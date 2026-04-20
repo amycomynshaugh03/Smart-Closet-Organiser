@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import ie.setu.project.R
 import ie.setu.project.views.clothingList.SyncState
 import kotlinx.coroutines.delay
@@ -31,8 +32,14 @@ fun SettingsScreen(
     syncState: SyncState,
     onExportWardrobe: () -> Unit,
     onSignOut: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
+    val currentLocation by settingsViewModel.currentLocation.collectAsState()
+    val searchResults by settingsViewModel.searchResults.collectAsState()
+    val isSearching by settingsViewModel.isSearching.collectAsState()
+    var cityQuery by remember { mutableStateOf("") }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -73,9 +80,72 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
-
             SyncStatusCard(syncState = syncState)
+
+            Text(
+                "Location",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 4.dp, top = 4.dp)
+            )
+
+            Card(
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    currentLocation?.let {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                Icons.Default.LocationOn,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                "Current: ${it.cityName}",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
+
+                    OutlinedTextField(
+                        value = cityQuery,
+                        onValueChange = {
+                            cityQuery = it
+                            settingsViewModel.searchCity(it)
+                        },
+                        label = { Text("Search city…") },
+                        leadingIcon = { Icon(Icons.Default.Search, null) },
+                        trailingIcon = {
+                            if (isSearching) {
+                                CircularProgressIndicator(modifier = Modifier.size(18.dp))
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+
+                    searchResults.forEach { result ->
+                        TextButton(
+                            onClick = {
+                                settingsViewModel.selectCity(result)
+                                cityQuery = ""
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                result.displayName,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+                }
+            }
 
             Text(
                 "Data & Backup",
@@ -84,6 +154,7 @@ fun SettingsScreen(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(start = 4.dp, top = 4.dp)
             )
+
             Card(
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth()
@@ -106,7 +177,9 @@ fun SettingsScreen(
 
             Button(
                 onClick = onSignOut,
-                modifier = Modifier.fillMaxWidth().height(52.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F))
             ) {
@@ -189,17 +262,8 @@ private fun SyncStatusCard(syncState: SyncState) {
                     modifier = Modifier.size(28.dp)
                 )
                 Column {
-                    Text(
-                        title,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp
-                    )
-                    Text(
-                        subtitle,
-                        color = Color.White.copy(alpha = 0.85f),
-                        fontSize = 12.sp
-                    )
+                    Text(title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                    Text(subtitle, color = Color.White.copy(alpha = 0.85f), fontSize = 12.sp)
                 }
             }
         }
@@ -252,23 +316,10 @@ private fun SettingsRow(
         ) {
             Icon(icon, null, tint = MaterialTheme.colorScheme.primary)
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    title,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
-                )
+                Text(title, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface)
+                Text(subtitle, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
             }
-            Icon(
-                Icons.Default.ChevronRight,
-                null,
-                tint = Color.Gray,
-                modifier = Modifier.size(18.dp)
-            )
+            Icon(Icons.Default.ChevronRight, null, tint = Color.Gray, modifier = Modifier.size(18.dp))
         }
     }
 }
