@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Timestamp
@@ -271,6 +272,7 @@ class DonationViewModel @Inject constructor(
             .setInitialDelay(delay, TimeUnit.MILLISECONDS)
             .setInputData(data)
             .addTag("donation_${plan.id}")
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .build()
 
         WorkManager.getInstance(context).enqueue(request)

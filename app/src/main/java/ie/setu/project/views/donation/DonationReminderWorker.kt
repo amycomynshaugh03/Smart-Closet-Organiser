@@ -10,7 +10,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import ie.setu.project.R
+
 
 @HiltWorker
 class DonationReminderWorker @AssistedInject constructor(
@@ -35,7 +35,7 @@ class DonationReminderWorker @AssistedInject constructor(
         )
 
         val notification = NotificationCompat.Builder(context, "donation_reminders")
-            .setSmallIcon(R.drawable.ic_heart)
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle("Donation Day!")
             .setContentText("Don't forget to drop off $itemTitle at $locationName today")
             .setStyle(NotificationCompat.BigTextStyle()
