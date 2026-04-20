@@ -12,6 +12,7 @@ import ie.setu.project.models.ClosetSQLStore
 import ie.setu.project.models.OutfitJSONStore
 import ie.setu.project.models.clothing.ClothingStore
 import ie.setu.project.models.outfit.OutfitStore
+import ie.setu.project.preferences.LocationPreferencesRepository
 import javax.inject.Singleton
 
 @Module
@@ -40,4 +41,10 @@ object StoreModule {
     fun provideOutfitCalendarFirestoreRepository(
         firestore: FirebaseFirestore
     ): OutfitCalendarFirestoreRepository = OutfitCalendarFirestoreRepository(firestore)
+
+    @Provides
+    @Singleton
+    fun provideLocationPreferencesRepository(@ApplicationContext context: Context): LocationPreferencesRepository {
+        return LocationPreferencesRepository(context)
+    }
 }
