@@ -3,6 +3,7 @@ package ie.setu.project.views.settings
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -85,14 +86,16 @@ fun SettingsScreen(
             Text(
                 "Location",
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
+                color = Color(0xFF007A90),
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(start = 4.dp, top = 4.dp)
             )
 
             Card(
                 shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                border = BorderStroke(1.5.dp, Color(0xFF007A90).copy(alpha = 0.4f))
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -103,12 +106,14 @@ fun SettingsScreen(
                             Icon(
                                 Icons.Default.LocationOn,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = Color(0xFF007A90)
                             )
                             Spacer(Modifier.width(8.dp))
                             Text(
-                                "Current: ${it.cityName}",
-                                style = MaterialTheme.typography.bodyMedium
+                                " ${it.cityName}",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFF007A90)
                             )
                         }
                     }
@@ -120,14 +125,17 @@ fun SettingsScreen(
                             settingsViewModel.searchCity(it)
                         },
                         label = { Text("Search city…") },
-                        leadingIcon = { Icon(Icons.Default.Search, null) },
+                        leadingIcon = { Icon(Icons.Default.Search, null, tint = Color(0xFF007A90)) },
                         trailingIcon = {
-                            if (isSearching) {
-                                CircularProgressIndicator(modifier = Modifier.size(18.dp))
-                            }
+                            if (isSearching) CircularProgressIndicator(modifier = Modifier.size(18.dp))
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF007A90),
+                            unfocusedBorderColor = Color(0xFF007A90).copy(alpha = 0.4f),
+                            focusedLabelColor = Color(0xFF007A90)
+                        )
                     )
 
                     searchResults.forEach { result ->
@@ -140,7 +148,8 @@ fun SettingsScreen(
                         ) {
                             Text(
                                 result.displayName,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
+                                color = Color(0xFF007A90)
                             )
                         }
                     }
@@ -150,14 +159,16 @@ fun SettingsScreen(
             Text(
                 "Data & Backup",
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
+                color = Color(0xFF007A90),
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(start = 4.dp, top = 4.dp)
             )
 
             Card(
                 shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                border = BorderStroke(1.5.dp, Color(0xFF007A90).copy(alpha = 0.4f))
             ) {
                 SettingsRow(
                     icon = Icons.Default.CloudUpload,
@@ -170,7 +181,7 @@ fun SettingsScreen(
             Text(
                 "Account",
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
+                color = Color(0xFF007A90),
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(start = 4.dp, top = 4.dp)
             )
@@ -314,12 +325,12 @@ private fun SettingsRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Icon(icon, null, tint = MaterialTheme.colorScheme.primary)
+            Icon(icon, null, tint = Color(0xFF007A90))
             Column(modifier = Modifier.weight(1f)) {
                 Text(title, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface)
                 Text(subtitle, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
             }
-            Icon(Icons.Default.ChevronRight, null, tint = Color.Gray, modifier = Modifier.size(18.dp))
+            Icon(Icons.Default.ChevronRight, null, tint = Color(0xFF007A90), modifier = Modifier.size(18.dp))
         }
     }
 }
