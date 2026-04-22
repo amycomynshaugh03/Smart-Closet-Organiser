@@ -2,22 +2,29 @@ package ie.setu.project.views.clothing
 
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Checkroom
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -26,13 +33,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import ie.setu.project.R
 import ie.setu.project.models.clothing.ClosetOrganiserModel
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.filled.Checkroom
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,14 +47,14 @@ fun ClothingScreen(
     val categories = listOf("All", "Tops", "Bottoms", "Dresses", "Shoes", "Jackets")
     var selectedCategory by rememberSaveable { mutableStateOf("All") }
     var selectedTopSubType by rememberSaveable { mutableStateOf<String?>(null) }
-    val topSubTypes = listOf("Hoodie","Jumper", "Long Sleeve", "T-Shirt", "Blouse", "Tank Top")
+    val topSubTypes = listOf("Hoodie", "Jumper", "Long Sleeve", "T-Shirt", "Blouse", "Tank Top")
 
     val filteredItems = when {
         selectedCategory == "All" -> items
         selectedCategory == "Tops" && selectedTopSubType != null ->
             items.filter {
                 it.category.trim().equals("Tops", ignoreCase = true) &&
-                        it.description.contains(selectedTopSubType!!, ignoreCase = true)
+                        it.subCategory.trim().equals(selectedTopSubType!!, ignoreCase = true)
             }
         else -> items.filter { it.category.trim().equals(selectedCategory, ignoreCase = true) }
     }
@@ -195,7 +195,10 @@ private fun ClothingRow(item: ClosetOrganiserModel, onClick: () -> Unit, onDelet
                 Text(item.description.ifBlank { "No description" }, style = MaterialTheme.typography.bodySmall)
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    "Category: ${item.category.ifBlank { "None" }}",
+                    buildString {
+                        append("Category: ${item.category.ifBlank { "None" }}")
+                        if (item.subCategory.isNotBlank()) append(" · ${item.subCategory}")
+                    },
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.Gray
                 )
