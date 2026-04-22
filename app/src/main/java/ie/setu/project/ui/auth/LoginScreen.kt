@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -157,15 +158,20 @@ fun LoginScreen(
                         val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
                         vm.signInWithGoogle(googleIdTokenCredential.idToken)
                     } catch (e: GetCredentialException) {
-                        Log.e("GoogleSignIn", "Credential error: ${e.message}")
                     } catch (e: Exception) {
-                        Log.e("GoogleSignIn", "Unexpected error: ${e.message}")
                     }
                 }
             },
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_google_logo),
+                contentDescription = "Google logo",
+                modifier = Modifier.size(20.dp),
+                tint = Color.Unspecified
+            )
+            Spacer(Modifier.width(8.dp))
             Text("Continue with Google", fontSize = 16.sp, color = Color(0xFF4285F4))
         }
 
