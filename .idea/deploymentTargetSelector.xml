@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-04-17T20:55:00.099331200Z">
+        <DropdownSelection timestamp="2026-04-22T17:54:41.267142600Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\amypc\.android\avd\SCO_Phone.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=N5LNU20829411845" />
             </handle>
           </Target>
         </DropdownSelection>

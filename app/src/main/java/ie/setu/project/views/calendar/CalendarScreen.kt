@@ -211,7 +211,7 @@ private fun CalendarGrid(
         columns = GridCells.Fixed(7),
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(max = 320.dp)
+            .height(500.dp)
             .padding(horizontal = 8.dp),
         userScrollEnabled = false
     ) {
