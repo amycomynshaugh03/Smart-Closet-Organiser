@@ -50,12 +50,17 @@ fun UserEditScreen(
 
     LaunchedEffect(saveState) {
         when (saveState) {
-            is ProfileSaveState.Success -> { snackbarHostState.showSnackbar("Profile saved!"); vm.resetSaveState() }
-            is ProfileSaveState.Error -> { snackbarHostState.showSnackbar((saveState as ProfileSaveState.Error).message); vm.resetSaveState() }
+            is ProfileSaveState.Success -> {
+                vm.resetSaveState()
+                onBack()
+            }
+            is ProfileSaveState.Error -> {
+                snackbarHostState.showSnackbar((saveState as ProfileSaveState.Error).message)
+                vm.resetSaveState()
+            }
             else -> {}
         }
     }
-
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {

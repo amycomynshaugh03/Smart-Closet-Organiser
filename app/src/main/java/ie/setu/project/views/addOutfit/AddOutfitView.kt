@@ -17,7 +17,7 @@ class AddOutfitView : AppCompatActivity() {
 
     private lateinit var presenter: AddOutfitPresenter
     private var lastWornState by mutableStateOf("")
-    private var selectedCountState by mutableStateOf(0)
+    private var selectedCountState by mutableIntStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
