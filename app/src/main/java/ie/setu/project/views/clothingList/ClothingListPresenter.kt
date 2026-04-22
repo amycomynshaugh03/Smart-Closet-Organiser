@@ -11,10 +11,12 @@ import ie.setu.project.models.LocalBackupRepository
 import ie.setu.project.models.clothing.ClosetOrganiserModel
 import ie.setu.project.models.outfit.OutfitModel
 import ie.setu.project.models.weather.WeatherResponse
+import ie.setu.project.preferences.LocationPreferencesRepository
 import ie.setu.project.weather.WeatherService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -29,7 +31,8 @@ class ClothingListPresenter @Inject constructor(
     private val clothingRepo: ClothingFirestoreRepository,
     private val outfitRepo: OutfitFirestoreRepository,
     private val imageStorageRepo: ImageStorageRepository,
-    private val localBackup: LocalBackupRepository
+    private val localBackup: LocalBackupRepository,
+    private val locationPrefs: LocationPreferencesRepository
 ) : ViewModel() {
 
     private val weatherService = WeatherService()
@@ -52,10 +55,8 @@ class ClothingListPresenter @Inject constructor(
     private val _showSearchResults = MutableStateFlow(false)
     val showSearchResults: StateFlow<Boolean> = _showSearchResults.asStateFlow()
 
-
     private val _syncState = MutableStateFlow(SyncState.SYNCING)
     val syncState: StateFlow<SyncState> = _syncState.asStateFlow()
-
 
     private val _exportJson = MutableStateFlow<String?>(null)
     val exportJson: StateFlow<String?> = _exportJson.asStateFlow()
@@ -67,7 +68,11 @@ class ClothingListPresenter @Inject constructor(
     val weatherError: StateFlow<String?> = _weatherError.asStateFlow()
 
     init {
-        fetchWeather()
+        viewModelScope.launch {
+            locationPrefs.locationFlow.collect {
+                fetchWeather()
+            }
+        }
         refreshFromFirestore()
     }
 
@@ -96,7 +101,6 @@ class ClothingListPresenter @Inject constructor(
                 val q = _searchQuery.value.trim()
                 if (q.isNotBlank()) performSearch(q)
 
-
                 localBackup.backupFromFirestore(cachedClothing)
 
                 _syncState.value = SyncState.SYNCED
@@ -116,7 +120,8 @@ class ClothingListPresenter @Inject constructor(
     fun fetchWeather() {
         viewModelScope.launch {
             try {
-                val weather = weatherService.getWeather(53.3498, -6.2603)
+                val loc = locationPrefs.locationFlow.first()
+                val weather = weatherService.getWeather(loc.lat, loc.lon)
                 _weatherData.value = weather
             } catch (e: Exception) {
                 Timber.e(e, "Weather fetch failed")
@@ -125,6 +130,7 @@ class ClothingListPresenter @Inject constructor(
             }
         }
     }
+
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
         val q = query.trim()

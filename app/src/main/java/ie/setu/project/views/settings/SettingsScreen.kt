@@ -3,6 +3,7 @@ package ie.setu.project.views.settings
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import ie.setu.project.R
 import ie.setu.project.views.clothingList.SyncState
 import kotlinx.coroutines.delay
@@ -31,8 +33,14 @@ fun SettingsScreen(
     syncState: SyncState,
     onExportWardrobe: () -> Unit,
     onSignOut: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
+    val currentLocation by settingsViewModel.currentLocation.collectAsState()
+    val searchResults by settingsViewModel.searchResults.collectAsState()
+    val isSearching by settingsViewModel.isSearching.collectAsState()
+    var cityQuery by remember { mutableStateOf("") }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -73,20 +81,94 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
-
             SyncStatusCard(syncState = syncState)
+
+            Text(
+                "Location",
+                style = MaterialTheme.typography.labelLarge,
+                color = Color(0xFF007A90),
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 4.dp, top = 4.dp)
+            )
+
+            Card(
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                border = BorderStroke(1.5.dp, Color(0xFF007A90).copy(alpha = 0.4f))
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    currentLocation?.let {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                Icons.Default.LocationOn,
+                                contentDescription = null,
+                                tint = Color(0xFF007A90)
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                " ${it.cityName}",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFF007A90)
+                            )
+                        }
+                    }
+
+                    OutlinedTextField(
+                        value = cityQuery,
+                        onValueChange = {
+                            cityQuery = it
+                            settingsViewModel.searchCity(it)
+                        },
+                        label = { Text("Search city…") },
+                        leadingIcon = { Icon(Icons.Default.Search, null, tint = Color(0xFF007A90)) },
+                        trailingIcon = {
+                            if (isSearching) CircularProgressIndicator(modifier = Modifier.size(18.dp))
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF007A90),
+                            unfocusedBorderColor = Color(0xFF007A90).copy(alpha = 0.4f),
+                            focusedLabelColor = Color(0xFF007A90)
+                        )
+                    )
+
+                    searchResults.forEach { result ->
+                        TextButton(
+                            onClick = {
+                                settingsViewModel.selectCity(result)
+                                cityQuery = ""
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                result.displayName,
+                                modifier = Modifier.fillMaxWidth(),
+                                color = Color(0xFF007A90)
+                            )
+                        }
+                    }
+                }
+            }
 
             Text(
                 "Data & Backup",
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
+                color = Color(0xFF007A90),
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(start = 4.dp, top = 4.dp)
             )
+
             Card(
                 shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                border = BorderStroke(1.5.dp, Color(0xFF007A90).copy(alpha = 0.4f))
             ) {
                 SettingsRow(
                     icon = Icons.Default.CloudUpload,
@@ -99,14 +181,16 @@ fun SettingsScreen(
             Text(
                 "Account",
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
+                color = Color(0xFF007A90),
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(start = 4.dp, top = 4.dp)
             )
 
             Button(
                 onClick = onSignOut,
-                modifier = Modifier.fillMaxWidth().height(52.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F))
             ) {
@@ -189,17 +273,8 @@ private fun SyncStatusCard(syncState: SyncState) {
                     modifier = Modifier.size(28.dp)
                 )
                 Column {
-                    Text(
-                        title,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp
-                    )
-                    Text(
-                        subtitle,
-                        color = Color.White.copy(alpha = 0.85f),
-                        fontSize = 12.sp
-                    )
+                    Text(title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                    Text(subtitle, color = Color.White.copy(alpha = 0.85f), fontSize = 12.sp)
                 }
             }
         }
@@ -250,25 +325,12 @@ private fun SettingsRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Icon(icon, null, tint = MaterialTheme.colorScheme.primary)
+            Icon(icon, null, tint = Color(0xFF007A90))
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    title,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
-                )
+                Text(title, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface)
+                Text(subtitle, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
             }
-            Icon(
-                Icons.Default.ChevronRight,
-                null,
-                tint = Color.Gray,
-                modifier = Modifier.size(18.dp)
-            )
+            Icon(Icons.Default.ChevronRight, null, tint = Color(0xFF007A90), modifier = Modifier.size(18.dp))
         }
     }
 }
