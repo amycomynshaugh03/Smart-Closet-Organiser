@@ -36,8 +36,11 @@ fun LoginScreen(
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var showResetDialog by remember { mutableStateOf(false) }
+    var resetEmail by remember { mutableStateOf("") }
 
     val state by vm.authResponse.collectAsState()
+    val resetState by vm.resetResponse.collectAsState()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val webClientId = stringResource(R.string.default_web_client_id)
@@ -46,6 +49,12 @@ fun LoginScreen(
         if (state is Response.Success) {
             vm.clearAuthResponse()
             onSignedIn()
+        }
+    }
+
+    LaunchedEffect(resetState) {
+        if (resetState is Response.Success) {
+            vm.clearResetResponse()
         }
     }
 
@@ -66,29 +75,65 @@ fun LoginScreen(
         Spacer(Modifier.height(32.dp))
 
         OutlinedTextField(
-            value = email, onValueChange = { email = it }, label = { Text("Email") },
-            leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-            singleLine = true, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Email") },
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Person,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp)
         )
+
         Spacer(Modifier.height(12.dp))
+
         OutlinedTextField(
-            value = password, onValueChange = { password = it }, label = { Text("Password") },
-            leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Password") },
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Lock,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            },
             visualTransformation = PasswordVisualTransformation(),
-            singleLine = true, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp)
         )
-        Spacer(Modifier.height(20.dp))
+
+        Spacer(Modifier.height(8.dp))
+
+        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+            TextButton(onClick = { resetEmail = email; showResetDialog = true }) {
+                Text("Forgot Password?", color = MaterialTheme.colorScheme.primary, fontSize = 13.sp)
+            }
+        }
+
+        Spacer(Modifier.height(12.dp))
 
         Button(
             onClick = { vm.signIn(email.trim(), password) },
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-        ) { Text("Sign In", fontSize = 16.sp) }
+        ) {
+            Text("Sign In", fontSize = 16.sp)
+        }
 
         Spacer(Modifier.height(12.dp))
 
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
             HorizontalDivider(modifier = Modifier.weight(1f))
             Text("  or  ", color = Color.Gray, fontSize = 13.sp)
             HorizontalDivider(modifier = Modifier.weight(1f))
@@ -120,7 +165,9 @@ fun LoginScreen(
             },
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(12.dp)
-        ) { Text("Continue with Google", fontSize = 16.sp, color = Color(0xFF4285F4)) }
+        ) {
+            Text("Continue with Google", fontSize = 16.sp, color = Color(0xFF4285F4))
+        }
 
         Spacer(Modifier.height(16.dp))
 
@@ -132,8 +179,64 @@ fun LoginScreen(
 
         when (val s = state) {
             is Response.Loading -> CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-            is Response.Failure -> Text("Error: ${s.e.message ?: "Unknown error"}", color = Color.Red, fontSize = 13.sp)
+            is Response.Failure -> Text(
+                "Error: ${s.e.message ?: "Unknown error"}",
+                color = Color.Red,
+                fontSize = 13.sp
+            )
             else -> {}
         }
+    }
+
+    if (showResetDialog) {
+        AlertDialog(
+            onDismissRequest = { showResetDialog = false; vm.clearResetResponse() },
+            title = { Text("Reset Password") },
+            text = {
+                Column {
+                    Text("Enter your email address and we will send you a reset link.")
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = resetEmail,
+                        onValueChange = { resetEmail = it },
+                        label = { Text("Email") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    when (resetState) {
+                        is Response.Failure -> Text(
+                            "Something went wrong. Please try again.",
+                            color = Color.Red,
+                            fontSize = 12.sp
+                        )
+                        is Response.Success -> Text(
+                            "Reset email sent! Check your inbox.",
+                            color = Color(0xFF2E7D32),
+                            fontSize = 12.sp
+                        )
+                        else -> {}
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { vm.resetPassword(resetEmail.trim()) }) {
+                    if (resetState is Response.Loading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    } else {
+                        Text("Send Reset Email")
+                    }
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showResetDialog = false; vm.clearResetResponse() }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
