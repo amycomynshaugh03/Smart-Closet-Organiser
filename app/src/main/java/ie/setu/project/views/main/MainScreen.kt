@@ -34,6 +34,7 @@ fun MainScreen(
     category: String, onCategoryChange: (String) -> Unit,
     lastWornText: String, onPickLastWorn: () -> Unit,
     imageUri: Uri?, onChooseImage: () -> Unit,
+    subCategory: String, onSubCategoryChange: (String) -> Unit,
     isEdit: Boolean, onCancel: () -> Unit, onSave: () -> Unit,
     snackbarHostState: SnackbarHostState,
     removeBg: Boolean, onRemoveBgChange: (Boolean) -> Unit,
@@ -43,6 +44,8 @@ fun MainScreen(
     val seasons = stringArrayResource(id = R.array.seasons_array).toList()
     var seasonExpanded by remember { mutableStateOf(false) }
     val categories = listOf("All", "Tops", "Bottoms", "Dress", "Shoes", "Jackets")
+    val topSubTypes = listOf("Hoodie", "Jumper", "Long Sleeve", "T-Shirt", "Blouse", "Tank Top")
+    var subCategoryExpanded by remember { mutableStateOf(false) }
     var categoryExpanded by remember { mutableStateOf(false) }
     var showInfoDialog by remember { mutableStateOf(false) }
 
@@ -95,23 +98,95 @@ fun MainScreen(
             modifier = Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            OutlinedTextField(value = title, onValueChange = onTitleChange, label = { Text(stringResource(R.string.enter_clothing_title)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(
+                value = title,
+                onValueChange = onTitleChange,
+                label = { Text(stringResource(R.string.enter_clothing_title)) },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
 
             ExposedDropdownMenuBox(expanded = categoryExpanded, onExpandedChange = { categoryExpanded = !categoryExpanded }) {
-                OutlinedTextField(value = category, onValueChange = {}, readOnly = true, label = { Text("Category") }, trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded) }, modifier = Modifier.menuAnchor().fillMaxWidth())
+                OutlinedTextField(
+                    value = category,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Category") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded) },
+                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                )
                 ExposedDropdownMenu(expanded = categoryExpanded, onDismissRequest = { categoryExpanded = false }) {
                     categories.forEach { c ->
-                        DropdownMenuItem(text = { Text(c) }, onClick = { if (c != "All") onCategoryChange(c); categoryExpanded = false })
+                        DropdownMenuItem(
+                            text = { Text(c) },
+                            onClick = {
+                                if (c != "All") onCategoryChange(c)
+                                categoryExpanded = false
+                            }
+                        )
                     }
                 }
             }
 
-            OutlinedTextField(value = description, onValueChange = onDescriptionChange, label = { Text(stringResource(R.string.enter_description)) }, minLines = 2, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = colour, onValueChange = onColourChange, label = { Text(stringResource(R.string.enter_colour)) }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = size, onValueChange = onSizeChange, label = { Text(stringResource(R.string.enter_size)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
+            if (category == "Tops") {
+                ExposedDropdownMenuBox(
+                    expanded = subCategoryExpanded,
+                    onExpandedChange = { subCategoryExpanded = !subCategoryExpanded }
+                ) {
+                    OutlinedTextField(
+                        value = subCategory,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Top Style") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = subCategoryExpanded) },
+                        modifier = Modifier.menuAnchor().fillMaxWidth()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = subCategoryExpanded,
+                        onDismissRequest = { subCategoryExpanded = false }
+                    ) {
+                        topSubTypes.forEach { sub ->
+                            DropdownMenuItem(
+                                text = { Text(sub) },
+                                onClick = { onSubCategoryChange(sub); subCategoryExpanded = false }
+                            )
+                        }
+                    }
+                }
+            }
+
+            OutlinedTextField(
+                value = description,
+                onValueChange = onDescriptionChange,
+                label = { Text(stringResource(R.string.enter_description)) },
+                minLines = 2,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = colour,
+                onValueChange = onColourChange,
+                label = { Text(stringResource(R.string.enter_colour)) },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = size,
+                onValueChange = onSizeChange,
+                label = { Text(stringResource(R.string.enter_size)) },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
 
             ExposedDropdownMenuBox(expanded = seasonExpanded, onExpandedChange = { seasonExpanded = !seasonExpanded }) {
-                OutlinedTextField(value = season, onValueChange = {}, readOnly = true, label = { Text(stringResource(R.string.enter_season)) }, trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = seasonExpanded) }, modifier = Modifier.menuAnchor().fillMaxWidth())
+                OutlinedTextField(
+                    value = season,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text(stringResource(R.string.enter_season)) },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = seasonExpanded) },
+                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                )
                 ExposedDropdownMenu(expanded = seasonExpanded, onDismissRequest = { seasonExpanded = false }) {
                     seasons.forEach { s ->
                         DropdownMenuItem(text = { Text(s) }, onClick = { onSeasonChange(s); seasonExpanded = false })
@@ -119,17 +194,29 @@ fun MainScreen(
                 }
             }
 
-            OutlinedTextField(value = lastWornText, onValueChange = {}, readOnly = true, label = { Text(stringResource(R.string.enter_lastworn)) }, modifier = Modifier.fillMaxWidth(), trailingIcon = { TextButton(onClick = onPickLastWorn) { Text("Pick") } })
+            OutlinedTextField(
+                value = lastWornText,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text(stringResource(R.string.enter_lastworn)) },
+                modifier = Modifier.fillMaxWidth(),
+                trailingIcon = { TextButton(onClick = onPickLastWorn) { Text("Pick") } }
+            )
 
             Button(onClick = onChooseImage, modifier = Modifier.fillMaxWidth()) { Text(imageButtonLabel) }
 
-            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Column {
                     Text("Remove Background", style = MaterialTheme.typography.bodyLarge)
                     Text("Works best on plain backgrounds", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
                 }
                 Switch(
-                    checked = removeBg, onCheckedChange = onRemoveBgChange,
+                    checked = removeBg,
+                    onCheckedChange = onRemoveBgChange,
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color.White,
                         checkedTrackColor = MaterialTheme.colorScheme.primary
@@ -188,7 +275,10 @@ fun MainScreen(
                     }
                 }
             } else {
-                Box(modifier = Modifier.fillMaxWidth().height(120.dp), contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier.fillMaxWidth().height(120.dp),
+                    contentAlignment = Alignment.Center
+                ) {
                     Text("No image selected")
                 }
             }

@@ -14,9 +14,8 @@ data class ClosetOrganiserModel(
     var size: String = "",
     var season: String = "",
     var category: String = "",
+    var subCategory: String = "",
     var lastWorn: Date = Date(),
-
     var image: Uri? = Uri.EMPTY,
-
     var imageUrl: String = ""
 ) : Parcelable

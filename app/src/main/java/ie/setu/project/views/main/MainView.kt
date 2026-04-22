@@ -23,6 +23,7 @@ class MainView : AppCompatActivity() {
     private var sizeState by mutableStateOf("")
     private var seasonState by mutableStateOf("")
     private var categoryState by mutableStateOf("")
+    private var subCategoryState by mutableStateOf("")
     private var lastWornState by mutableStateOf("")
     private var imageUriState by mutableStateOf<Uri?>(null)
     private var isEditState by mutableStateOf(false)
@@ -40,6 +41,7 @@ class MainView : AppCompatActivity() {
         sizeState = presenter.closetOrganiser.size
         seasonState = presenter.closetOrganiser.season
         categoryState = presenter.closetOrganiser.category
+        subCategoryState = presenter.closetOrganiser.subCategory
 
         if (categoryState.isBlank()) categoryState = "Tops"
 
@@ -71,6 +73,8 @@ class MainView : AppCompatActivity() {
                 onSeasonChange = { seasonState = it },
                 category = categoryState,
                 onCategoryChange = { categoryState = it },
+                subCategory = subCategoryState,
+                onSubCategoryChange = { subCategoryState = it },
                 lastWornText = lastWornState,
                 onPickLastWorn = { presenter.showDatePicker() },
                 imageUri = imageUriState,
@@ -81,7 +85,10 @@ class MainView : AppCompatActivity() {
                     if (titleState.isBlank()) {
                         scope.launch { snackbarHostState.showSnackbar("Please enter missing item") }
                     } else {
-                        presenter.doAddOrSave(titleState, descriptionState, colourState, sizeState, seasonState, categoryState)
+                        presenter.doAddOrSave(
+                            titleState, descriptionState, colourState,
+                            sizeState, seasonState, categoryState, subCategoryState
+                        )
                     }
                 },
                 snackbarHostState = snackbarHostState,
@@ -101,6 +108,7 @@ class MainView : AppCompatActivity() {
         sizeState = item.size
         seasonState = item.season
         categoryState = item.category
+        subCategoryState = item.subCategory
         lastWornState = try {
             SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(item.lastWorn)
         } catch (e: Exception) { "" }

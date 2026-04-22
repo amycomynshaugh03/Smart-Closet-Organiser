@@ -28,6 +28,7 @@ class ClothingFirestoreRepository @Inject constructor(
             "season" to item.season,
             "category" to item.category,
             "lastWorn" to item.lastWorn.time,
+            "subCategory" to item.subCategory,
 
 
             "image" to (item.image?.toString() ?: ""),
@@ -80,6 +81,7 @@ class ClothingFirestoreRepository @Inject constructor(
                 val season = doc.getString("season").orEmpty()
                 val category = doc.getString("category").orEmpty()
                 val lastWornMs = doc.getLong("lastWorn") ?: 0L
+                val subCategory = doc.getString("subCategory").orEmpty()
 
                 val imageStr = doc.getString("image").orEmpty()
                 val imageUrl = doc.getString("imageUrl").orEmpty()
@@ -92,6 +94,7 @@ class ClothingFirestoreRepository @Inject constructor(
                     size = size,
                     season = season,
                     category = category,
+                    subCategory = subCategory,
                     lastWorn = Date(lastWornMs),
                     image = if (imageStr.isBlank()) Uri.EMPTY else Uri.parse(imageStr),
                     imageUrl = imageUrl

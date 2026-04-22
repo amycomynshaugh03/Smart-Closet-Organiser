@@ -63,7 +63,8 @@ class MainPresenter(private val view: MainView) {
         colourPattern: String,
         size: String,
         season: String,
-        category: String
+        category: String,
+        subCategory: String
     ) {
         closetOrganiser.title = title.trim()
         closetOrganiser.description = description.trim()
@@ -71,6 +72,7 @@ class MainPresenter(private val view: MainView) {
         closetOrganiser.size = size.trim()
         closetOrganiser.season = season.trim()
         closetOrganiser.category = category.trim()
+        closetOrganiser.subCategory = subCategory.trim()
 
         val uid = firebase.authService().currentUserId
 
@@ -150,7 +152,7 @@ class MainPresenter(private val view: MainView) {
                 category    = analysis.category
             )
         }.onFailure { e ->
-            Timber.e(e, "Image scan failed,user can fill in manually")
+            Timber.e(e, "Image scan failed, user can fill in manually")
         }
     }
 
