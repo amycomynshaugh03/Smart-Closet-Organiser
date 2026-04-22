@@ -30,6 +30,11 @@ fun AddOutfitScreen(
     var selectedSeason by rememberSaveable { mutableStateOf(initialSeason?.takeIf { it.isNotBlank() } ?: seasons.firstOrNull().orEmpty()) }
     var seasonExpanded by remember { mutableStateOf(false) }
 
+    val clothingButtonText = if (selectedClothingCount > 0)
+        "Edit Selection ($selectedClothingCount item${if (selectedClothingCount > 1) "s" else ""} selected)"
+    else
+        stringResource(R.string.button_addClothing)
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -73,13 +78,18 @@ fun AddOutfitScreen(
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = { TextButton(onClick = onPickLastWorn) { Text("Pick") } })
 
-            Button(onClick = onChooseClothing,
-                modifier = Modifier.fillMaxWidth())
-                { Text(stringResource(R.string.button_addClothing)) }
+            Button(
+                onClick = onChooseClothing,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(clothingButtonText)
+            }
 
             Button(
-                onClick = { if (title.isBlank()) showError("Please enter a title")
-                else onSave(title, description, selectedSeason) },
+                onClick = {
+                    if (title.isBlank()) showError("Please enter a title")
+                    else onSave(title, description, selectedSeason)
+                },
                 modifier = Modifier.fillMaxWidth()
             ) { Text(stringResource(R.string.save_outfit)) }
         }

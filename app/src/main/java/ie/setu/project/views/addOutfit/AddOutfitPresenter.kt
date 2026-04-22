@@ -114,6 +114,7 @@ class AddOutfitPresenter(private val view: AddOutfitView) {
                     result.data?.getParcelableArrayListExtra<ClosetOrganiserModel>("selected_clothing")
                         ?.let { selectedItems ->
                             outfit.clothingItems = selectedItems.toMutableList()
+                            view.showOutfit(outfit)
                         }
                 }
             }
