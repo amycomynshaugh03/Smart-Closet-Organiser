@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -73,7 +74,6 @@ fun ClothingListScreen(
         if (carouselItems.isEmpty()) currentCarouselPage = 0
         else if (currentCarouselPage > carouselItems.lastIndex) currentCarouselPage = carouselItems.lastIndex
     }
-
 
     Scaffold(
         topBar = {
@@ -135,7 +135,6 @@ fun ClothingListScreen(
                         indicatorColor = Color.White.copy(0.2f)
                     )
                 )
-
                 NavigationBarItem(
                     selected = false,
                     onClick = { onNavigateToCalendar() },
@@ -149,32 +148,30 @@ fun ClothingListScreen(
                         indicatorColor = Color.White.copy(0.2f)
                     )
                 )
-
                 NavigationBarItem(
                     selected = false,
-                    onClick  = { onNavigateToTryOn() },
-                    icon     = { Icon(Icons.Default.Person, contentDescription = "Virtual Try-On") },
-                    label    = { Text("Try-On") },
-                    colors   = NavigationBarItemDefaults.colors(
-                        selectedIconColor   = Color.White,
-                        selectedTextColor   = Color.White,
+                    onClick = { onNavigateToTryOn() },
+                    icon = { Icon(Icons.Default.Person, contentDescription = "Virtual Try-On") },
+                    label = { Text("Try-On") },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = Color.White,
+                        selectedTextColor = Color.White,
                         unselectedIconColor = Color.White.copy(0.5f),
                         unselectedTextColor = Color.White.copy(0.5f),
-                        indicatorColor      = Color.White.copy(0.2f)
+                        indicatorColor = Color.White.copy(0.2f)
                     )
                 )
-
                 NavigationBarItem(
                     selected = false,
-                    onClick  = { onNavigateToDonation() },
-                    icon     = { Icon(Icons.Default.Recycling, contentDescription = "Donation Tracker") },
-                    label    = { Text("Donate") },
-                    colors   = NavigationBarItemDefaults.colors(
-                        selectedIconColor   = Color.White,
-                        selectedTextColor   = Color.White,
+                    onClick = { onNavigateToDonation() },
+                    icon = { Icon(Icons.Default.Recycling, contentDescription = "Donation Tracker") },
+                    label = { Text("Donate") },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = Color.White,
+                        selectedTextColor = Color.White,
                         unselectedIconColor = Color.White.copy(0.5f),
                         unselectedTextColor = Color.White.copy(0.5f),
-                        indicatorColor      = Color.White.copy(0.2f)
+                        indicatorColor = Color.White.copy(0.2f)
                     )
                 )
             }
@@ -192,7 +189,6 @@ fun ClothingListScreen(
 
         Column(modifier = Modifier.fillMaxSize().padding(paddingValues).verticalScroll(rememberScrollState())) {
 
-
             Row(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
                 horizontalArrangement = Arrangement.Start,
@@ -202,13 +198,25 @@ fun ClothingListScreen(
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(onClick = onNavigateToClothing, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) { Text("Clothes") }
                 Row(modifier = Modifier.weight(1f).padding(start = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(painter = painterResource(id = R.drawable.ic_search), contentDescription = "Search", modifier = Modifier.padding(end = 8.dp), tint = Color.Gray)
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_search),
+                        contentDescription = "Search",
+                        modifier = Modifier.padding(end = 8.dp),
+                        tint = Color.Gray
+                    )
                     TextField(
                         value = searchQuery,
                         onValueChange = { query -> searchQuery = query; presenter.updateSearchQuery(query) },
                         modifier = Modifier.weight(1f),
                         placeholder = { Text("Search") },
-                        singleLine = true
+                        singleLine = true,
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
+                            disabledContainerColor = Color.White,
+                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                            unfocusedIndicatorColor = Color.LightGray
+                        )
                     )
                 }
             }
@@ -235,7 +243,16 @@ fun ClothingListScreen(
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp)
             )
 
-            Card(modifier = Modifier.fillMaxWidth().height(350.dp).padding(horizontal = 16.dp, vertical = 8.dp), shape = RoundedCornerShape(12.dp)) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(350.dp)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                colors = CardDefaults.cardColors(containerColor = Color.White)
+            ) {
                 Column {
                     Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
                         if (carouselItems.isNotEmpty()) {
@@ -244,22 +261,64 @@ fun ClothingListScreen(
                                     val imageModel: Any? = item.imageUrl.takeIf { it.isNotBlank() } ?: item.image
                                     val ok = imageModel != null && imageModel != Uri.EMPTY && imageModel.toString().isNotBlank()
                                     if (ok) {
-                                        AsyncImage(model = imageModel, contentDescription = "Carousel item", modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Fit)
+                                        AsyncImage(
+                                            model = imageModel,
+                                            contentDescription = "Carousel item",
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentScale = ContentScale.Fit
+                                        )
                                     } else {
-                                        Box(modifier = Modifier.fillMaxSize().background(Color.LightGray), contentAlignment = Alignment.Center) { Text("No image") }
+                                        Box(
+                                            modifier = Modifier.fillMaxSize().background(Color(0xFFF5F5F5)),
+                                            contentAlignment = Alignment.Center
+                                        ) { Text("No image", color = Color.Gray) }
+                                    }
+
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .align(Alignment.BottomStart)
+                                            .background(
+                                                brush = Brush.verticalGradient(
+                                                    colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.6f))
+                                                )
+                                            )
+                                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                                    ) {
+                                        Text(
+                                            text = item.title,
+                                            color = Color.White,
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 14.sp,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
                                     }
                                 }
                             }
                         } else {
-                            Box(modifier = Modifier.fillMaxSize().background(Color.LightGray), contentAlignment = Alignment.Center) { Text("No items") }
+                            Box(
+                                modifier = Modifier.fillMaxSize().background(Color(0xFFF5F5F5)),
+                                contentAlignment = Alignment.Center
+                            ) { Text("No items", color = Color.Gray) }
                         }
 
                         if (carouselItems.size > 1) {
-                            Row(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                                IconButton(onClick = { if (currentCarouselPage > 0) currentCarouselPage-- }, modifier = Modifier.background(Color.Black.copy(alpha = 0.5f), CircleShape)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                IconButton(
+                                    onClick = { if (currentCarouselPage > 0) currentCarouselPage-- },
+                                    modifier = Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.8f), CircleShape)
+                                ) {
                                     Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Previous", tint = Color.White)
                                 }
-                                IconButton(onClick = { if (currentCarouselPage < carouselItems.size - 1) currentCarouselPage++ }, modifier = Modifier.background(Color.Black.copy(alpha = 0.5f), CircleShape)) {
+                                IconButton(
+                                    onClick = { if (currentCarouselPage < carouselItems.size - 1) currentCarouselPage++ },
+                                    modifier = Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.8f), CircleShape)
+                                ) {
                                     Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "Next", tint = Color.White)
                                 }
                             }
@@ -267,10 +326,26 @@ fun ClothingListScreen(
                     }
 
                     if (carouselItems.size > 1) {
-                        Row(modifier = Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement = Arrangement.Center) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(Color(0xFFF5F5F5))
+                                .padding(8.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
                             repeat(carouselItems.size) { index ->
-                                Box(modifier = Modifier.padding(4.dp).size(8.dp).clip(CircleShape)
-                                    .background(if (index == currentCarouselPage) MaterialTheme.colorScheme.primary else Color.Gray))
+                                Box(
+                                    modifier = Modifier
+                                        .padding(4.dp)
+                                        .size(if (index == currentCarouselPage) 10.dp else 8.dp)
+                                        .clip(CircleShape)
+                                        .background(
+                                            if (index == currentCarouselPage)
+                                                MaterialTheme.colorScheme.primary
+                                            else
+                                                MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+                                        )
+                                )
                             }
                         }
                     }
