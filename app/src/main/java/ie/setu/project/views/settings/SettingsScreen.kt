@@ -32,6 +32,7 @@ import kotlinx.coroutines.delay
 fun SettingsScreen(
     syncState: SyncState,
     onExportWardrobe: () -> Unit,
+    onSyncToFirestore: () -> Unit,
     onSignOut: () -> Unit,
     onBack: () -> Unit,
     settingsViewModel: SettingsViewModel = hiltViewModel()
@@ -82,6 +83,24 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             SyncStatusCard(syncState = syncState)
+
+            if (syncState == SyncState.OFFLINE_BACKUP || syncState == SyncState.SYNC_ERROR) {
+                Button(
+                    onClick = onSyncToFirestore,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.CloudUpload,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text("Sync local changes to cloud")
+                }
+            }
 
             Text(
                 "Location",
@@ -246,8 +265,14 @@ private fun SyncStatusCard(syncState: SyncState) {
         SyncState.OFFLINE_BACKUP -> {
             bgColor  = Color(0xFFC62828)
             icon     = Icons.Default.CloudOff
-            title    = "Offline — read-only"
-            subtitle = "Showing a local backup. Changes can't be saved right now."
+            title    = "Offline: read-only"
+            subtitle = "Showing a local backup. Tap the button below to sync when back online."
+        }
+        SyncState.SYNC_ERROR -> {
+            bgColor  = Color(0xFFAD1457)
+            icon     = Icons.Default.ErrorOutline
+            title    = "Sync failed"
+            subtitle = "Could not push local changes to the cloud. Tap the button below to try again."
         }
     }
 

@@ -103,6 +103,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                 SettingsScreen(
                     syncState = syncState,
                     onExportWardrobe = { presenter.exportWardrobe(); showSettings = false },
+                    onSyncToFirestore = { presenter.syncLocalToFirestore() },
                     onSignOut = { authVm.signOut(); showSettings = false },
                     onBack = { showSettings = false }
                 )
