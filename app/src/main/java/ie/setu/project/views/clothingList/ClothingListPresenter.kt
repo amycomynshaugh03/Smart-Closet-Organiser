@@ -1,8 +1,12 @@
 package ie.setu.project.views.clothingList
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import ie.setu.project.firebase.clothing.ClothingFirestoreRepository
 import ie.setu.project.firebase.outfit.OutfitFirestoreRepository
 import ie.setu.project.firebase.services.AuthService
@@ -22,7 +26,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 enum class SyncState {
-    SYNCING, SYNCED, OFFLINE_CACHE, OFFLINE_BACKUP
+    SYNCING, SYNCED, OFFLINE_CACHE, OFFLINE_BACKUP, SYNC_ERROR
 }
 
 @HiltViewModel
@@ -32,7 +36,8 @@ class ClothingListPresenter @Inject constructor(
     private val outfitRepo: OutfitFirestoreRepository,
     private val imageStorageRepo: ImageStorageRepository,
     private val localBackup: LocalBackupRepository,
-    private val locationPrefs: LocationPreferencesRepository
+    private val locationPrefs: LocationPreferencesRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val weatherService = WeatherService()
@@ -76,6 +81,13 @@ class ClothingListPresenter @Inject constructor(
         refreshFromFirestore()
     }
 
+    private fun isOnline(): Boolean {
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = cm.activeNetwork ?: return false
+        val capabilities = cm.getNetworkCapabilities(network) ?: return false
+        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
+
     fun refreshFromFirestore() {
         val uid = authService.currentUserId
         if (uid.isBlank()) {
@@ -86,6 +98,17 @@ class ClothingListPresenter @Inject constructor(
             _searchResults.value = emptyList()
             _showSearchResults.value = false
             _syncState.value = SyncState.SYNCED
+            return
+        }
+
+        if (!isOnline()) {
+            viewModelScope.launch {
+                val backupItems = localBackup.getAllLocal()
+                cachedClothing = backupItems
+                _carouselItems.value = backupItems.takeLast(5).reversed()
+                _clothingItems.value = backupItems
+                _syncState.value = SyncState.OFFLINE_BACKUP
+            }
             return
         }
 
@@ -113,6 +136,26 @@ class ClothingListPresenter @Inject constructor(
                 _carouselItems.value = backupItems.takeLast(5).reversed()
                 _clothingItems.value = backupItems
                 _syncState.value = SyncState.OFFLINE_BACKUP
+            }
+        }
+    }
+
+    fun syncLocalToFirestore() {
+        val uid = authService.currentUserId
+        if (uid.isBlank()) return
+
+        _syncState.value = SyncState.SYNCING
+
+        viewModelScope.launch {
+            try {
+                val localItems = localBackup.getAllLocal()
+                localItems.forEach { item ->
+                    clothingRepo.upsert(uid, item)
+                }
+                refreshFromFirestore()
+            } catch (e: Exception) {
+                Timber.e(e, "syncLocalToFirestore failed")
+                _syncState.value = SyncState.SYNC_ERROR
             }
         }
     }

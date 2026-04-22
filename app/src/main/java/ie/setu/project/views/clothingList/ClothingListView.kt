@@ -1,6 +1,5 @@
 package ie.setu.project.views.clothingList
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
@@ -14,8 +13,6 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import ie.setu.project.adapters.ClosetItemListener
 import ie.setu.project.models.clothing.ClosetOrganiserModel
-import ie.setu.project.models.weather.WeatherCondition
-import ie.setu.project.models.weather.WeatherResponse
 import ie.setu.project.ui.auth.AuthStateViewModel
 import ie.setu.project.ui.auth.AuthViewModel
 import ie.setu.project.ui.auth.LoginScreen
@@ -106,6 +103,7 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                 SettingsScreen(
                     syncState = syncState,
                     onExportWardrobe = { presenter.exportWardrobe(); showSettings = false },
+                    onSyncToFirestore = { presenter.syncLocalToFirestore() },
                     onSignOut = { authVm.signOut(); showSettings = false },
                     onBack = { showSettings = false }
                 )
@@ -155,22 +153,23 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
         try {
             val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
             val fileName = "wardrobe_backup_$timestamp.json"
-            val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-            downloadsDir.mkdirs()
-            val file = File(downloadsDir, fileName)
+
+            val exportDir = File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) ?: filesDir, "exports")
+            exportDir.mkdirs()
+            val file = File(exportDir, fileName)
             file.writeText(json)
 
             val uri = androidx.core.content.FileProvider.getUriForFile(
-                this, "${packageName}.provider", file
+                this, "${packageName}.fileprovider", file
             )
-            val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "application/json"
-                putExtra(android.content.Intent.EXTRA_STREAM, uri)
-                putExtra(android.content.Intent.EXTRA_SUBJECT, "Wardrobe Backup")
-                addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                putExtra(Intent.EXTRA_STREAM, uri)
+                putExtra(Intent.EXTRA_SUBJECT, "Wardrobe Backup")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
-            startActivity(android.content.Intent.createChooser(shareIntent, "Export Wardrobe Backup"))
-            showSnackbar("Backup saved to Downloads/$fileName", Snackbar.LENGTH_LONG)
+            startActivity(Intent.createChooser(shareIntent, "Export Wardrobe Backup"))
+            showSnackbar("Export ready - choose where to save", Snackbar.LENGTH_LONG)
         } catch (e: Exception) {
             showSnackbar("Export failed: ${e.message}", Snackbar.LENGTH_LONG)
         }
