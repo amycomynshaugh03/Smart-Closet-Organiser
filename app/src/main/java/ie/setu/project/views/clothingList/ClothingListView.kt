@@ -144,8 +144,6 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
                     showSnackbar("Deleted ${item.title}", Snackbar.LENGTH_SHORT)
                 },
                 showSnackbar = { message, duration -> showSnackbar(message, duration) },
-                updateWeatherUI = { weather -> updateWeatherUI(weather) },
-                showWeatherError = { message -> showWeatherError(message) },
                 onNavigateToProfile = { showProfile = true },
                 onNavigateToTryOn = { startActivity(Intent(this, TryOnView::class.java)) },
                 onNavigateToDonation = { startActivity(Intent(this, DonationView::class.java)) },
@@ -192,17 +190,5 @@ class ClothingListView : AppCompatActivity(), ClosetItemListener {
 
     fun showSnackbar(message: String, duration: Int) {
         Snackbar.make(window.decorView.rootView, message, duration).show()
-    }
-
-    @SuppressLint("SetTextI18n")
-    fun updateWeatherUI(weather: WeatherResponse) {
-        val current = weather.current_weather
-        val condition = WeatherCondition.fromCode(current.weathercode, current.is_day)
-        showSnackbar("Weather: ${current.temperature}°C, ${condition.description}", Snackbar.LENGTH_SHORT)
-    }
-
-    @SuppressLint("SetTextI18n")
-    fun showWeatherError(message: String) {
-        runOnUiThread { showSnackbar("Weather error: $message", Snackbar.LENGTH_SHORT) }
     }
 }

@@ -56,8 +56,6 @@ fun ClothingListScreen(
     onOutfitItemClick: (OutfitModel) -> Unit,
     onDeleteItemClick: (ClosetOrganiserModel) -> Unit,
     showSnackbar: (String, Int) -> Unit,
-    updateWeatherUI: (WeatherResponse) -> Unit,
-    showWeatherError: (String) -> Unit,
     onNavigateToProfile: () -> Unit
 ) {
     val carouselItems by presenter.carouselItems.collectAsStateWithLifecycle()
@@ -76,14 +74,6 @@ fun ClothingListScreen(
         else if (currentCarouselPage > carouselItems.lastIndex) currentCarouselPage = carouselItems.lastIndex
     }
 
-    var lastWeatherKey by remember { mutableStateOf<String?>(null) }
-    LaunchedEffect(weatherData) {
-        weatherData?.let { w ->
-            val c = w.current_weather
-            val key = "${c.temperature}_${c.weathercode}_${c.is_day}"
-            if (key != lastWeatherKey) { lastWeatherKey = key; updateWeatherUI(w) }
-        }
-    }
 
     Scaffold(
         topBar = {
