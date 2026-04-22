@@ -43,7 +43,7 @@ fun MainScreen(
 ) {
     val seasons = stringArrayResource(id = R.array.seasons_array).toList()
     var seasonExpanded by remember { mutableStateOf(false) }
-    val categories = listOf("All", "Tops", "Bottoms", "Dress", "Shoes", "Jackets")
+    val categories = listOf("All", "Tops", "Bottoms", "Dresses", "Shoes", "Jackets")
     val topSubTypes = listOf("Hoodie", "Jumper", "Long Sleeve", "T-Shirt", "Blouse", "Tank Top")
     var subCategoryExpanded by remember { mutableStateOf(false) }
     var categoryExpanded by remember { mutableStateOf(false) }
