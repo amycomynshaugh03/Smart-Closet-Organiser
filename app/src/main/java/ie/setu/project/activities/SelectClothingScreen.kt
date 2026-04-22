@@ -114,7 +114,11 @@ fun SelectClothingScreen(
                                         .size(60.dp)
                                         .clip(RoundedCornerShape(10.dp))
                                         .background(Color(0xFFF5F5F5))
-                                        .border(1.5.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(10.dp)),
+                                        .border(
+                                            1.5.dp,
+                                            MaterialTheme.colorScheme.primary,
+                                            RoundedCornerShape(10.dp)
+                                        ),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     if (hasImage) {
@@ -147,19 +151,35 @@ fun SelectClothingScreen(
                 }
             }
 
+            val categoryOrder = listOf("Tops", "Bottoms", "Dresses", "Jackets", "Shoes")
+            val grouped = clothingItems
+                .groupBy { it.category.ifBlank { "Other" } }
+                .toSortedMap(compareBy { categoryOrder.indexOf(it).takeIf { i -> i >= 0 } ?: 99 })
+
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(12.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                items(clothingItems, key = { it.id }) { item ->
-                    val isChecked = selectedItems.any { it.id == item.id }
-                    SelectClothingRow(
-                        item = item,
-                        checked = isChecked,
-                        onCheckedChange = { checked -> onToggle(item, checked) },
-                        onDelete = { onDelete(item) }
-                    )
+                grouped.forEach { (category, items) ->
+                    item {
+                        Text(
+                            text = category,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        )
+                    }
+                    items(items, key = { it.id }) { item ->
+                        val isChecked = selectedItems.any { it.id == item.id }
+                        SelectClothingRow(
+                            item = item,
+                            checked = isChecked,
+                            onCheckedChange = { checked -> onToggle(item, checked) },
+                            onDelete = { onDelete(item) }
+                        )
+                    }
                 }
             }
         }
