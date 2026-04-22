@@ -57,4 +57,14 @@ class AuthRepository
             Response.Failure(e)
         }
     }
+
+    override suspend fun sendPasswordResetEmail(email: String): Response<Unit> {
+        return try {
+            firebaseAuth.sendPasswordResetEmail(email).await()
+            Response.Success(Unit)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Response.Failure(e)
+        }
+    }
 }

@@ -19,6 +19,10 @@ class AuthViewModel @Inject constructor(
     private val _authResponse = MutableStateFlow<Response<FirebaseUser>?>(null)
     val authResponse: StateFlow<Response<FirebaseUser>?> = _authResponse
 
+    private val _resetResponse = MutableStateFlow<Response<Unit>?>(null)
+    val resetResponse: StateFlow<Response<Unit>?> = _resetResponse
+
+
     fun signIn(email: String, password: String) = viewModelScope.launch {
         _authResponse.value = Response.Loading
         _authResponse.value = authService.authenticateUser(email, password)
@@ -41,5 +45,14 @@ class AuthViewModel @Inject constructor(
 
     fun clearAuthResponse() {
         _authResponse.value = null
+    }
+
+    fun resetPassword(email: String) = viewModelScope.launch {
+        _resetResponse.value = Response.Loading
+        _resetResponse.value = authService.sendPasswordResetEmail(email)
+    }
+
+    fun clearResetResponse() {
+        _resetResponse.value = null
     }
 }
