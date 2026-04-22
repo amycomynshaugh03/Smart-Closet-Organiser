@@ -50,7 +50,9 @@ class AiStylistViewModel @Inject constructor() : ViewModel() {
                 } else {
                     clothingItems
                         .groupBy { it.category.ifBlank { "Uncategorised" } }
-                        .entries.joinToString("\n") { (cat, items) ->
+                        .entries
+                        .distinctBy { it.key }
+                        .joinToString("\n") { (cat, items) ->
                             val list = items.take(5).joinToString(", ") { item ->
                                 buildString {
                                     append(item.title.ifBlank { "Unnamed" })
@@ -69,30 +71,32 @@ class AiStylistViewModel @Inject constructor() : ViewModel() {
                 } else ""
 
                 val prompt = """
-                    You are a friendly personal stylist AI inside a wardrobe app called Smart Closet Organiser.
-                    
-                    ## Current Conditions
-                    Temperature: ${tempC}°C
-                    Weather: $weatherDesc
-                    Time of day: ${if (isDay == 1) "Daytime" else "Evening/Night"}
-                    
-                    ## User's Wardrobe
-                    $wardrobeSummary
-                    
-                    ## Fashion Rules You MUST Follow
-                    $fashionRules
-                    
-                    ## User Input
-                    $vibeSection
-                    
-                    ## Your Task
-                    Suggest a complete outfit using items from the wardrobe above.
-                    - Name actual items from the wardrobe 
-                    - Explain briefly why the outfit works (weather + colour)
-                    - Give one practical tip for today's weather
-                    - Keep it to 4-5 sentences, warm and conversational
-                    - No bullet points — write in natural sentences
-                    - End with a short encouraging sign-off
+                You are a friendly personal stylist AI inside a wardrobe app called Smart Closet Organiser.
+    
+                ## Current Conditions
+                Temperature: ${tempC}°C
+                Weather: $weatherDesc
+                Time of day: ${if (isDay == 1) "Daytime" else "Evening/Night"}
+    
+                ## User's Wardrobe
+                $wardrobeSummary
+    
+                ## Fashion Rules You MUST Follow
+                $fashionRules
+    
+                ## User Input
+                $vibeSection
+    
+                ## Your Task
+                Suggest a complete outfit using items from the wardrobe above.
+                - Name actual items from the wardrobe
+                - Each clothing category should only appear ONCE in your suggestion
+                - Do not repeat or list the same category twice
+                - Explain briefly why the outfit works (weather + colour)
+                - Give one practical tip for today's weather
+                - Keep it to 4-5 sentences, warm and conversational
+                - No bullet points — write in natural sentences
+                - End with a short encouraging sign-off
                 """.trimIndent()
 
                 val response = model.generateContent(prompt)
