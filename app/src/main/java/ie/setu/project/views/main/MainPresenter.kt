@@ -95,7 +95,9 @@ class MainPresenter(private val view: MainView) {
             if (uid.isNotBlank()) {
                 try {
                     val localUri = saved.image
-                    if (localUri != null && localUri != Uri.EMPTY) {
+                    val alreadyUploaded = saved.imageUrl.isNotBlank()
+
+                    if (localUri != null && localUri != Uri.EMPTY && !alreadyUploaded) {
                         val upload = firebase.imageStorageRepository()
                             .uploadClothingImage(uid, saved.id, localUri)
 
