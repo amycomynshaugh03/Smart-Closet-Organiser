@@ -2,9 +2,12 @@ package ie.setu.project.activities
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -56,7 +59,6 @@ fun SelectClothingScreen(
                             Spacer(Modifier.width(8.dp))
                             Icon(painter = painterResource(R.drawable.ic_heart), contentDescription = null, tint = Color.White)
                         }
-                        Text(text = "$selectedCount selected", fontSize = 12.sp, color = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -74,19 +76,91 @@ fun SelectClothingScreen(
             }
         }
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier.padding(padding).fillMaxSize(),
-            contentPadding = PaddingValues(12.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            items(clothingItems, key = { it.id }) { item ->
-                val isChecked = selectedItems.any { it.id == item.id }
-                SelectClothingRow(
-                    item = item,
-                    checked = isChecked,
-                    onCheckedChange = { checked -> onToggle(item, checked) },
-                    onDelete = { onDelete(item) }
-                )
+
+        Column(modifier = Modifier.padding(padding).fillMaxSize()) {
+
+            if (selectedItems.isNotEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White)
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                ) {
+                    Text(
+                        text = "$selectedCount selected",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        selectedItems.forEach { item ->
+                            val imageModel: Any? = item.imageUrl.takeIf { it.isNotBlank() } ?: item.image
+                            val hasImage = imageModel != null &&
+                                    imageModel != android.net.Uri.EMPTY &&
+                                    imageModel.toString().isNotBlank()
+
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.width(64.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(60.dp)
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .background(Color(0xFFF5F5F5))
+                                        .border(1.5.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(10.dp)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (hasImage) {
+                                        AsyncImage(
+                                            model = imageModel,
+                                            contentDescription = item.title,
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    } else {
+                                        Icon(
+                                            imageVector = Icons.Default.Checkroom,
+                                            contentDescription = null,
+                                            tint = Color.LightGray,
+                                            modifier = Modifier.size(28.dp)
+                                        )
+                                    }
+                                }
+                                Text(
+                                    text = item.title.ifBlank { "Item" },
+                                    fontSize = 10.sp,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = Color.Gray
+                                )
+                            }
+                        }
+                    }
+                    HorizontalDivider(modifier = Modifier.padding(top = 8.dp))
+                }
+            }
+
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(12.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                items(clothingItems, key = { it.id }) { item ->
+                    val isChecked = selectedItems.any { it.id == item.id }
+                    SelectClothingRow(
+                        item = item,
+                        checked = isChecked,
+                        onCheckedChange = { checked -> onToggle(item, checked) },
+                        onDelete = { onDelete(item) }
+                    )
+                }
             }
         }
     }
