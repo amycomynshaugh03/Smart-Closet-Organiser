@@ -42,6 +42,7 @@ class AddOutfitView : AppCompatActivity() {
                 onPickLastWorn = { presenter.showDatePicker() },
                 onChooseClothing = { presenter.launchClothingSelection() },
                 onSave = { title, desc, season -> presenter.doAddOrSave(title, desc, season) },
+                onBack = { finish() },
                 showError = { msg -> scope.launch { snackbarHostState.showSnackbar(msg) } }
             )
         } }

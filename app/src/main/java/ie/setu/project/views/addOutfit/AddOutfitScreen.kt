@@ -3,9 +3,12 @@ package ie.setu.project.views.addOutfit
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringArrayResource
@@ -22,6 +25,7 @@ fun AddOutfitScreen(
     lastWornText: String, selectedClothingCount: Int, snackbarHostState: SnackbarHostState,
     onPickLastWorn: () -> Unit, onChooseClothing: () -> Unit,
     onSave: (title: String, description: String, season: String) -> Unit,
+    onBack: () -> Unit,
     showError: (String) -> Unit
 ) {
     val seasons = stringArrayResource(id = R.array.seasons_array).toList()
@@ -38,8 +42,17 @@ fun AddOutfitScreen(
     Scaffold(
         topBar = {
             TopAppBar(
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                    }
+                },
                 title = {
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Icon(painter = androidx.compose.ui.res.painterResource(R.drawable.ic_heart), contentDescription = null, tint = Color.White)
                         Spacer(Modifier.width(8.dp))
                         Text(text = "Outfits", fontSize = 30.sp, fontFamily = FontFamily.Cursive, color = Color.White)
@@ -55,17 +68,23 @@ fun AddOutfitScreen(
             modifier = Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            OutlinedTextField(value = title, onValueChange = { title = it },
+            OutlinedTextField(
+                value = title, onValueChange = { title = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text(stringResource(R.string.enter_clothing_title)) }, singleLine = true)
-            OutlinedTextField(value = description, onValueChange = { description = it },
+                label = { Text(stringResource(R.string.enter_clothing_title)) }, singleLine = true
+            )
+            OutlinedTextField(
+                value = description, onValueChange = { description = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text(stringResource(R.string.enter_description)) }, minLines = 3)
+                label = { Text(stringResource(R.string.enter_description)) }, minLines = 3
+            )
 
             ExposedDropdownMenuBox(expanded = seasonExpanded, onExpandedChange = { seasonExpanded = !seasonExpanded }) {
-                OutlinedTextField(value = selectedSeason, onValueChange = {}, readOnly = true, label = { Text("Season") },
+                OutlinedTextField(
+                    value = selectedSeason, onValueChange = {}, readOnly = true, label = { Text("Season") },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = seasonExpanded) },
-                    modifier = Modifier.menuAnchor().fillMaxWidth())
+                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                )
                 ExposedDropdownMenu(expanded = seasonExpanded, onDismissRequest = { seasonExpanded = false }) {
                     seasons.forEach { season ->
                         DropdownMenuItem(text = { Text(season) }, onClick = { selectedSeason = season; seasonExpanded = false })
@@ -73,10 +92,12 @@ fun AddOutfitScreen(
                 }
             }
 
-            OutlinedTextField(value = lastWornText, onValueChange = {},
+            OutlinedTextField(
+                value = lastWornText, onValueChange = {},
                 readOnly = true, label = { Text(stringResource(R.string.enter_lastworn)) },
                 modifier = Modifier.fillMaxWidth(),
-                trailingIcon = { TextButton(onClick = onPickLastWorn) { Text("Pick") } })
+                trailingIcon = { TextButton(onClick = onPickLastWorn) { Text("Pick") } }
+            )
 
             Button(
                 onClick = onChooseClothing,
