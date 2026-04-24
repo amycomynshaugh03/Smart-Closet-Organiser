@@ -69,6 +69,15 @@ private val DarkColorScheme = darkColorScheme(
     inversePrimary = Primary,
 )
 
+/**
+ * The Material 3 theme for the Smart Closet Organiser app.
+ *
+ * Applies either the light or dark colour scheme based on the system setting,
+ * using the colour values defined in [Color.kt].
+ *
+ * @param darkTheme Whether to apply the dark colour scheme. Defaults to the system setting.
+ * @param content The composable content to render within this theme.
+ */
 @Composable
 fun ClosetOrganiserTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

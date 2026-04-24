@@ -2,6 +2,15 @@ package ie.setu.project.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+/**
+ * Defines the colour palette for the Smart Closet Organiser app.
+ *
+ * Colours are defined for both light and dark Material 3 colour schemes.
+ * These values are used by [ClosetOrganiserTheme] in [Theme.kt].
+ *
+ * Light theme colours are named directly (e.g. [Primary], [Background]).
+ * Dark theme colours are suffixed with "Dark" (e.g. [PrimaryDark], [BackgroundDark]).
+ */
 
 val Primary = Color(0xFF007A90)
 val OnPrimary = Color(0xFFFFFFFF)
