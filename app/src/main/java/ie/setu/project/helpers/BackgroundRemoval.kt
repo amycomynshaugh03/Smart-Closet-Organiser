@@ -16,6 +16,18 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
 
+/**
+ * Sends a clothing image to the remove.bg API to remove its background, then saves
+ * the resulting transparent PNG to the app's cache and returns a content URI.
+ *
+ * The image is corrected for EXIF rotation before upload.
+ * Requires [BuildConfig.REMOVE_BG_API_KEY] to be set.
+ *
+ * @param context The application or activity context, used for file access.
+ * @param inputUri The local [Uri] of the source image.
+ * @return A [Uri] pointing to the background-removed PNG in the app's cache directory.
+ * @throws IllegalStateException if the remove.bg API returns an error or empty response.
+ */
 suspend fun removeBackgroundAndSave(
     context: Context,
     inputUri: android.net.Uri
@@ -88,7 +100,14 @@ suspend fun removeBackgroundAndSave(
 
 
 }
-
+/**
+ * Reads the EXIF orientation of an image and returns a rotation-corrected copy as a new URI.
+ * If no rotation is needed, returns the original [inputUri] unchanged.
+ *
+ * @param context The application or activity context, used for file access.
+ * @param inputUri The local [Uri] of the source image.
+ * @return A [Uri] pointing to the rotation-corrected JPEG, or the original if no correction was needed.
+ */
 suspend fun correctImageRotation(
     context: Context,
     inputUri: android.net.Uri
