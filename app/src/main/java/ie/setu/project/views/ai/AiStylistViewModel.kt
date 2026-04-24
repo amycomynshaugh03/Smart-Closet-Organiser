@@ -14,26 +14,57 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+/**
+ * Represents the state of an AI outfit suggestion request.
+ */
 sealed class AiState {
+    /** No request has been made. */
     object Idle : AiState()
+    /** A request is currently in progress. */
     object Loading : AiState()
+    /** The request completed successfully with a [suggestion] string. */
     data class Success(val suggestion: String) : AiState()
+    /** The request failed with an error [message]. */
     data class Error(val message: String) : AiState()
 }
 
+/**
+ * ViewModel for the AI Stylist feature.
+ *
+ * Uses the Gemini 2.5 Flash model to generate a personalised outfit suggestion
+ * based on the user's current wardrobe, local weather, and an optional mood/vibe input.
+ * Fashion rules from [FashionRules] are included in the prompt to guide the AI.
+ *
+ * Injected via Hilt.
+ */
 @HiltViewModel
 class AiStylistViewModel @Inject constructor() : ViewModel() {
 
     private val _aiState = MutableStateFlow<AiState>(AiState.Idle)
+
+    /** The current state of the AI suggestion (idle, loading, success, or error). */
     val aiState: StateFlow<AiState> = _aiState.asStateFlow()
 
     private val model = GenerativeModel(modelName = "gemini-2.5-flash", apiKey = BuildConfig.GEMINI_API_KEY)
 
     private val _userVibe = MutableStateFlow("")
+
+    /** The user's optional mood/vibe input for the outfit suggestion. */
     val userVibe: StateFlow<String> = _userVibe.asStateFlow()
 
+    /**
+     * Updates the user's vibe/mood input for the next suggestion.
+     * @param vibe A free-text string describing the user's desired style or mood.
+     */
     fun setUserVibe(vibe: String) { _userVibe.value = vibe }
 
+    /**
+     * Requests an outfit suggestion from Gemini based on the current weather and wardrobe.
+     * Updates [aiState] to [AiState.Loading] while the request is in progress.
+     *
+     * @param weather The current [WeatherResponse] from the weather API, or null if unavailable.
+     * @param clothingItems The user's current wardrobe items.
+     */
     fun getSuggestion(weather: WeatherResponse?, clothingItems: List<ClosetOrganiserModel>) {
         viewModelScope.launch {
             _aiState.value = AiState.Loading
@@ -124,6 +155,7 @@ class AiStylistViewModel @Inject constructor() : ViewModel() {
         else -> "Cloudy"
     }
 
+    /** Resets [aiState] to idle and clears the user vibe input. */
     fun reset() {
         _aiState.value = AiState.Idle
         _userVibe.value = ""
