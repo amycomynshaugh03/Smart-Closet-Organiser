@@ -9,6 +9,16 @@ import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * Firestore repository for managing outfits in cloud storage.
+ *
+ * Operates under the path: `users/{uid}/outfits/{outfitId}`.
+ * Each outfit document stores the outfit's metadata and a nested list of clothing items.
+ * Injected as a singleton via Hilt.
+ *
+ * @constructor Injects [FirebaseFirestore] via Hilt.
+ * @param firestore The Firestore database instance.
+ */
 @Singleton
 class OutfitFirestoreRepository @Inject constructor(
     private val firestore: FirebaseFirestore
@@ -29,6 +39,13 @@ class OutfitFirestoreRepository @Inject constructor(
         "imageUrl"     to item.imageUrl
     )
 
+    /**
+     * Saves or updates an outfit document in Firestore, including all nested clothing items.
+     * Uses the outfit's [OutfitModel.id] as the document ID.
+     *
+     * @param uid The authenticated user's UID.
+     * @param outfit The outfit to save.
+     */
     suspend fun upsert(uid: String, outfit: OutfitModel) {
         val docId = outfit.id.toString()
         val data = hashMapOf(
@@ -42,10 +59,23 @@ class OutfitFirestoreRepository @Inject constructor(
         outfitsCollection(uid).document(docId).set(data).await()
     }
 
+    /**
+     * Deletes an outfit document from Firestore.
+     *
+     * @param uid The authenticated user's UID.
+     * @param outfitId The ID of the outfit to delete.
+     */
     suspend fun delete(uid: String, outfitId: Long) {
         outfitsCollection(uid).document(outfitId.toString()).delete().await()
     }
 
+    /**
+     * Retrieves all outfits for a user, sorted alphabetically by title.
+     * Each outfit is reconstructed with its full list of clothing items.
+     *
+     * @param uid The authenticated user's UID.
+     * @return A list of [OutfitModel] objects sorted by title (case-insensitive).
+     */
     @Suppress("UNCHECKED_CAST")
     suspend fun getAll(uid: String): List<OutfitModel> {
         val snap = outfitsCollection(uid).get().await()
