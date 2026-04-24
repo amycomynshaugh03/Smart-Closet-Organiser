@@ -25,10 +25,39 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+/**
+ * Represents the current data synchronisation state of the clothing list.
+ */
 enum class SyncState {
-    SYNCING, SYNCED, OFFLINE_CACHE, OFFLINE_BACKUP, SYNC_ERROR
+    /** A Firestore sync is currently in progress. */
+    SYNCING,
+    /** Data was successfully synced from Firestore. */
+    SYNCED,
+    /** Data is being served from Firestore's offline cache. */
+    OFFLINE_CACHE,
+    /** Device is offline; data is being served from the local SQLite backup. */
+    OFFLINE_BACKUP,
+    /** A sync attempt failed unexpectedly. */
+    SYNC_ERROR
 }
 
+/**
+ * ViewModel/Presenter for the main clothing list screen (ClothingListView).
+ *
+ * Combines MVP-style presentation logic with Android ViewModel lifecycle management.
+ * Responsible for loading clothing and outfit data from Firestore (or a local SQLite backup
+ * when offline), fetching weather data, handling search, and managing data exports.
+ *
+ * Injected via Hilt.
+ *
+ * @param authService Provides the current user's authentication state and UID.
+ * @param clothingRepo Firestore repository for clothing item operations.
+ * @param outfitRepo Firestore repository for outfit operations.
+ * @param imageStorageRepo Firebase Storage repository for image deletion.
+ * @param localBackup Local SQLite backup repository used when offline.
+ * @param locationPrefs DataStore repository for the user's saved weather location.
+ * @param context Application context used for connectivity checks.
+ */
 @HiltViewModel
 class ClothingListPresenter @Inject constructor(
     private val authService: AuthService,
@@ -46,30 +75,39 @@ class ClothingListPresenter @Inject constructor(
     private var cachedOutfits: List<OutfitModel> = emptyList()
 
     private val _carouselItems = MutableStateFlow<List<ClosetOrganiserModel>>(emptyList())
+    /** The most recent 5 clothing items for the home screen carousel (most recently added first). */
     val carouselItems: StateFlow<List<ClosetOrganiserModel>> = _carouselItems.asStateFlow()
 
     private val _weatherData = MutableStateFlow<WeatherResponse?>(null)
+    /** The latest weather data for the user's saved location. Null if unavailable. */
     val weatherData: StateFlow<WeatherResponse?> = _weatherData.asStateFlow()
 
     private val _searchQuery = MutableStateFlow("")
+    /** The current search query string. */
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
     private val _searchResults = MutableStateFlow<List<Any>>(emptyList())
+    /** Combined clothing and outfit search results matching the current query. */
     val searchResults: StateFlow<List<Any>> = _searchResults.asStateFlow()
 
     private val _showSearchResults = MutableStateFlow(false)
+    /** True when search results should be shown in the UI. */
     val showSearchResults: StateFlow<Boolean> = _showSearchResults.asStateFlow()
 
     private val _syncState = MutableStateFlow(SyncState.SYNCING)
+    /** The current Firestore synchronisation state. */
     val syncState: StateFlow<SyncState> = _syncState.asStateFlow()
 
     private val _exportJson = MutableStateFlow<String?>(null)
+    /** The exported wardrobe JSON string, or null if no export is pending. */
     val exportJson: StateFlow<String?> = _exportJson.asStateFlow()
 
     private val _clothingItems = MutableStateFlow<List<ClosetOrganiserModel>>(emptyList())
+    /** All clothing items for the current user. */
     val clothingItems: StateFlow<List<ClosetOrganiserModel>> = _clothingItems.asStateFlow()
 
     private val _weatherError = MutableStateFlow<String?>(null)
+    /** An error message from the last weather fetch, or null if no error occurred. */
     val weatherError: StateFlow<String?> = _weatherError.asStateFlow()
 
     init {
@@ -81,6 +119,11 @@ class ClothingListPresenter @Inject constructor(
         refreshFromFirestore()
     }
 
+    /**
+     * Checks whether the device currently has an active internet connection.
+     *
+     * @return True if internet is available, false otherwise.
+     */
     private fun isOnline(): Boolean {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = cm.activeNetwork ?: return false
@@ -88,6 +131,10 @@ class ClothingListPresenter @Inject constructor(
         return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
+    /**
+     * Refreshes clothing and outfit data from Firestore, falling back to the local SQLite
+     * backup if the device is offline. Clears all state if the user is not authenticated.
+     */
     fun refreshFromFirestore() {
         val uid = authService.currentUserId
         if (uid.isBlank()) {
@@ -140,6 +187,10 @@ class ClothingListPresenter @Inject constructor(
         }
     }
 
+    /**
+     * Pushes all locally backed-up clothing items back to Firestore.
+     * Used to re-sync data after recovering from an offline period.
+     */
     fun syncLocalToFirestore() {
         val uid = authService.currentUserId
         if (uid.isBlank()) return
@@ -160,6 +211,10 @@ class ClothingListPresenter @Inject constructor(
         }
     }
 
+    /**
+     * Fetches weather data from the Open-Meteo API for the user's saved location preference.
+     * Updates [weatherData] on success or sets [weatherError] on failure.
+     */
     fun fetchWeather() {
         viewModelScope.launch {
             try {
@@ -174,6 +229,12 @@ class ClothingListPresenter @Inject constructor(
         }
     }
 
+    /**
+     * Updates the search query and triggers a filtered search across clothing items and outfits.
+     * Hides search results if the query is empty.
+     *
+     * @param query The new search query string entered by the user.
+     */
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
         val q = query.trim()
@@ -186,6 +247,12 @@ class ClothingListPresenter @Inject constructor(
         }
     }
 
+    /**
+     * Filters [cachedClothing] and [cachedOutfits] against the given query and
+     * updates [searchResults]. Searches across title, description, colour, season, and category.
+     *
+     * @param query The trimmed, non-empty search string.
+     */
     private fun performSearch(query: String) {
         viewModelScope.launch {
             val results = mutableListOf<Any>()
@@ -211,6 +278,12 @@ class ClothingListPresenter @Inject constructor(
         }
     }
 
+    /**
+     * Deletes a clothing item and its associated image from Firestore and Firebase Storage,
+     * then refreshes the clothing list.
+     *
+     * @param item The clothing item to delete.
+     */
     fun deleteClothing(item: ClosetOrganiserModel) {
         val uid = authService.currentUserId
         if (uid.isBlank()) return
@@ -228,6 +301,10 @@ class ClothingListPresenter @Inject constructor(
         }
     }
 
+    /**
+     * Serialises all locally backed-up clothing items to a JSON string
+     * and emits it via [exportJson] for the UI to consume (e.g. share or save to file).
+     */
     fun exportWardrobe() {
         viewModelScope.launch {
             try {
@@ -238,10 +315,16 @@ class ClothingListPresenter @Inject constructor(
         }
     }
 
+    /**
+     * Resets [exportJson] to null after the UI has consumed the exported data.
+     */
     fun clearExport() {
         _exportJson.value = null
     }
 
+    /**
+     * Hides the search results panel and clears the search query and results.
+     */
     fun hideSearchResults() {
         _showSearchResults.value = false
         _searchQuery.value = ""
