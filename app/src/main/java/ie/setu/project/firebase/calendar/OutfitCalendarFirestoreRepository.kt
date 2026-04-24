@@ -6,6 +6,16 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * Firestore repository for managing outfit calendar entries.
+ *
+ * Operates under: `users/{uid}/calendar/{dateKey}`.
+ * Each document represents one day's outfit assignment.
+ * Injected as a singleton via Hilt.
+ *
+ * @constructor Injects [FirebaseFirestore] via Hilt.
+ * @param firestore The Firestore database instance.
+ */
 @Singleton
 class OutfitCalendarFirestoreRepository @Inject constructor(
     private val firestore: FirebaseFirestore
@@ -13,6 +23,13 @@ class OutfitCalendarFirestoreRepository @Inject constructor(
     private fun calendarCollection(uid: String) =
         firestore.collection("users").document(uid).collection("calendar")
 
+    /**
+     * Saves or updates a calendar entry for a given date.
+     * Uses [OutfitCalendarEntry.dateKey] as the document ID.
+     *
+     * @param uid The authenticated user's UID.
+     * @param entry The calendar entry to save.
+     */
     suspend fun upsert(uid: String, entry: OutfitCalendarEntry) {
         val data = hashMapOf(
             "dateKey"     to entry.dateKey,
@@ -23,10 +40,22 @@ class OutfitCalendarFirestoreRepository @Inject constructor(
         calendarCollection(uid).document(entry.dateKey).set(data).await()
     }
 
+    /**
+     * Removes the calendar entry for a given date.
+     *
+     * @param uid The authenticated user's UID.
+     * @param dateKey The date key of the entry to delete (e.g. "2025-04-24").
+     */
     suspend fun delete(uid: String, dateKey: String) {
         calendarCollection(uid).document(dateKey).delete().await()
     }
 
+    /**
+     * Retrieves all calendar entries for a user as a map of date key to entry.
+     *
+     * @param uid The authenticated user's UID.
+     * @return A map of date key strings to [OutfitCalendarEntry] objects.
+     */
     suspend fun getAll(uid: String): Map<String, OutfitCalendarEntry> {
         val snap = calendarCollection(uid).get().await()
         return snap.documents.mapNotNull { doc ->
