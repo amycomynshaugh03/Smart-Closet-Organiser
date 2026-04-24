@@ -12,6 +12,16 @@ import ie.setu.project.views.addOutfit.AddOutfitView
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+/**
+ * Presenter for [OutfitView] in the MVP layer.
+ *
+ * Loads the user's outfits from Firestore and handles navigation to the add/edit screen
+ * and outfit deletion. Uses [FirebaseEntryPoint] to resolve Firebase dependencies
+ * outside the Hilt graph.
+ *
+ * @constructor Registers the activity result callback and triggers an initial Firestore refresh.
+ * @param view The [OutfitView] this presenter is attached to.
+ */
 class OutfitPresenter(private val view: OutfitView) {
 
     private val firebase by lazy {
@@ -30,8 +40,15 @@ class OutfitPresenter(private val view: OutfitView) {
         refreshFromFirestore()
     }
 
+    /**
+     * Returns the most recently loaded list of outfits.
+     */
     fun getOutfits(): List<OutfitModel> = cachedOutfits
 
+    /**
+     * Fetches all outfits from Firestore for the current user and notifies the view to reload.
+     * Silently returns if the user is not authenticated.
+     */
     fun refreshFromFirestore() {
         val uid = firebase.authService().currentUserId
         if (uid.isBlank()) return
@@ -46,6 +63,11 @@ class OutfitPresenter(private val view: OutfitView) {
         }
     }
 
+    /**
+     * Launches [AddOutfitView] with the given outfit pre-loaded for editing.
+     *
+     * @param outfit The outfit to edit.
+     */
     fun onOutfitClick(outfit: OutfitModel) {
         val intent = Intent(view, AddOutfitView::class.java).apply {
             putExtra("outfit_edit", outfit)
@@ -53,6 +75,11 @@ class OutfitPresenter(private val view: OutfitView) {
         getResult.launch(intent)
     }
 
+    /**
+     * Deletes the given outfit from Firestore and refreshes the outfit list.
+     *
+     * @param outfit The outfit to delete.
+     */
     fun onDeleteOutfitClick(outfit: OutfitModel) {
         val uid = firebase.authService().currentUserId
         if (uid.isBlank()) return
@@ -67,6 +94,10 @@ class OutfitPresenter(private val view: OutfitView) {
         }
     }
 
+    /**
+     * Registers the activity result callback for the add/edit outfit screen.
+     * Refreshes the outfit list on [Activity.RESULT_OK] and shows a snackbar on cancellation.
+     */
     private fun registerActivityResultCallback() {
         getResult = view.registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()

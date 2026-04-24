@@ -14,6 +14,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
+/**
+ * Presenter for [ClothingView] in the MVP layer.
+ *
+ * Manages clothing item data by fetching from Firestore, handling item additions,
+ * edits, and deletions. Also cleans up the associated Firebase Storage image on delete.
+ * Uses [FirebaseEntryPoint] to access Firebase dependencies outside the Hilt graph.
+ *
+ * @constructor Creates the presenter, registers the activity result callback,
+ *   and triggers an initial Firestore refresh.
+ * @param view The [ClothingView] activity this presenter is attached to.
+ */
 class ClothingPresenter(private val view: ClothingView) {
 
     private lateinit var getResult: ActivityResultLauncher<Intent>
@@ -32,8 +43,15 @@ class ClothingPresenter(private val view: ClothingView) {
         refreshFromFirestore()
     }
 
+    /**
+     * Returns the most recently loaded list of clothing items.
+     */
     fun getClosetItems(): List<ClosetOrganiserModel> = cachedItems
 
+    /**
+     * Fetches all clothing items from Firestore for the current user and
+     * updates the view's adapter. Silently clears the list if the user is not signed in.
+     */
     fun refreshFromFirestore() {
         val uid = firebase.authService().currentUserId
         if (uid.isBlank()) {
@@ -57,10 +75,18 @@ class ClothingPresenter(private val view: ClothingView) {
         }
     }
 
+    /**
+     * Launches the add clothing item screen via [MainView].
+     */
     fun launchAddItem() {
         getResult.launch(Intent(view, MainView::class.java))
     }
 
+    /**
+     * Launches the edit screen for the given clothing item.
+     *
+     * @param item The clothing item to edit.
+     */
     fun onClosetItemClick(item: ClosetOrganiserModel) {
         val intent = Intent(view, MainView::class.java).apply {
             putExtra("closet_item_edit", item)
@@ -68,7 +94,12 @@ class ClothingPresenter(private val view: ClothingView) {
         getResult.launch(intent)
     }
 
-
+    /**
+     * Deletes the given item's image from Firebase Storage and its document from Firestore,
+     * then refreshes the clothing list.
+     *
+     * @param item The clothing item to delete.
+     */
     fun onDeleteItemClick(item: ClosetOrganiserModel) {
         val uid = firebase.authService().currentUserId
         if (uid.isBlank()) {
@@ -92,6 +123,10 @@ class ClothingPresenter(private val view: ClothingView) {
         }
     }
 
+    /**
+     * Registers the activity result callback for add/edit operations.
+     * Refreshes the clothing list on [Activity.RESULT_OK].
+     */
     private fun registerActivityResultCallback() {
         getResult = view.registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()

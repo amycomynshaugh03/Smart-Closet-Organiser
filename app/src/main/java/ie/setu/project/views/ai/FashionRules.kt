@@ -1,7 +1,18 @@
 package ie.setu.project.views.ai
 
+/**
+ * A collection of fashion and styling rules used to guide the AI Stylist.
+ *
+ * Rules cover colour coordination, pattern mixing, silhouette balance, formality,
+ * accessories, fabric choice, and weather-appropriate dressing. These are injected
+ * into the Gemini prompt inside [AiStylistViewModel] to constrain the AI's suggestions.
+ */
 object FashionRules {
 
+    /**
+     * A list of general, weather-independent styling rules (colour clashes to avoid,
+     * safe combinations, pattern guidance, silhouette balance, formality matching, etc.).
+     */
     val generalRules = listOf(
         "NEVER pair navy blue and black together — they are too similar and look like a mismatched accident.",
         "NEVER pair two different shades of black together — faded black and true black look like a mistake.",
@@ -42,6 +53,14 @@ object FashionRules {
         "Avoid heavy fabrics like wool or tweed in warm weather — opt for linen, cotton, or light blends.",
     )
 
+    /**
+     * Returns a list of weather-specific styling rules derived from the current
+     * weather code and temperature.
+     *
+     * @param weatherCode The WMO weather interpretation code from the Open-Meteo API.
+     * @param tempCelsius The current temperature in degrees Celsius.
+     * @return A list of rule strings relevant to the current weather conditions.
+     */
     fun weatherRules(weatherCode: Int, tempCelsius: Float): List<String> {
         val rules = mutableListOf<String>()
 
@@ -89,6 +108,14 @@ object FashionRules {
         return rules
     }
 
+    /**
+     * Combines [generalRules] and [weatherRules] into a single prompt-ready string,
+     * with each rule prefixed by a dash.
+     *
+     * @param weatherCode The WMO weather code for the current conditions.
+     * @param tempCelsius The current temperature in degrees Celsius.
+     * @return A formatted multi-line string of all applicable rules.
+     */
     fun buildRulesPrompt(weatherCode: Int, tempCelsius: Float): String {
         val all = generalRules + weatherRules(weatherCode, tempCelsius)
         return all.joinToString("\n") { "- $it" }

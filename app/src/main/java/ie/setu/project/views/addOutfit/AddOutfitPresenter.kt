@@ -19,8 +19,20 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+/**
+ * Presenter for [AddOutfitView] in the MVP layer.
+ *
+ * Handles creating and editing [OutfitModel] records. On save, the outfit is written
+ * to the local [OutfitStore] and synced to Firestore. Also manages launching the
+ * [SelectClothingActivity] for clothing selection and the date picker for last-worn date.
+ *
+ * @constructor Creates the presenter, loads any existing outfit from the intent,
+ *   and registers the clothing selection activity result callback.
+ * @param view The [AddOutfitView] this presenter is attached to.
+ */
 class AddOutfitPresenter(private val view: AddOutfitView) {
 
+    /** The outfit being created or edited. Defaults to a new empty [OutfitModel]. */
     var outfit = OutfitModel()
 
     private val outfitStore: OutfitStore by lazy {
@@ -48,6 +60,16 @@ class AddOutfitPresenter(private val view: AddOutfitView) {
         registerClothingSelectionCallback()
     }
 
+    /**
+     * Saves or updates the outfit with the provided field values.
+     * Creates a new outfit if [outfit.id] is 0, otherwise updates the existing one.
+     * Writes to the local [OutfitStore] and syncs to Firestore if the user is authenticated.
+     * Finishes the view with [RESULT_OK] on completion.
+     *
+     * @param title The outfit title entered by the user.
+     * @param description The outfit description entered by the user.
+     * @param season The selected season for the outfit.
+     */
     fun doAddOrSave(title: String, description: String, season: String) {
 
         outfit.title = title.trim()
@@ -82,6 +104,10 @@ class AddOutfitPresenter(private val view: AddOutfitView) {
         view.finish()
     }
 
+    /**
+     * Launches [SelectClothingActivity] so the user can pick clothing items for the outfit.
+     * Passes the currently selected items so checkboxes are pre-populated.
+     */
     fun launchClothingSelection() {
         val intent = Intent(view, SelectClothingActivity::class.java).apply {
             putExtra("selected_clothing", ArrayList(outfit.clothingItems))
@@ -89,6 +115,10 @@ class AddOutfitPresenter(private val view: AddOutfitView) {
         clothingSelectionLauncher.launch(intent)
     }
 
+    /**
+     * Shows a [MaterialDatePicker] and updates [outfit.lastWorn] with the chosen date.
+     * Also updates the view's displayed date string.
+     */
     fun showDatePicker() {
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setSelection(outfit.lastWorn.time)
@@ -105,6 +135,11 @@ class AddOutfitPresenter(private val view: AddOutfitView) {
         datePicker.show(view.supportFragmentManager, "DATE_PICKER")
     }
 
+    /**
+     * Registers the activity result callback for the clothing selection screen.
+     * On [RESULT_OK], updates [outfit.clothingItems] with the user's selections
+     * and refreshes the view.
+     */
     private fun registerClothingSelectionCallback() {
         clothingSelectionLauncher = view.registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()

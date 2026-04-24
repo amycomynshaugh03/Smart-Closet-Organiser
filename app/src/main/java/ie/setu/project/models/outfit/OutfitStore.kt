@@ -2,7 +2,8 @@ package ie.setu.project.models.outfit
 
 /**
  * Interface that defines the operations for managing outfits in the store.
- * It provides methods to retrieve, create, update, and delete outfits.
+ * All implementations (e.g. [OutfitMemStore], [OutfitJSONStore]) must provide
+ * CRUD operations for [OutfitModel] items.
  */
 interface OutfitStore {
 
@@ -14,16 +15,14 @@ interface OutfitStore {
     fun findAll(): List<OutfitModel>
 
     /**
-     * Adds a new outfit to the store.
-     *
-     * @param outfit The outfit to be added.
+     * Adds a new outfit to the store, assigning it a unique ID.
+     * @param outfit The outfit to add.
      */
     fun create(outfit: OutfitModel)
 
     /**
-     * Updates an existing outfit in the store.
-     *
-     * @param outfit The outfit with updated data.
+     * Updates an existing outfit matched by [OutfitModel.id].
+     * @param outfit The outfit with updated fields.
      */
     fun update(outfit: OutfitModel)
 

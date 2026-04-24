@@ -5,4 +5,6 @@ plugins {
     alias(libs.plugins.google.gms.google.services) apply false
     alias(libs.plugins.hilt.android) apply false
     alias(libs.plugins.kotlin.android.ksp) apply false
+    id("org.jetbrains.dokka") version "1.9.20" apply false
+
 }

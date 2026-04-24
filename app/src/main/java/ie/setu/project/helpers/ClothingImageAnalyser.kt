@@ -11,6 +11,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
+/**
+ * Holds the result of an AI-powered clothing image analysis performed by Gemini.
+ *
+ * @property title A short generated name for the item (e.g. "White Linen Shirt").
+ * @property description A one-sentence description of the item's style or fabric.
+ * @property colour The primary colour or pattern (e.g. "Navy Blue", "Red Floral").
+ * @property category The clothing category, one of: Tops, Bottoms, Dress, Shoes, Jackets.
+ */
 data class ClothingAnalysisResult(
     val title: String = "",
     val description: String = "",
@@ -18,6 +26,17 @@ data class ClothingAnalysisResult(
     val category: String = ""
 )
 
+/**
+ * Uses the Gemini 2.5 Flash model to analyse a clothing item image and return
+ * structured metadata including title, description, colour, and category.
+ *
+ * The image is downsampled before sending to stay within model input size limits.
+ * Requires [BuildConfig.GEMINI_API_KEY] to be set.
+ *
+ * @param context Used to read the image from the given [Uri].
+ * @param imageUri The local [Uri] of the clothing image to analyse.
+ * @return A [Result] wrapping a [ClothingAnalysisResult] on success, or an exception on failure.
+ */
 suspend fun analyseClothingImage(
     context: Context,
     imageUri: Uri

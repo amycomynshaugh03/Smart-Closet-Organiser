@@ -1,3 +1,7 @@
+// This file is entirely commented out and represents a deprecated SQLite-backed
+// OutfitStore implementation. It was superseded by OutfitJSONStore and
+// OutfitFirestoreRepository. Retained for reference only.
+
 // package ie.setu.project.models
 //
 // import android.content.ContentValues
@@ -12,7 +16,7 @@
 // import timber.log.Timber.i
 // import java.util.Date
 //
-// private const val DATABASE_NAME = "closet.db" // Should match ClosetSQLStore
+// private const val DATABASE_NAME = "closet.db"
 // private const val DATABASE_VERSION = 1
 // private const val OUTFIT_TABLE = "outfits"
 // private const val COLUMN_ID = "id"

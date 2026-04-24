@@ -11,7 +11,20 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
-
+/**
+ * A Hilt-injected [CoroutineWorker] that fires a local notification reminding
+ * the user to drop off a scheduled clothing donation.
+ *
+ * Scheduled by [DonationViewModel.scheduleDonation] via [WorkManager] with a delay
+ * calculated from the planned donation date. The notification deep-links into the
+ * Donation tab of the app.
+ *
+ * Requires the "donation_reminders" notification channel to exist (created in [MainApp]).
+ *
+ * Input data keys:
+ * - `"item_title"` — The title of the clothing item being donated.
+ * - `"location_name"` — The name of the chosen donation location.
+ */
 @HiltWorker
 class DonationReminderWorker @AssistedInject constructor(
     @Assisted private val context: Context,

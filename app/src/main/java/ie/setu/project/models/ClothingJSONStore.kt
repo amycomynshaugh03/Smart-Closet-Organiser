@@ -13,18 +13,32 @@ import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.Random
 
+/** The filename used to persist clothing items as JSON in the app's private storage. */
 const val JSON_FILE = "clothingitems.json"
 
+/** Gson instance configured for pretty printing and custom [Uri] serialization. */
 val gsonBuilder: Gson = GsonBuilder()
     .setPrettyPrinting()
     .registerTypeAdapter(Uri::class.java, UriParser())
     .create()
 
+/** Gson type token for deserializing a list of [ClosetOrganiserModel] objects. */
 val listType: Type =
     object : TypeToken<ArrayList<ClosetOrganiserModel>>() {}.type
 
+/** Generates a random [Long] for use as a clothing item ID. */
 fun generateRandomId(): Long = Random().nextLong()
 
+/**
+ * A JSON file-backed implementation of [ClothingStore].
+ *
+ * Persists clothing items to a local JSON file ("clothingitems.json") in the app's
+ * private storage. On initialization, deserializes existing data if the file is present.
+ * All mutating operations re-serialize the full list back to disk.
+ *
+ * @constructor Creates the store and loads existing data from disk if available.
+ * @param context Used to read and write the JSON file via [read] and [write] helpers.
+ */
 class ClothingJSONStore(private val context: Context) : ClothingStore {
 
     private var clothingItems = mutableListOf<ClosetOrganiserModel>()
@@ -85,6 +99,9 @@ class ClothingJSONStore(private val context: Context) : ClothingStore {
     }
 }
 
+/**
+ * Custom Gson type adapter for serializing and deserializing [Uri] objects as plain strings.
+ */
 class UriParser : JsonDeserializer<Uri>, JsonSerializer<Uri> {
 
     override fun deserialize(

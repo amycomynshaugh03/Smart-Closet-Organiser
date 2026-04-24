@@ -10,6 +10,21 @@ import dagger.hilt.android.HiltAndroidApp
 import ie.setu.project.BuildConfig
 import javax.inject.Inject
 
+/**
+ * The main Application class for the Smart Closet Organiser app.
+ *
+ * Annotated with [HiltAndroidApp] to trigger Hilt's code generation and act as
+ * the root component for dependency injection. Also implements [Configuration.Provider]
+ * to supply a custom [WorkManager] configuration backed by [HiltWorkerFactory], which
+ * allows Hilt-injected workers to function correctly.
+ *
+ * On creation, this class:
+ * - Initialises the Google Places SDK using the Maps API key from [BuildConfig].
+ * - Creates the "donation_reminders" notification channel required for scheduled donation notifications.
+ *
+ * @property workerFactory The Hilt-provided [HiltWorkerFactory] injected at runtime.
+ */
+
 @HiltAndroidApp
 class MainApp : Application(), Configuration.Provider {
 

@@ -37,6 +37,16 @@ val PREF_DONATED_IDS       = stringSetPreferencesKey("donated_item_ids")
 val PREF_KEPT_IDS          = stringSetPreferencesKey("kept_item_ids")
 val PREF_LOCATION_VISITS   = stringPreferencesKey("location_visit_counts")
 
+/**
+ * Represents a potential clothing donation location found via the Google Places API.
+ *
+ * @property placeId The Google Places ID of the location.
+ * @property name The display name of the location.
+ * @property address The street address.
+ * @property latLng The geographic coordinates.
+ * @property type The category of the donation location.
+ * @property visitCount The number of times the user has donated here (from DataStore).
+ */
 data class DonationLocation(
     val placeId: String,
     val name: String,
@@ -46,14 +56,31 @@ data class DonationLocation(
     val visitCount: Int = 0
 )
 
+/** The type of a donation drop-off location. */
 enum class LocationType { CHARITY_SHOP, CLOTHING_BIN, OTHER }
 
+/**
+ * Aggregated statistics about the user's donation activity.
+ *
+ * @property totalDonated The total number of items donated.
+ * @property favouriteLocation The name of the most frequently visited donation location, or null.
+ * @property locationBreakdown A map of location name to donation count.
+ */
 data class DonationStats(
     val totalDonated: Int,
     val favouriteLocation: String?,
     val locationBreakdown: Map<String, Int>
 )
 
+/**
+ * ViewModel for the Donation feature.
+ *
+ * Manages the full donation lifecycle: flagging inactive clothing items, searching
+ * for nearby donation locations via Google Places, scheduling donations with [WorkManager]
+ * notifications, confirming completed donations, and tracking stats via DataStore.
+ *
+ * Injected via Hilt.
+ */
 @HiltViewModel
 class DonationViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -63,27 +90,43 @@ class DonationViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _flaggedItems     = MutableStateFlow<List<ClosetOrganiserModel>>(emptyList())
+
+    /** Items that haven't been worn within the configured inactivity threshold. */
     val flaggedItems: StateFlow<List<ClosetOrganiserModel>> = _flaggedItems.asStateFlow()
 
     private val _thresholdMonths  = MutableStateFlow(6)
+
+    /** The inactivity threshold in months before an item is flagged for donation. */
     val thresholdMonths: StateFlow<Int> = _thresholdMonths.asStateFlow()
 
     private val _remindersEnabled = MutableStateFlow(true)
+
+    /** Whether donation reminder notifications are enabled. */
     val remindersEnabled: StateFlow<Boolean> = _remindersEnabled.asStateFlow()
 
     private val _donationStats    = MutableStateFlow(DonationStats(0, null, emptyMap()))
+
+    /** Aggregated statistics about the user's donation history. */
     val donationStats: StateFlow<DonationStats> = _donationStats.asStateFlow()
 
     private val _nearbyLocations  = MutableStateFlow<List<DonationLocation>>(emptyList())
+
+    /** Nearby donation locations returned by the last Google Places search. */
     val nearbyLocations: StateFlow<List<DonationLocation>> = _nearbyLocations.asStateFlow()
 
     private val _pendingPlans     = MutableStateFlow<List<DonationPlan>>(emptyList())
+
+    /** Donation plans that have been scheduled but not yet confirmed. */
     val pendingPlans: StateFlow<List<DonationPlan>> = _pendingPlans.asStateFlow()
 
     private val _isSearchingMap   = MutableStateFlow(false)
+
+    /** True while a nearby locations search is in progress. */
     val isSearchingMap: StateFlow<Boolean> = _isSearchingMap.asStateFlow()
 
     private val _selectedItem     = MutableStateFlow<ClosetOrganiserModel?>(null)
+
+    /** The clothing item currently selected to begin a donation flow. */
     val selectedItem: StateFlow<ClosetOrganiserModel?> = _selectedItem.asStateFlow()
 
     init { loadPreferences() }
@@ -97,6 +140,7 @@ class DonationViewModel @Inject constructor(
         refreshPendingPlans()
     }
 
+    /** Re-queries Firestore for items exceeding the inactivity threshold, excluding kept/donated ones. */
     fun refreshFlaggedItems() {
         val uid = authService.currentUserId
         if (uid.isBlank()) return
@@ -116,17 +160,20 @@ class DonationViewModel @Inject constructor(
         }
     }
 
+    /** Updates the inactivity threshold and refreshes flagged items. @param months New threshold. */
     fun setThresholdMonths(months: Int) = viewModelScope.launch {
         context.donationDataStore.edit { it[PREF_THRESHOLD_MONTHS] = months }
         _thresholdMonths.value = months
         refreshFlaggedItems()
     }
 
+    /** Enables or disables donation reminder notifications. @param enabled The new state. */
     fun setRemindersEnabled(enabled: Boolean) = viewModelScope.launch {
         context.donationDataStore.edit { it[PREF_REMINDERS_ENABLED] = enabled }
         _remindersEnabled.value = enabled
     }
 
+    /** Marks an item as "keep" so it no longer appears in the flagged list. */
     fun keepItem(item: ClosetOrganiserModel) = viewModelScope.launch {
         context.donationDataStore.edit { prefs ->
             prefs[PREF_KEPT_IDS] = (prefs[PREF_KEPT_IDS] ?: emptySet()) + item.id.toString()
@@ -134,9 +181,16 @@ class DonationViewModel @Inject constructor(
         _flaggedItems.value = _flaggedItems.value.filter { it.id != item.id }
     }
 
+    /** Sets the currently selected item to start a donation flow. */
     fun startDonationFlow(item: ClosetOrganiserModel) { _selectedItem.value = item }
+
+    /** Clears the currently selected item. */
     fun clearSelectedItem() { _selectedItem.value = null }
 
+    /**
+     * Creates and saves a [DonationPlan], schedules a WorkManager notification,
+     * and removes the item from the flagged list.
+     */
     fun scheduleDonation(item: ClosetOrganiserModel, location: DonationLocation, scheduledDate: Date) {
         val uid = authService.currentUserId
         if (uid.isBlank()) return
@@ -159,6 +213,10 @@ class DonationViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Marks a plan as confirmed, deletes the clothing item from Firestore,
+     * and increments the location visit count in DataStore.
+     */
     fun confirmDonation(plan: DonationPlan) {
         val uid = authService.currentUserId
         if (uid.isBlank()) return
@@ -179,6 +237,7 @@ class DonationViewModel @Inject constructor(
         }
     }
 
+    /** Cancels a pending donation plan and its associated WorkManager notification. */
     fun cancelPlan(plan: DonationPlan) = viewModelScope.launch {
         val uid = authService.currentUserId
         if (uid.isBlank()) return@launch
@@ -188,6 +247,11 @@ class DonationViewModel @Inject constructor(
         refreshFlaggedItems()
     }
 
+    /**
+     * Searches for nearby donation spots using the Google Places Nearby Search API.
+     * Results are sorted by prior visit frequency.
+     * @param userLocation The user's current coordinates.
+     */
     fun searchNearbyDonationSpots(userLocation: LatLng) {
         _isSearchingMap.value = true
         viewModelScope.launch {
@@ -208,7 +272,6 @@ class DonationViewModel @Inject constructor(
                     client.newCall(request).execute().body?.string() ?: ""
                 }
 
-                android.util.Log.d("DonationVM", "Places response: $responseBody")
 
                 val json    = JSONObject(responseBody)
                 val results = json.getJSONArray("results")

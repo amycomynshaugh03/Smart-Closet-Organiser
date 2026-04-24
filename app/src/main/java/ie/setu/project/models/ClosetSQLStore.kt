@@ -10,6 +10,7 @@ import ie.setu.project.models.clothing.ClosetOrganiserModel
 import ie.setu.project.models.clothing.ClothingStore
 import java.util.Date
 
+
 private const val DATABASE_NAME = "closet.db"
 private const val DATABASE_VERSION = 3
 
@@ -25,10 +26,27 @@ private const val COLUMN_LAST_WORN = "last_worn"
 private const val COLUMN_IMAGE = "image"
 private const val COLUMN_IMAGE_URL = "image_url"
 
+/**
+ * SQLite-backed implementation of [ClothingStore].
+ *
+ * Uses [ClosetDbHelper] (an inner [SQLiteOpenHelper]) to manage a local SQLite database
+ * named "closet.db". The database contains tables for clothing items, outfits, and
+ * outfit-clothing junction data.
+ *
+ * This store is used as both the primary local store and an offline backup when
+ * Firestore is unavailable.
+ *
+ * @constructor Creates the store and opens the writable database.
+ * @param context The application context, used to open the database.
+ */
 class ClosetSQLStore(private val context: Context) : ClothingStore {
 
     private val database: SQLiteDatabase = ClosetDbHelper(context).writableDatabase
 
+
+    /**
+     * Returns all clothing items from the database, sorted alphabetically by title.
+     */
     override suspend fun findAll(): List<ClosetOrganiserModel> {
         val items = mutableListOf<ClosetOrganiserModel>()
         database.rawQuery("SELECT * FROM $TABLE_NAME ORDER BY $COLUMN_TITLE", null).use { cursor ->
@@ -39,6 +57,10 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
         return items
     }
 
+    /**
+     * Looks up a single item by ID. Returns null if not found or on error.
+     * @param id The ID of the item to find.
+     */
     override suspend fun findById(id: Long): ClosetOrganiserModel? {
         return try {
             database.rawQuery(
@@ -52,11 +74,20 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
         }
     }
 
+    /**
+     * Inserts a new clothing item into the database.
+     * The item's [ClosetOrganiserModel.id] is updated with the auto-generated row ID.
+     * @param clothingItem The item to insert.
+     */
     override suspend fun create(clothingItem: ClosetOrganiserModel) {
         val values = toContentValues(clothingItem)
         clothingItem.id = database.insert(TABLE_NAME, null, values)
     }
 
+    /**
+     * Updates an existing clothing item row matched by its ID.
+     * @param closetItem The item with updated field values.
+     */
     override suspend fun update(closetItem: ClosetOrganiserModel) {
         val values = toContentValues(closetItem)
         database.update(
@@ -67,6 +98,10 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
         )
     }
 
+    /**
+     * Deletes a clothing item row by its ID.
+     * @param clothingItem The item to delete.
+     */
     override suspend fun delete(clothingItem: ClosetOrganiserModel) {
         database.delete(
             TABLE_NAME,
@@ -111,6 +146,10 @@ class ClosetSQLStore(private val context: Context) : ClothingStore {
         }
     }
 
+    /**
+     * Inner [SQLiteOpenHelper] that manages the creation and migration of "closet.db".
+     * Version 3 adds the [COLUMN_IMAGE_URL] column to the clothing_items table.
+     */
     private inner class ClosetDbHelper(context: Context) :
         SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 

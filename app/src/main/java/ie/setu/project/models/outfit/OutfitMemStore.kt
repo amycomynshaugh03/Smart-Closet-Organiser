@@ -1,9 +1,11 @@
 package ie.setu.project.models.outfit
 
 /**
- * A memory-based implementation of the [OutfitStore] interface for managing outfits.
- * This class stores outfits in memory and provides functionality to create, update, delete,
- * and retrieve outfits.
+ * An in-memory implementation of [OutfitStore].
+ *
+ * Stores outfits in an [ArrayList] with no persistence between sessions.
+ * ID assignment uses list index at time of creation (0-based).
+ * Primarily used for testing or offline scenarios.
  */
 class OutfitMemStore : OutfitStore {
 

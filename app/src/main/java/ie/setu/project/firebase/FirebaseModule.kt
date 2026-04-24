@@ -16,6 +16,18 @@ import ie.setu.project.firebase.auth.AuthRepository
 import ie.setu.project.firebase.services.AuthService
 import javax.inject.Singleton
 
+/**
+ * Hilt module that provides singleton Firebase service instances.
+ *
+ * Installed in [SingletonComponent] to ensure a single instance of each Firebase service
+ * is shared across the entire application.
+ *
+ * Provides:
+ * - [FirebaseAuth] for authentication
+ * - [FirebaseFirestore] with persistent offline caching enabled (unlimited size)
+ * - [AuthService] bound to [AuthRepository]
+ * - [FirebaseStorage] for image uploads and deletions
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object FirebaseModule {

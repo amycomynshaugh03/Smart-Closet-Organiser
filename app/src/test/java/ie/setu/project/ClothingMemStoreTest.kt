@@ -9,10 +9,20 @@ import org.junit.Test
 import java.util.Calendar
 import java.util.Date
 
+/**
+ * The Material 3 theme for the Smart Closet Organiser app.
+ *
+ * Applies either the light or dark colour scheme based on the system setting,
+ * using the colour values defined in [Color.kt].
+ *
+ * @param darkTheme Whether to apply the dark colour scheme. Defaults to the system setting.
+ * @param content The composable content to render within this theme.
+ */
 class ClothingMemStoreTest {
 
     private lateinit var store: ClothingMemStore
 
+    /** Initialises a fresh [ClothingMemStore] before each test. */
     @Before
     fun setup() {
         store = ClothingMemStore()
