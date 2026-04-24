@@ -133,6 +133,9 @@ enum class WeatherCondition(
         description = "Thunderstorm"
     );
 
+    /**
+     * Provides a utility method to map raw API weather codes to [WeatherCondition] enum values.
+     */
     companion object {
         /**
          * Converts a weather code and a day/night indicator to the corresponding [WeatherCondition].
