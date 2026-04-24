@@ -26,8 +26,23 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+/**
+ * Presenter for [MainView] in the MVP layer.
+ *
+ * Handles creating and editing [ClosetOrganiserModel] items, including image selection,
+ * background removal via the remove.bg API, rotation correction, AI-powered image scanning
+ * via Gemini, date picking, and syncing to both the local [ClothingStore] and Firestore
+ * with Firebase Storage image upload.
+ *
+ * Uses [FirebaseEntryPoint] and [StoreEntryPoint] for dependency resolution outside Hilt.
+ *
+ * @constructor Loads any item being edited from the intent extras and registers
+ *   the image picker activity result callback.
+ * @param view The [MainView] this presenter is attached to.
+ */
 class MainPresenter(private val view: MainView) {
 
+    /** The clothing item currently being added or edited. Defaults to a new empty [ClosetOrganiserModel]. */
     var closetOrganiser = ClosetOrganiserModel()
 
     private val clothingStore: ClothingStore by lazy {
@@ -46,6 +61,8 @@ class MainPresenter(private val view: MainView) {
     }
 
     private lateinit var imageIntentLauncher: ActivityResultLauncher<Intent>
+
+    /** True if the view is editing an existing item rather than creating a new one. */
     var edit = false
 
     init {
@@ -57,6 +74,22 @@ class MainPresenter(private val view: MainView) {
         registerImagePickerCallback()
     }
 
+    /**
+     * Saves or updates the clothing item using all provided field values.
+     * If the item is new, it is created in the local store; otherwise, it is updated.
+     * If the user is authenticated, the item is also upserted to Firestore. If a new
+     * local image has been selected and not yet uploaded, it is first uploaded to
+     * Firebase Storage and the resulting URL is saved alongside the Firestore document.
+     * Finishes the view with [RESULT_OK] on completion.
+     *
+     * @param title The item title.
+     * @param description A description of the item.
+     * @param colourPattern The colour or pattern of the item.
+     * @param size The size of the item.
+     * @param season The season the item is suited for.
+     * @param category The broad clothing category (e.g. "Tops", "Bottoms").
+     * @param subCategory A more specific sub-category within the main category.
+     */
     fun doAddOrSave(
         title: String,
         description: String,
@@ -122,15 +155,26 @@ class MainPresenter(private val view: MainView) {
         }
     }
 
+    /**
+     * Cancels the current add/edit operation and finishes the view with [RESULT_CANCELED].
+     */
     fun doCancel() {
         view.setResult(RESULT_CANCELED)
         view.finish()
     }
 
+    /**
+     * Opens the system image picker so the user can select a clothing item photo.
+     */
     fun doSelectImage() {
         showImagePicker(imageIntentLauncher)
     }
 
+    /**
+     * Runs the currently selected image through the Gemini clothing analysis model
+     * and pre-fills the form fields (title, description, colour, category) with the result.
+     * Does nothing if no image has been selected.
+     */
     fun doScanImage() {
         val uri = closetOrganiser.image
         if (uri == null || uri == android.net.Uri.EMPTY) return
@@ -139,6 +183,12 @@ class MainPresenter(private val view: MainView) {
         }
     }
 
+    /**
+     * Calls [analyseClothingImage] with the given URI, shows a scanning indicator
+     * while in progress, and updates the view's form fields with the analysis result.
+     *
+     * @param uri The local [Uri] of the image to analyse.
+     */
     private suspend fun scanImageWithGemini(uri: android.net.Uri) {
         view.setScanning(true)
         val result = analyseClothingImage(view, uri)
@@ -156,6 +206,10 @@ class MainPresenter(private val view: MainView) {
         }
     }
 
+    /**
+     * Shows a [MaterialDatePicker] and updates [closetOrganiser.lastWorn] with the
+     * selected date. Also updates the view's displayed date string.
+     */
     fun showDatePicker() {
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("Select Last Worn Date")
@@ -172,6 +226,11 @@ class MainPresenter(private val view: MainView) {
         datePicker.show(view.supportFragmentManager, "DATE_PICKER")
     }
 
+    /**
+     * Registers the activity result callback for the image picker.
+     * On a successful pick, optionally removes the background (if enabled in the view)
+     * or corrects the image rotation, then updates [closetOrganiser.image] and the view.
+     */
     private fun registerImagePickerCallback() {
         imageIntentLauncher =
             view.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
