@@ -15,6 +15,13 @@ import ie.setu.project.models.outfit.OutfitStore
 import ie.setu.project.preferences.LocationPreferencesRepository
 import javax.inject.Singleton
 
+/**
+ * Hilt module that provides singleton instances of local data stores and repositories.
+ *
+ * Installed in [SingletonComponent] so all bindings are application-scoped.
+ * Binds [ClothingStore] to [ClosetSQLStore], [OutfitStore] to [OutfitJSONStore],
+ * and also provides [OutfitCalendarFirestoreRepository] and [LocationPreferencesRepository].
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object StoreModule {
