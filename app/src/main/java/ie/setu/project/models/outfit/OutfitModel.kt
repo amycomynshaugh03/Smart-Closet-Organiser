@@ -6,19 +6,18 @@ import kotlinx.parcelize.Parcelize
 import java.util.Date
 
 /**
- * Data class representing an outfit in the Closet Organiser app.
+ * Represents a saved outfit composed of one or more clothing items.
  *
- * This class contains the details of an outfit, including its title, description, season,
- * the date it was last worn, and the list of clothing items that make up the outfit.
- * The class implements [Parcelable] to allow it to be passed between Android components.
+ * Implements [Parcelable] so it can be passed between Activities via Intents.
  *
- * @property id The unique identifier of the outfit.
- * @property title The title of the outfit.
- * @property description A brief description of the outfit.
- * @property season The season associated with the outfit (e.g., Summer, Winter).
- * @property lastWorn The date when the outfit was last worn.
- * @property clothingItems A list of [ClosetOrganiserModel] representing the clothing items in the outfit.
+ * @property id Unique identifier for the outfit. Defaults to 0 until assigned by the store.
+ * @property title Display name of the outfit (e.g. "Summer Work Look").
+ * @property description A brief description of the outfit's style or occasion.
+ * @property season The season this outfit is suited for (e.g. "Summer", "Winter", "All").
+ * @property lastWorn The date this outfit was last worn. Defaults to the current date.
+ * @property clothingItems The list of [ClosetOrganiserModel] items that make up this outfit.
  */
+
 @Parcelize
 data class OutfitModel(
     var id: Long = 0,
