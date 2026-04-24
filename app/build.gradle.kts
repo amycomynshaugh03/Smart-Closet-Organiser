@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
 
     id("org.jetbrains.kotlin.plugin.parcelize")
-    id("org.jetbrains.dokka") version "1.8.20"
+    id("org.jetbrains.dokka")
     id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
 
     alias(libs.plugins.google.gms.google.services)
