@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,16 +29,14 @@ fun DonationScreen(
     val pendingPlans    by vm.pendingPlans.collectAsStateWithLifecycle()
     val selectedItem    by vm.selectedItem.collectAsStateWithLifecycle()
 
-    var showSettings by remember { mutableStateOf(false) }
-    var activeTab    by remember { mutableStateOf(0) }
+    var showSettings      by remember { mutableStateOf(false) }
+    var activeTab         by remember { mutableStateOf(0) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) { vm.refreshFlaggedItems() }
 
-    if (selectedItem != null) {
-        DonatePlanSheet(item = selectedItem!!, vm = vm, onDismiss = { vm.clearSelectedItem() })
-    }
-
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 navigationIcon = {
@@ -73,6 +72,15 @@ fun DonationScreen(
     ) { padding ->
         Column(modifier = Modifier.padding(padding).fillMaxSize()) {
 
+            if (selectedItem != null) {
+                DonatePlanSheet(
+                    item = selectedItem!!,
+                    vm = vm,
+                    snackbarHostState = snackbarHostState,
+                    onDismiss = { vm.clearSelectedItem() }
+                )
+            }
+
             if (showSettings) {
                 DonationSettingsPanel(
                     thresholdMonths   = thresholdMonths,
@@ -87,10 +95,10 @@ fun DonationScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SummaryColumn("${flaggedItems.size}",         "Flagged",   MaterialTheme.colorScheme.primary)
-                SummaryColumn("${donationStats.totalDonated}","Donated",   Color(0xFF2E7D32))
-                SummaryColumn("${pendingPlans.size}",         "Planned",   Color(0xFFF57C00))
-                SummaryColumn("${thresholdMonths}mo",         "Threshold", MaterialTheme.colorScheme.tertiary)
+                SummaryColumn("${flaggedItems.size}",          "Flagged",   MaterialTheme.colorScheme.primary)
+                SummaryColumn("${donationStats.totalDonated}", "Donated",   Color(0xFF2E7D32))
+                SummaryColumn("${pendingPlans.size}",          "Planned",   Color(0xFFF57C00))
+                SummaryColumn("${thresholdMonths}mo",          "Threshold", MaterialTheme.colorScheme.tertiary)
             }
 
             TabRow(selectedTabIndex = activeTab) {

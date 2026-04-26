@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.maps.android.compose.*
 import ie.setu.project.models.clothing.ClosetOrganiserModel
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -38,9 +39,11 @@ import java.util.*
 fun DonatePlanSheet(
     item: ClosetOrganiserModel,
     vm: DonationViewModel,
+    snackbarHostState: SnackbarHostState,
     onDismiss: () -> Unit
 ) {
     val context          = LocalContext.current
+    val scope            = rememberCoroutineScope()
     val nearbyLocations  by vm.nearbyLocations.collectAsStateWithLifecycle()
     val isSearching      by vm.isSearchingMap.collectAsStateWithLifecycle()
     var selectedLocation by remember { mutableStateOf<DonationLocation?>(null) }
@@ -269,7 +272,15 @@ fun DonatePlanSheet(
 
             Spacer(Modifier.height(16.dp))
             Button(
-                onClick = { vm.scheduleDonation(item, selectedLocation!!, scheduledDate!!) },
+                onClick = {
+                    vm.scheduleDonation(item, selectedLocation!!, scheduledDate!!)
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            "Donation planned for ${SimpleDateFormat("EEE dd MMM", Locale.getDefault()).format(scheduledDate!!)}"
+                        )
+                    }
+                    onDismiss()
+                },
                 enabled = selectedLocation != null && scheduledDate != null,
                 modifier = Modifier.fillMaxWidth().height(50.dp),
                 shape = RoundedCornerShape(12.dp)
