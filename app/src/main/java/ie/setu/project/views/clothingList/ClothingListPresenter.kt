@@ -152,7 +152,7 @@ class ClothingListPresenter @Inject constructor(
             viewModelScope.launch {
                 val backupItems = localBackup.getAllLocal()
                 cachedClothing = backupItems
-                _carouselItems.value = backupItems.takeLast(5).reversed()
+                _carouselItems.value = backupItems.sortedBy { it.id }.takeLast(5).reversed()
                 _clothingItems.value = backupItems
                 _syncState.value = SyncState.OFFLINE_BACKUP
             }
@@ -165,7 +165,7 @@ class ClothingListPresenter @Inject constructor(
             try {
                 cachedClothing = clothingRepo.getAll(uid)
                 cachedOutfits = outfitRepo.getAll(uid)
-                _carouselItems.value = cachedClothing.takeLast(5).reversed()
+                _carouselItems.value = cachedClothing.sortedBy { it.id }.takeLast(5).reversed()
                 _clothingItems.value = cachedClothing
 
                 val q = _searchQuery.value.trim()
@@ -180,7 +180,7 @@ class ClothingListPresenter @Inject constructor(
 
                 val backupItems = localBackup.getAllLocal()
                 cachedClothing = backupItems
-                _carouselItems.value = backupItems.takeLast(5).reversed()
+                _carouselItems.value = backupItems.sortedBy { it.id }.sortedBy { it.id }.takeLast(5).reversed()
                 _clothingItems.value = backupItems
                 _syncState.value = SyncState.OFFLINE_BACKUP
             }
