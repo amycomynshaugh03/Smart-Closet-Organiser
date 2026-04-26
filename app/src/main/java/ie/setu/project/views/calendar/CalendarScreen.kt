@@ -8,8 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -90,43 +88,85 @@ fun CalendarScreen(
             )
         }
     ) { padding ->
-        Column(
+        if (isLoading) {
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(padding)
+            )
+        }
+
+        val today    = LocalDate.now()
+        val upcoming = calendarEntries.values
+            .filter { !LocalDate.parse(it.dateKey, DATE_FMT).isBefore(today) }
+            .sortedBy { it.dateKey }
+            .take(10)
+
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            if (isLoading) {
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            item {
+                MonthHeader(
+                    yearMonth  = currentMonth,
+                    onPrevious = { currentMonth = currentMonth.minusMonths(1) },
+                    onNext     = { currentMonth = currentMonth.plusMonths(1) }
+                )
             }
 
-            MonthHeader(
-                yearMonth  = currentMonth,
-                onPrevious = { currentMonth = currentMonth.minusMonths(1) },
-                onNext     = { currentMonth = currentMonth.plusMonths(1) }
-            )
+            item { DayOfWeekRow() }
 
-            DayOfWeekRow()
+            item {
+                CalendarGrid(
+                    yearMonth       = currentMonth,
+                    selectedDate    = selectedDate,
+                    calendarEntries = calendarEntries,
+                    onDateClick     = { date ->
+                        selectedDate     = date
+                        showOutfitPicker = true
+                    }
+                )
+            }
 
-            CalendarGrid(
-                yearMonth       = currentMonth,
-                selectedDate    = selectedDate,
-                calendarEntries = calendarEntries,
-                onDateClick     = { date ->
-                    selectedDate     = date
-                    showOutfitPicker = true
+            item { HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) }
+
+            if (upcoming.isEmpty()) {
+                item {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "No outfits planned yet. Tap any date above to assign one!",
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onSurface.copy(0.5f)
+                        )
+                    }
                 }
-            )
-
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-            UpcomingOutfitsList(
-                calendarEntries = calendarEntries,
-                outfits         = outfits,
-                onEntryClick    = { entry ->
-                    selectedDate     = LocalDate.parse(entry.dateKey, DATE_FMT)
-                    showOutfitPicker = true
+            } else {
+                item {
+                    Text(
+                        "Upcoming",
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 16.sp
+                    )
                 }
-            )
+                items(upcoming) { entry ->
+                    UpcomingEntryRow(
+                        entry        = entry,
+                        outfits      = outfits,
+                        onEntryClick = { e ->
+                            selectedDate     = LocalDate.parse(e.dateKey, DATE_FMT)
+                            showOutfitPicker = true
+                        }
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                }
+            }
         }
     }
 
@@ -207,32 +247,45 @@ private fun CalendarGrid(
     val startOffset = firstDay.dayOfWeek.value - 1
     val daysInMonth = yearMonth.lengthOfMonth()
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(7),
+    // Build a flat list of cells: leading blanks + days + trailing blanks
+    val totalCells = startOffset + daysInMonth
+    val trailingBlanks = if (totalCells % 7 != 0) 7 - (totalCells % 7) else 0
+    val allCells = totalCells + trailingBlanks
+
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(500.dp)
-            .padding(horizontal = 8.dp),
-        userScrollEnabled = false
+            .padding(horizontal = 8.dp)
     ) {
-        items(startOffset) { Box(Modifier.aspectRatio(1f)) }
-
-        items(daysInMonth) { index ->
-            val day     = index + 1
-            val date    = yearMonth.atDay(day)
-            val dateKey = date.format(DATE_FMT)
-            DayCell(
-                day        = day,
-                isToday    = date == today,
-                isSelected = date == selectedDate,
-                hasOutfit  = calendarEntries.containsKey(dateKey),
-                isPast     = date.isBefore(today),
-                onClick    = { onDateClick(date) }
-            )
+        // Render rows of 7 cells each
+        for (row in 0 until (allCells / 7)) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                for (col in 0 until 7) {
+                    val cellIndex = row * 7 + col
+                    val dayIndex  = cellIndex - startOffset + 1
+                    if (cellIndex < startOffset || dayIndex > daysInMonth) {
+                        Box(modifier = Modifier
+                            .weight(1f)
+                            .aspectRatio(1f))
+                    } else {
+                        val date    = yearMonth.atDay(dayIndex)
+                        val dateKey = date.format(DATE_FMT)
+                        Box(modifier = Modifier
+                            .weight(1f)
+                            .aspectRatio(1f)) {
+                            DayCell(
+                                day        = dayIndex,
+                                isToday    = date == today,
+                                isSelected = date == selectedDate,
+                                hasOutfit  = calendarEntries.containsKey(dateKey),
+                                isPast     = date.isBefore(today),
+                                onClick    = { onDateClick(date) }
+                            )
+                        }
+                    }
+                }
+            }
         }
-
-        val remainder = (startOffset + daysInMonth) % 7
-        if (remainder != 0) items(7 - remainder) { Box(Modifier.aspectRatio(1f)) }
     }
 }
 
@@ -290,220 +343,185 @@ private fun DayCell(
 }
 
 @Composable
-private fun UpcomingOutfitsList(
-    calendarEntries: Map<String, OutfitCalendarEntry>,
+private fun UpcomingEntryRow(
+    entry: OutfitCalendarEntry,
     outfits: List<OutfitModel>,
     onEntryClick: (OutfitCalendarEntry) -> Unit
 ) {
-    val today    = LocalDate.now()
-    val upcoming = calendarEntries.values
-        .filter { !LocalDate.parse(it.dateKey, DATE_FMT).isBefore(today) }
-        .sortedBy { it.dateKey }
-        .take(10)
+    val date       = LocalDate.parse(entry.dateKey, DATE_FMT)
+    val fullOutfit = outfits.find { it.id == entry.outfitId }
+    var expanded   by remember(entry.dateKey) { mutableStateOf(false) }
 
-    if (upcoming.isEmpty()) {
-        Box(
-            Modifier
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize()
+    ) {
+        Row(
+            modifier = Modifier
                 .fillMaxWidth()
-                .padding(32.dp),
-            contentAlignment = Alignment.Center
+                .clickable { expanded = !expanded }
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                "No outfits planned yet. Tap any date above to assign one!",
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurface.copy(0.5f)
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(MaterialTheme.colorScheme.primary.copy(0.12f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    Icons.Default.Checkroom,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            Spacer(Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(entry.outfitTitle, fontWeight = FontWeight.Medium)
+                Text(
+                    date.format(DateTimeFormatter.ofPattern("EEE, d MMM yyyy")),
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurface.copy(0.6f)
+                )
+                if (entry.note.isNotBlank()) {
+                    Text(
+                        entry.note,
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.5f)
+                    )
+                }
+            }
+
+            Icon(
+                imageVector = if (expanded) Icons.Default.KeyboardArrowUp
+                else Icons.Default.KeyboardArrowDown,
+                contentDescription = if (expanded) "Collapse" else "Expand",
+                tint = MaterialTheme.colorScheme.onSurface.copy(0.5f)
             )
         }
-        return
-    }
 
-    Text(
-        "Upcoming",
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 16.sp
-    )
-
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
-        items(upcoming) { entry ->
-            val date       = LocalDate.parse(entry.dateKey, DATE_FMT)
-            val fullOutfit = outfits.find { it.id == entry.outfitId }
-            var expanded   by remember { mutableStateOf(false) }
-
+        if (expanded && fullOutfit != null) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .animateContentSize()
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 12.dp)
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { expanded = !expanded }
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(MaterialTheme.colorScheme.primary.copy(0.12f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            Icons.Default.Checkroom,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-
-                    Spacer(Modifier.width(12.dp))
-
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(entry.outfitTitle, fontWeight = FontWeight.Medium)
-                        Text(
-                            date.format(DateTimeFormatter.ofPattern("EEE, d MMM yyyy")),
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurface.copy(0.6f)
-                        )
-                        if (entry.note.isNotBlank()) {
-                            Text(
-                                entry.note,
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurface.copy(0.5f)
-                            )
-                        }
-                    }
-
-                    Icon(
-                        imageVector = if (expanded) Icons.Default.KeyboardArrowUp
-                        else Icons.Default.KeyboardArrowDown,
-                        contentDescription = if (expanded) "Collapse" else "Expand",
-                        tint = MaterialTheme.colorScheme.onSurface.copy(0.5f)
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
                     )
-                }
-
-                if (expanded && fullOutfit != null) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .padding(bottom = 12.dp)
-                    ) {
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        if (fullOutfit.description.isNotBlank()) {
+                            Text(
+                                fullOutfit.description,
+                                fontSize = 13.sp,
+                                color = MaterialTheme.colorScheme.onSurface.copy(0.7f)
                             )
-                        ) {
-                            Column(modifier = Modifier.padding(12.dp)) {
-                                if (fullOutfit.description.isNotBlank()) {
-                                    Text(
-                                        fullOutfit.description,
-                                        fontSize = 13.sp,
-                                        color = MaterialTheme.colorScheme.onSurface.copy(0.7f)
-                                    )
-                                    Spacer(Modifier.height(6.dp))
-                                }
+                            Spacer(Modifier.height(6.dp))
+                        }
 
-                                if (fullOutfit.season.isNotBlank()) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(
-                                            Icons.Default.WbSunny,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(14.dp),
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                        Spacer(Modifier.width(4.dp))
-                                        Text(
-                                            fullOutfit.season,
-                                            fontSize = 13.sp,
-                                            fontWeight = FontWeight.Medium
-                                        )
-                                    }
-                                    Spacer(Modifier.height(8.dp))
-                                }
+                        if (fullOutfit.season.isNotBlank()) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    Icons.Default.WbSunny,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(14.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(Modifier.width(4.dp))
+                                Text(
+                                    fullOutfit.season,
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                            Spacer(Modifier.height(8.dp))
+                        }
 
-                                if (fullOutfit.clothingItems.isNotEmpty()) {
-                                    Text(
-                                        "Items in this outfit",
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        modifier = Modifier.padding(bottom = 8.dp)
-                                    )
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .horizontalScroll(rememberScrollState()),
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        if (fullOutfit.clothingItems.isNotEmpty()) {
+                            Text(
+                                "Items in this outfit",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .horizontalScroll(rememberScrollState()),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                fullOutfit.clothingItems.forEach { clothing ->
+                                    val imgModel: Any? = clothing.imageUrl
+                                        .takeIf { it.isNotBlank() } ?: clothing.image
+                                    val validImg = imgModel != null &&
+                                            imgModel != Uri.EMPTY &&
+                                            imgModel.toString().isNotBlank()
+
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier.width(72.dp)
                                     ) {
-                                        fullOutfit.clothingItems.forEach { clothing ->
-                                            val imgModel: Any? = clothing.imageUrl
-                                                .takeIf { it.isNotBlank() } ?: clothing.image
-                                            val validImg = imgModel != null &&
-                                                    imgModel != Uri.EMPTY &&
-                                                    imgModel.toString().isNotBlank()
-
-                                            Column(
-                                                horizontalAlignment = Alignment.CenterHorizontally,
-                                                modifier = Modifier.width(72.dp)
-                                            ) {
-                                                Box(
-                                                    modifier = Modifier
-                                                        .size(64.dp)
-                                                        .clip(RoundedCornerShape(10.dp))
-                                                        .background(Color.LightGray),
-                                                    contentAlignment = Alignment.Center
-                                                ) {
-                                                    if (validImg) {
-                                                        AsyncImage(
-                                                            model = imgModel,
-                                                            contentDescription = clothing.title,
-                                                            modifier = Modifier.fillMaxSize(),
-                                                            contentScale = ContentScale.Crop
-                                                        )
-                                                    } else {
-                                                        Icon(
-                                                            Icons.Default.Checkroom,
-                                                            contentDescription = null,
-                                                            tint = Color.White,
-                                                            modifier = Modifier.size(28.dp)
-                                                        )
-                                                    }
-                                                }
-                                                Spacer(Modifier.height(4.dp))
-                                                Text(
-                                                    clothing.title,
-                                                    fontSize = 11.sp,
-                                                    textAlign = TextAlign.Center,
-                                                    maxLines = 2,
-                                                    overflow = TextOverflow.Ellipsis
+                                        Box(
+                                            modifier = Modifier
+                                                .size(64.dp)
+                                                .clip(RoundedCornerShape(10.dp))
+                                                .background(Color.LightGray),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            if (validImg) {
+                                                AsyncImage(
+                                                    model = imgModel,
+                                                    contentDescription = clothing.title,
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    contentScale = ContentScale.Crop
+                                                )
+                                            } else {
+                                                Icon(
+                                                    Icons.Default.Checkroom,
+                                                    contentDescription = null,
+                                                    tint = Color.White,
+                                                    modifier = Modifier.size(28.dp)
                                                 )
                                             }
                                         }
+                                        Spacer(Modifier.height(4.dp))
+                                        Text(
+                                            clothing.title,
+                                            fontSize = 11.sp,
+                                            textAlign = TextAlign.Center,
+                                            maxLines = 2,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
                                     }
                                 }
                             }
                         }
-
-                        Spacer(Modifier.height(8.dp))
-
-                        OutlinedButton(
-                            onClick = { onEntryClick(entry) },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Icon(
-                                Icons.Default.Edit,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(Modifier.width(6.dp))
-                            Text("Edit Outfit Plan")
-                        }
                     }
                 }
 
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                Spacer(Modifier.height(8.dp))
+
+                OutlinedButton(
+                    onClick = { onEntryClick(entry) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(
+                        Icons.Default.Edit,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text("Edit Outfit Plan")
+                }
             }
         }
     }
