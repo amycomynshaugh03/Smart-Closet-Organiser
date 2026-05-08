@@ -391,6 +391,18 @@ code {
   .arch__block:last-child { border-bottom: none; }
 }
 
+.deliverable-poster {
+  max-width: 860px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.12);
+}
+
+.deliverable-poster img {
+  width: 100%;
+  display: block;
+}
 @media (max-width: 480px) {
   .stats { grid-template-columns: 1fr; }
   .screenshots__row { justify-content: center; }
